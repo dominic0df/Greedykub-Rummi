@@ -1,0 +1,13 @@
+﻿################################################################################
+# Diese .gitignore-Datei wurde von Microsoft(R) Visual Studio automatisch erstellt.
+################################################################################
+
+/.vs/VSWorkspaceState.json
+/.vs/slnx.sqlite
+/.vs/ProjectSettings.json
+/.vs/Greedykub-Rummi/v16/ipch/AutoPCH/c436ab19f9b568f1/ROW.ipch
+/.vs/Greedykub-Rummi/v16/ipch/AutoPCH/8c92e36d39c4c800/MAIN.ipch
+/.vs/Greedykub-Rummi/v16/ipch/AutoPCH/471923d59f64e26a/MAIN.ipch
+/.vs/Greedykub-Rummi/v16/Browse.VC.opendb
+/.vs/Greedykub-Rummi/v16/Browse.VC.db
+/.vs/Greedykub-Rummi/v16/.suo
