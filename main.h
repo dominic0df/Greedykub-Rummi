@@ -40,3 +40,7 @@ public:
 	std::string position;
 
 };
+
+void initialFillTokenManagementArray(Token* tokenManagement[9][13]);
+
+void printArray(Token* tokenManagement[9][13]);
