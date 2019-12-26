@@ -9,6 +9,10 @@ const std::string YELLOW_TERMINAL_COL = "\033[33m";      /* Yellow */
 const std::string BLUE_TERMINAL_COL = "\033[36m";      /* Blau -> Cyan */
 const std::string WHITE_TERMINAL_COL = "\033[37m";      /* White */
 
+const int NUMBER_OF_ROWS = 9;
+const int NUMBER_OF_COLUMNS = 13;
+
+
 int main();
 
 class Token //Spielstein
@@ -18,6 +22,7 @@ public:
 
 	enum Color { BLUE, RED, GREEN, YELLOW, JOKER };
 	enum Location { Player1, Player2, Player3, Player4, Playground, Storage };
+
 
 
 	Token::Color& getColor() {
@@ -39,7 +44,7 @@ public:
 	Token(Token::Color newColor, int newValue, Token::Location currentLocation, std::string currentPosition);
 
 
-public:
+private:
 
 	Token::Color color;
 	int value;
@@ -48,8 +53,8 @@ public:
 
 };
 
-void initialFillTokenManagementArray(Token* tokenManagement[9][13]);
+void initialFillTokenManagementArray(Token* tokenManagement[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS]);
 
-void printMemoryStructure(Token* tokenManagement[9][13]);
+void printMemoryStructure(Token* tokenManagement[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS]);
 
 std::string getColorToPrint(int place_in_enum);
