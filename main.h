@@ -2,6 +2,13 @@
 #include <vector>
 #include <iostream>
 
+const std::string RESET_TERMINAL_COL = "\033[0m";
+const std::string RED_TERMINAL_COL = "\033[31m";      /* Red */
+const std::string GREEN_TERMINAL_COL = "\033[32m";      /* Green */
+const std::string YELLOW_TERMINAL_COL = "\033[33m";      /* Yellow */
+const std::string BLUE_TERMINAL_COL = "\033[36m";      /* Blau -> Cyan */
+const std::string WHITE_TERMINAL_COL = "\033[37m";      /* White */
+
 int main();
 
 class Token //Spielstein
@@ -43,4 +50,6 @@ public:
 
 void initialFillTokenManagementArray(Token* tokenManagement[9][13]);
 
-void printArray(Token* tokenManagement[9][13]);
+void printMemoryStructure(Token* tokenManagement[9][13]);
+
+std::string getColorToPrint(int place_in_enum);

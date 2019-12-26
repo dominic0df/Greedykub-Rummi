@@ -7,20 +7,23 @@ int main() {
 	
 	Token* tokenManagement[9][13];
 	initialFillTokenManagementArray(tokenManagement);
-	printArray(tokenManagement);
+	printMemoryStructure(tokenManagement);
 }
 
-void printArray(Token* tokenManagement[9][13]) {
+void printMemoryStructure(Token* tokenManagement[9][13]) {
 	for (size_t i = 0; i < 8; i++)
 	{
 		for (size_t j = 0; j < 13; j++)
 		{
-			std::cout << tokenManagement[i][j]->value << " ";
+			//Token myTokenTest2 = *(tokenManagement[i][j]);
+			//Token::Color colorTest = myTokenTest2.getColor();
+			std::string color_for_print = getColorToPrint(tokenManagement[i][j]->color);
+			std::cout << color_for_print << tokenManagement[i][j]->value << RESET_TERMINAL_COL << " ";
 		}
 		std::cout << std::endl;
 	}
-	std::cout << tokenManagement[8][0]->value << " ";
-	std::cout << tokenManagement[8][1]->value << " ";
+	std::cout << WHITE_TERMINAL_COL << tokenManagement[8][0]->value << RESET_TERMINAL_COL << " ";
+	std::cout << WHITE_TERMINAL_COL << tokenManagement[8][1]->value << RESET_TERMINAL_COL << " ";
 }
 
 Token::Token(Token::Color newColor, int newValue, Token::Location currentLocation, std::string currentPosition)
@@ -64,4 +67,22 @@ void initialFillTokenManagementArray(Token* tokenManagement[9][13]) {
 	Token* token = new Token(Token::Color::JOKER, 0, Token::Location::Storage, "");
 	tokenManagement[8][0] = token;
 	tokenManagement[8][1] = token;
+}
+
+std::string getColorToPrint(int place_in_enum) {
+	if (place_in_enum == 0) {
+		return BLUE_TERMINAL_COL;
+	}
+	else if (place_in_enum == 1) {
+		return RED_TERMINAL_COL;
+	}
+	else if (place_in_enum == 2) {
+		return GREEN_TERMINAL_COL;
+	}
+	else if (place_in_enum == 3) {
+		return YELLOW_TERMINAL_COL;
+	}
+	else if (place_in_enum == 4) {
+		return WHITE_TERMINAL_COL;
+	}
 }
