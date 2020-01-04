@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <memory>
 
 const std::string RESET_TERMINAL_COL = "\033[0m";
 const std::string RED_TERMINAL_COL = "\033[31m";      /* Red */

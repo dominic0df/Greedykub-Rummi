@@ -1,12 +1,15 @@
 #include "main.h"
 
-int main() {
-	Token* tokenManagement[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS];
+int main()
+{
+	std::unique_ptr<std::unique_ptr<std::unique_ptr<Token>>> tokenManagement;
+	//Token* tokenManagement[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS];
 	initialFillTokenManagementArray(tokenManagement);
 	printMemoryStructure(tokenManagement);
 }
 
-void printMemoryStructure(Token* tokenManagement[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS]) {
+void printMemoryStructure(Token *tokenManagement[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS])
+{
 	for (size_t i = 0; i < NUMBER_OF_ROWS - 1; i++)
 	{
 		for (size_t j = 0; j < NUMBER_OF_COLUMNS; j++)
@@ -32,55 +35,44 @@ Token::Token(Token::Color newColor, int newValue, Token::Location currentLocatio
 	position = currentPosition;
 }
 
-void initialFillTokenManagementArray(Token* tokenManagement[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS]) {
+void initialFillTokenManagementArray(Token *tokenManagement[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS])
+{
 
-	for (size_t i = 0; i < NUMBER_OF_COLUMNS; i++)
+	for (int color = 0; color<4; color++)
 	{
-		Token* token = new Token(Token::Color::BLUE, i+1, Token::Location::Storage, "");
-		tokenManagement[0][i] = token;
-		tokenManagement[4][i] = token;
+		for (size_t j = 0; j < NUMBER_OF_COLUMNS; j++)
+		{
+			Token *token = new Token((Token::Color) color, j + 1, Token::Location::Storage, "");
+			tokenManagement[0 + color][j] = token;
+			tokenManagement[4 + color][j] = token;
+		}
 	}
 
-	for (size_t i = 0; i < NUMBER_OF_COLUMNS; i++)
-	{
-		Token* token = new Token(Token::Color::RED, i + 1, Token::Location::Storage, "");
-		tokenManagement[1][i] = token;
-		tokenManagement[5][i] = token;
-	}
-
-	for (size_t i = 0; i < NUMBER_OF_COLUMNS; i++)
-	{
-		Token* token = new Token(Token::Color::GREEN, i + 1, Token::Location::Storage, "");
-		tokenManagement[2][i] = token;
-		tokenManagement[6][i] = token;
-	}
-
-	for (size_t i = 0; i < NUMBER_OF_COLUMNS; i++)
-	{
-		Token* token = new Token(Token::Color::YELLOW, i + 1, Token::Location::Storage, "");
-		tokenManagement[3][i] = token;
-		tokenManagement[7][i] = token;
-	}
-
-	Token* token = new Token(Token::Color::JOKER, 30, Token::Location::Storage, "");
+	Token *token = new Token(Token::Color::JOKER, 30, Token::Location::Storage, "");
 	tokenManagement[8][0] = token;
 	tokenManagement[8][1] = token;
 }
 
-std::string getColorToPrint(int place_in_enum) {
-	if (place_in_enum == 0) {
+std::string getColorToPrint(int place_in_enum)
+{
+	if (place_in_enum == 0)
+	{
 		return BLUE_TERMINAL_COL;
 	}
-	else if (place_in_enum == 1) {
+	else if (place_in_enum == 1)
+	{
 		return RED_TERMINAL_COL;
 	}
-	else if (place_in_enum == 2) {
+	else if (place_in_enum == 2)
+	{
 		return GREEN_TERMINAL_COL;
 	}
-	else if (place_in_enum == 3) {
+	else if (place_in_enum == 3)
+	{
 		return YELLOW_TERMINAL_COL;
 	}
-	else{
+	else
+	{
 		return WHITE_TERMINAL_COL;
 	}
 }
