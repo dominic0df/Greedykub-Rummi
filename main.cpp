@@ -86,6 +86,49 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 
 	std::cout << joker1.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
 	std::cout << joker2.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
+	std::cout << std::endl;
+}
+
+/*std::vector<Token>*/void searchForGroups(std::vector<std::vector<Token>>& tokens)
+{
+    Token::Color color;
+    for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
+    {
+        std::map<int, Token::Color> indexWithColor;
+        for (int j = 0; j < NUMBER_OF_ROWS; j++)
+        {
+            if (tokens[i][j].getUsage() == Token::Usage::Playground) //|| (field[i][j].location == "HandToPlayground"))
+            {
+                indexWithColor[j] = (Token::Color) tokens[i][j].getColor(); //increase number of fields with same color
+            }
+        }
+
+		std::map<Token::Color, int> repeated;
+        for (std::map<int, Token::Color>::iterator it = indexWithColor.begin(); it != indexWithColor.end(); ++it)
+        {
+            repeated[it->second] = repeated[it->second]++;
+        }
+
+        if (repeated.size() > 2)
+        {
+            std::vector<int> newGroup;
+            for (std::map<Token::Color, int>::iterator it = repeated.begin(); it != repeated.end(); ++it)
+            {
+                if (it->second > 1)
+                {
+                    //find out repeated keys to add
+                    for(std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++it){
+                        if (repeated[iter->second]==it->first) //gleiche Farbe
+                        {
+                            newGroup.push_back(iter->first);
+                            repeated[iter->second]--;
+                            break;
+                        }
+                    }
+                }   
+            }
+        }
+    }
 }
 
 Token::Token(Token::Color newColor, int newValue, Token::Usage currentLocation, std::string currentPosition)
@@ -149,7 +192,7 @@ void Token::setUsage(Usage newUsage)
 	usage = newUsage;
 }
 
-void Token::setPostion(std::string newPosition)
+void Token::setPosition(std::string newPosition)
 {
 	position = newPosition;
 }

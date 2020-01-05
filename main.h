@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <memory>
+#include <map>
 
 const std::string UnavailableOptionChoosed = "Fehlerhafte Eingabe! Bitte waehlen sie eine der drei Optionen!";
 
@@ -52,7 +53,7 @@ public:
 
 	void setUsage(Token::Usage newUsage);
 
-	void setPostion(std::string newPosition);
+	void setPosition(std::string newPosition);
 
 	Token(Token::Color newColor, int newValue, Token::Usage currentUsage, std::string currentPosition);
 
@@ -67,3 +68,5 @@ int showFirstSelectMenu();
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 
 void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
+
+void searchForGroups(std::vector<std::vector<Token>>& tokens);
