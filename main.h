@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <memory>
+#include <map>
 
 const int NUMBER_OF_ROWS = 8;
 const int NUMBER_OF_COLUMNS = 13;
@@ -34,7 +35,9 @@ private:
 
 public:
 
-	std::string getColor();
+	std::string getTerminalColor();
+
+	Token::Color& getColor();
 
 	int& getValue();
 
@@ -48,7 +51,7 @@ public:
 
 	void setUsage(Token::Usage newUsage);
 
-	void setPostion(std::string newPosition);
+	void setPosition(std::string newPosition);
 
 	Token(Token::Color newColor, int newValue, Token::Usage currentUsage, std::string currentPosition);
 
@@ -57,3 +60,5 @@ public:
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 
 void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
+
+void searchForGroups(std::vector<std::vector<Token>>& tokens);
