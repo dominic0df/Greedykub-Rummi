@@ -21,47 +21,36 @@ public:
 	const std::string BLUE_TERMINAL_COL = "\033[36m";      /* Blau -> Cyan */
 	const std::string JOKER_WHITE_TERMINAL_COL = "\033[37m";      /* White */
 
-	enum Color { BLUE, RED, GREEN, YELLOW, JOKER_WHITE };
-	enum Usage { Player1, Player2, Player3, Player4, Playground, Stock };
-
-	std::string getColor() {
-		switch (color) {
-		case BLUE:
-			return BLUE_TERMINAL_COL;
-		case RED:
-			return RED_TERMINAL_COL;
-		case GREEN:
-			return GREEN_TERMINAL_COL;
-		case YELLOW:
-			return YELLOW_TERMINAL_COL;
-		case JOKER_WHITE:
-			return JOKER_WHITE_TERMINAL_COL;
-		}
-		//Fehlerfall
-		return RESET_TERMINAL_COL;
-	}
-
-	int& getValue() {
-		return value;
-	}
-
-	Token::Usage& getLocation() {
-		return location;
-	}
-
-	std::string& getPosition() {
-		return position;
-	}
-
-	Token(Token::Color newColor, int newValue, Token::Usage currentUsage, std::string currentPosition);
+	enum Color { BLUE = 0, RED, GREEN, YELLOW, JOKER_WHITE };
+	enum Usage { Player1 = 0, Player2, Player3, Player4, Playground, Stock };
 
 
 private:
 
-	Token::Color color;
+	Color color;
 	int value;
-	Token::Usage location;
+	Token::Usage usage;
 	std::string position;
+
+public:
+
+	std::string getColor();
+
+	int& getValue();
+
+	Token::Usage& getUsage();
+
+	std::string& getPosition();
+
+	void setColor(Token::Color newColor);
+
+	void setValue(int newValue);
+
+	void setUsage(Token::Usage newUsage);
+
+	void setPostion(std::string newPosition);
+
+	Token(Token::Color newColor, int newValue, Token::Usage currentUsage, std::string currentPosition);
 
 };
 
