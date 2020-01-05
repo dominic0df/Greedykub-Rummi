@@ -3,6 +3,8 @@
 #include <iostream>
 #include <memory>
 
+const std::string UnavailableOptionChoosed = "Fehlerhafte Eingabe! Bitte waehlen sie eine der drei Optionen!";
+
 const int NUMBER_OF_ROWS = 8;
 const int NUMBER_OF_COLUMNS = 13;
 const int VALUE_OF_JOKER = 30;
@@ -34,7 +36,9 @@ private:
 
 public:
 
-	std::string getColor();
+	std::string getTerminalColor();
+
+	Token::Color& getColor();
 
 	int& getValue();
 
@@ -53,6 +57,12 @@ public:
 	Token(Token::Color newColor, int newValue, Token::Usage currentUsage, std::string currentPosition);
 
 };
+
+void firstUserInteraction();
+
+int showFirstSelectMenu();
+
+//void startGame();
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 

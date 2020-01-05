@@ -6,7 +6,54 @@ int main()
 	Token joker1(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "");
 	Token joker2(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "");
 	setStartingCondition(tokens, joker1, joker2);
-	printMemoryStructure(tokens, joker1, joker2);
+	//printMemoryStructure(tokens, joker1, joker2);
+	std::cout << "Herzlich Willkommen bei Rummikub!" << std::endl;
+	firstUserInteraction();
+}
+
+void firstUserInteraction() {
+
+	int selection = showFirstSelectMenu();
+
+	switch (selection)
+	{
+	case 0:
+		break;
+	case 1:
+		//showGameManual();
+		break;
+	case 2:
+		//startGame();
+		break;
+	default:
+		//std::cin.clear();
+		//std::cin.ignore(INT_MAX, '\n');
+		std::cout << UnavailableOptionChoosed << std::endl;
+		firstUserInteraction();
+		break;
+	}
+}
+
+int showFirstSelectMenu()
+{
+	std::cout
+		<< std::endl
+		<< "Deine Optionen:" << std::endl
+		<< "1:\t Spiel starten" << std::endl
+		<< "2:\t Spielanleitung einsehen" << std::endl
+		<< "0:\t Verlassen des Spiels" << std::endl
+		<< std::endl;
+
+	int selection;
+	std::cin >> selection;
+	if (!std::cin.good())
+	{
+		std::cin.clear();
+		std::cin.ignore(INT_MAX, '\n');
+		std::cout << UnavailableOptionChoosed << std::endl;
+		showFirstSelectMenu();
+	}
+	return selection;
 }
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
@@ -32,13 +79,13 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
 		{
 			Token value = tokens[row][column];
-			std::cout << value.getColor() << value.getValue() << RESET_TERMINAL_COL << " ";
+			std::cout << value.getTerminalColor() << value.getValue() << RESET_TERMINAL_COL << " ";
 		}
 		std::cout << std::endl;
 	}
 
-	std::cout << joker1.getColor() << "J" << RESET_TERMINAL_COL << " ";
-	std::cout << joker2.getColor() << "J" << RESET_TERMINAL_COL << " ";
+	std::cout << joker1.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
+	std::cout << joker2.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
 }
 
 Token::Token(Token::Color newColor, int newValue, Token::Usage currentLocation, std::string currentPosition)
@@ -49,7 +96,7 @@ Token::Token(Token::Color newColor, int newValue, Token::Usage currentLocation, 
 	position = currentPosition;
 }
 
-std::string Token::getColor()
+std::string Token::getTerminalColor()
 {
 	switch (color) {
 	case BLUE:
@@ -65,6 +112,11 @@ std::string Token::getColor()
 	}
 	//Fehlerfall
 	return RESET_TERMINAL_COL;
+}
+
+Token::Color& Token::getColor()
+{
+	return color;
 }
 
 int& Token::getValue()
