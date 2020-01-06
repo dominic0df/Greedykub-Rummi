@@ -21,3 +21,6 @@ int showFirstSelectMenu();
 
 std::string requestNameOfPlayer();
 int requestNumberOfOpponents();
+
+
+

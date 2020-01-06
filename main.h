@@ -3,8 +3,11 @@
 #include <iostream>
 #include <memory>
 #include <map>
+#include "shared.h";
 
 const std::string ERROR_OCCURRED = "Ein Fehler im Programm ist aufgetreten!";
+const std::string WELCOME = "Herzlich Willkommen bei Rummikub!";
+const std::string MESSAGE_PLAYER_TO_START = "Folgender Spieler darf das Spiel beginnen: ";
 
 const int NUMBER_OF_ROWS = 8;
 const int NUMBER_OF_COLUMNS = 13;
@@ -61,7 +64,9 @@ public:
 
 //void startGame();
 
-void startGame(std::map<std::string, int>& score);
+void startGame(std::vector<scoreEntry>& score);
+
+int determineIndexPlayerToStart(std::vector<scoreEntry>& score);
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 

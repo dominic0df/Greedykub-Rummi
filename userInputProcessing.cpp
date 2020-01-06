@@ -2,7 +2,7 @@
 #include "main.h"
 #include "userInteraction.h"
 
-void firstUserInteraction(std::map<std::string, int>& score) {
+void firstUserInteraction(std::vector<scoreEntry>& score) {
 
 	int selection = showFirstSelectMenu();
 
@@ -25,7 +25,7 @@ void firstUserInteraction(std::map<std::string, int>& score) {
 	}
 }
 
-void setPlayerInformation(std::map<std::string, int>& score) {
+void setPlayerInformation(std::vector<scoreEntry>& score) {
 	//TO DO: Schwierigkeitsgrad der Gegner auswählen
 	//(TO DO: Namen für PC-Gegner festlegen)
 
@@ -33,12 +33,18 @@ void setPlayerInformation(std::map<std::string, int>& score) {
 
 	int numberOfOpponents = requestNumberOfOpponents();
 
-	score.insert(std::make_pair(nameOfHumanPlayer, 0));
+	scoreEntry humanPlayer;
+	humanPlayer.playerName = nameOfHumanPlayer;
+	humanPlayer.point = 0;
+	score.push_back(humanPlayer);
 
 	for (int player = 0; player < numberOfOpponents; player++)
 	{
-		std::string nextPlayer = "Player " + std::to_string(player + 1);
-		score.insert(std::make_pair(nextPlayer, 0));
+		std::string playerName = "Player " + std::to_string(player + 1);
+		scoreEntry nextPlayer;
+		nextPlayer.playerName = playerName;
+		nextPlayer.point = 0;
+		score.push_back(nextPlayer);
 	}
 
 	//std::cout << nameOfHumanPlayer << std::endl;

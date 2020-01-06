@@ -3,7 +3,8 @@
 #include <iostream>
 #include <memory>
 #include <map>
+#include "shared.h";
 
-void firstUserInteraction(std::map<std::string, int>& score);
+void firstUserInteraction(std::vector<scoreEntry>& score);
 
-void setPlayerInformation(std::map<std::string, int>& score);
+void setPlayerInformation(std::vector<scoreEntry>& score);
