@@ -2,7 +2,7 @@
 #include "main.h"
 #include "userInteraction.h"
 
-void firstUserInteraction(std::vector<scoreEntry>& score) {
+void firstUserInteraction() {
 
 	int selection = showFirstSelectMenu();
 
@@ -16,7 +16,7 @@ void firstUserInteraction(std::vector<scoreEntry>& score) {
 		//std::cout << "1 MANUAL";
 		break;
 	case 2:
-		startGame(score);
+		startGame();
 		//std::cout << "2 START GAME";
 		break;
 	default:
@@ -25,24 +25,18 @@ void firstUserInteraction(std::vector<scoreEntry>& score) {
 	}
 }
 
-void setPlayerInformation(std::vector<scoreEntry>& score) {
+void setPlayerInformation(std::vector<scoreEntry>& score, std::string& nameOfHumanPlayer) {
 	//TO DO: Schwierigkeitsgrad der Gegner auswählen
 	//(TO DO: Namen für PC-Gegner festlegen)
 
-	std::string nameOfHumanPlayer = requestNameOfPlayer();
+	nameOfHumanPlayer = requestNameOfPlayer();
 
 	int numberOfOpponents = requestNumberOfOpponents();
 
-	scoreEntry humanPlayer;
-	humanPlayer.playerName = nameOfHumanPlayer;
-	humanPlayer.point = 0;
-	score.push_back(humanPlayer);
-
-	for (int player = 0; player < numberOfOpponents; player++)
+	for (int player = 0; player <= numberOfOpponents; player++)
 	{
-		std::string playerName = "Player " + std::to_string(player + 1);
 		scoreEntry nextPlayer;
-		nextPlayer.playerName = playerName;
+		nextPlayer.player = (Token::Usage) player;
 		nextPlayer.point = 0;
 		score.push_back(nextPlayer);
 	}

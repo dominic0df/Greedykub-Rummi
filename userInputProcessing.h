@@ -5,6 +5,6 @@
 #include <map>
 #include "shared.h";
 
-void firstUserInteraction(std::vector<scoreEntry>& score);
+void firstUserInteraction();
 
-void setPlayerInformation(std::vector<scoreEntry>& score);
+void setPlayerInformation(std::vector<scoreEntry>& score, std::string& nameOfHumanPlayer);
