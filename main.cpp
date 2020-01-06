@@ -1,13 +1,14 @@
 #include "main.h"
+#include "userInputProcessing.h"
 
 int main()
 {
 	std::vector<std::vector<Token>> tokens;
+	std::vector<scoreEntry> score;
 	Token joker1(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "");
 	Token joker2(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "");
 	setStartingCondition(tokens, joker1, joker2);
-	printMemoryStructure(tokens, joker1, joker2);
-	std::vector<std::vector<std::vector<int>>> x = searchForGroups(tokens);
+	//printMemoryStructure(tokens, joker1, joker2);
 	//std::cout << x.size() << std::endl;
 	//std::cout << x[0].size() << std::endl;
 	//std::cout << x[0][0].size() << std::endl;
@@ -22,6 +23,33 @@ int main()
 		}
 	}*/
 	//testSearchForGroups(x,tokens);
+	std::cout << WELCOME << std::endl;
+	firstUserInteraction(score);
+}
+
+void startGame(std::vector<scoreEntry>& score) {
+
+	setPlayerInformation(score);
+
+	int indexOfPlayerToStartGame = determineIndexPlayerToStart(score);
+
+	std::cout << std::endl << MESSAGE_PLAYER_TO_START << score[indexOfPlayerToStartGame].playerName;
+
+	/*
+	std::cout << std::endl;
+	for (scoreEntry& entry : score)
+	{
+		std::cout << entry.playerName << ": " << entry.point << std::endl;
+	}
+	*/
+}
+
+int determineIndexPlayerToStart(std::vector<scoreEntry>& score) {
+	int numberOfPlayer = score.size();
+	srand(numberOfPlayer);
+	int indexOfPlayerToStartGame = rand() % numberOfPlayer;
+
+	return indexOfPlayerToStartGame;
 }
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
