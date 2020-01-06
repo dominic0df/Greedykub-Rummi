@@ -1,59 +1,30 @@
 #include "main.h"
+#include "userInputProcessing.h"
 
 int main()
 {
 	std::vector<std::vector<Token>> tokens;
+	std::map<std::string, int> score;
 	Token joker1(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "");
 	Token joker2(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "");
 	setStartingCondition(tokens, joker1, joker2);
 	//printMemoryStructure(tokens, joker1, joker2);
 	std::cout << "Herzlich Willkommen bei Rummikub!" << std::endl;
-	firstUserInteraction();
+	firstUserInteraction(score);
 }
 
-void firstUserInteraction() {
+void startGame(std::map<std::string, int>& score) {
+	setPlayerInformation(score);
 
-	int selection = showFirstSelectMenu();
-
-	switch (selection)
+	/*
+	std::cout << std::endl;
+	std::map<std::string, int>::iterator it = score.begin();
+	while (it != score.end())
 	{
-	case 0:
-		break;
-	case 1:
-		//showGameManual();
-		break;
-	case 2:
-		//startGame();
-		break;
-	default:
-		//std::cin.clear();
-		//std::cin.ignore(INT_MAX, '\n');
-		std::cout << UnavailableOptionChoosed << std::endl;
-		firstUserInteraction();
-		break;
+		std::cout << it->first << " :: " << it->second << std::endl;
+		it++;
 	}
-}
-
-int showFirstSelectMenu()
-{
-	std::cout
-		<< std::endl
-		<< "Deine Optionen:" << std::endl
-		<< "1:\t Spiel starten" << std::endl
-		<< "2:\t Spielanleitung einsehen" << std::endl
-		<< "0:\t Verlassen des Spiels" << std::endl
-		<< std::endl;
-
-	int selection;
-	std::cin >> selection;
-	if (!std::cin.good())
-	{
-		std::cin.clear();
-		std::cin.ignore(INT_MAX, '\n');
-		std::cout << UnavailableOptionChoosed << std::endl;
-		showFirstSelectMenu();
-	}
-	return selection;
+	*/
 }
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
@@ -91,44 +62,44 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 
 /*std::vector<Token>*/void searchForGroups(std::vector<std::vector<Token>>& tokens)
 {
-    Token::Color color;
-    for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
-    {
-        std::map<int, Token::Color> indexWithColor;
-        for (int j = 0; j < NUMBER_OF_ROWS; j++)
-        {
-            if (tokens[i][j].getUsage() == Token::Usage::Playground) //|| (field[i][j].location == "HandToPlayground"))
-            {
-                indexWithColor[j] = (Token::Color) tokens[i][j].getColor(); //increase number of fields with same color
-            }
-        }
+	Token::Color color;
+	for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
+	{
+		std::map<int, Token::Color> indexWithColor;
+		for (int j = 0; j < NUMBER_OF_ROWS; j++)
+		{
+			if (tokens[i][j].getUsage() == Token::Usage::Playground) //|| (field[i][j].location == "HandToPlayground"))
+			{
+				indexWithColor[j] = (Token::Color) tokens[i][j].getColor(); //increase number of fields with same color
+			}
+		}
 
 		std::map<Token::Color, int> repeated;
-        for (std::map<int, Token::Color>::iterator it = indexWithColor.begin(); it != indexWithColor.end(); ++it)
-        {
-            repeated[it->second] = repeated[it->second]++;
-        }
+		for (std::map<int, Token::Color>::iterator it = indexWithColor.begin(); it != indexWithColor.end(); ++it)
+		{
+			repeated[it->second] = repeated[it->second]++;
+		}
 
-        if (repeated.size() > 2)
-        {
-            std::vector<int> newGroup;
-            for (std::map<Token::Color, int>::iterator it = repeated.begin(); it != repeated.end(); ++it)
-            {
-                if (it->second > 1)
-                {
-                    //find out repeated keys to add
-                    for(std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++it){
-                        if (repeated[iter->second]==it->first) //gleiche Farbe
-                        {
-                            newGroup.push_back(iter->first);
-                            repeated[iter->second]--;
-                            break;
-                        }
-                    }
-                }   
-            }
-        }
-    }
+		if (repeated.size() > 2)
+		{
+			std::vector<int> newGroup;
+			for (std::map<Token::Color, int>::iterator it = repeated.begin(); it != repeated.end(); ++it)
+			{
+				if (it->second > 1)
+				{
+					//find out repeated keys to add
+					for (std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++it) {
+						if (repeated[iter->second] == it->first) //gleiche Farbe
+						{
+							newGroup.push_back(iter->first);
+							repeated[iter->second]--;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 Token::Token(Token::Color newColor, int newValue, Token::Usage currentLocation, std::string currentPosition)

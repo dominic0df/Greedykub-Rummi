@@ -4,7 +4,7 @@
 #include <memory>
 #include <map>
 
-const std::string UnavailableOptionChoosed = "Fehlerhafte Eingabe! Bitte waehlen sie eine der drei Optionen!";
+const std::string ERROR_OCCURRED = "Ein Fehler im Programm ist aufgetreten!";
 
 const int NUMBER_OF_ROWS = 8;
 const int NUMBER_OF_COLUMNS = 13;
@@ -59,11 +59,9 @@ public:
 
 };
 
-void firstUserInteraction();
-
-int showFirstSelectMenu();
-
 //void startGame();
+
+void startGame(std::map<std::string, int>& score);
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 
