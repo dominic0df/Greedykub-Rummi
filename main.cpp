@@ -27,8 +27,6 @@ void startGame() {
 		}
 	}*/
 	//testSearchForGroups(x,tokens);
-	std::cout << WELCOME << std::endl;
-	firstUserInteraction(score);
 
 	std::vector<scoreEntry> score;
 	std::string nameOfHumanPlayer;
@@ -217,7 +215,7 @@ void printToken(Token token) {
 	}
 }*/
 
-void testSearchForGroups(std::vector<std::vector<std::vector<int>>> x, std::vector<std::vector<Token>> tokens)
+void testSearchForGroups(std::vector<std::vector<std::vector<int>>>& x, std::vector<std::vector<Token>>& tokens)
 {
 	for (int i = 0; i < x.size(); i++)
 	{
