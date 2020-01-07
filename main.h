@@ -33,4 +33,6 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 
 void printToken(Token token);
 
-void searchForGroups(std::vector<std::vector<Token>>& tokens);
+std::vector<std::vector<std::vector<int>>> searchForGroups(std::vector<std::vector<Token>>& tokens);
+
+void testSearchForGroups(std::vector<std::vector<int>> &x, std::vector<std::vector<Token>> &tokens);
