@@ -23,6 +23,8 @@ int main();
 
 void startGame();
 
+void dealTokens(std::vector<scoreEntry>& score, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
+
 int determineIndexPlayerToStart(std::vector<scoreEntry>& score);
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
@@ -35,4 +37,4 @@ void printToken(Token token);
 
 std::vector<std::vector<std::vector<int>>> searchForGroups(std::vector<std::vector<Token>>& tokens);
 
-void testSearchForGroups(std::vector<std::vector<int>> &x, std::vector<std::vector<Token>> &tokens);
+void testSearchForGroups(std::vector<std::vector<int>>& x, std::vector<std::vector<Token>>& tokens);

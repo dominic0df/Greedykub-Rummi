@@ -41,5 +41,5 @@ void setPlayerInformation(std::vector<scoreEntry>& score, std::string& nameOfHum
 		score.push_back(nextPlayer);
 	}
 
-	//std::cout << nameOfHumanPlayer << std::endl;
+	//std::cout << "Length: " << score.size() << std::endl;
 }
