@@ -4,6 +4,7 @@
 #include <memory>
 #include <map>
 #include <time.h>
+#include <algorithm>
 #include "shared.h";
 
 const std::string ERROR_OCCURRED = "Ein Fehler im Programm ist aufgetreten!";
@@ -28,6 +29,10 @@ void dealTokens(std::vector<scoreEntry>& score, std::vector<std::vector<Token>>&
 int determineIndexPlayerToStart(std::vector<scoreEntry>& score);
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
+
+std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player);
+
+void showTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player);
 
 void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage drawingPlayer, int amountOfTokens);
 

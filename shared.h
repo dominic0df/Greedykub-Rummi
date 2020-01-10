@@ -9,7 +9,8 @@ public:
 
 	const std::string RED_TERMINAL_COL = "\033[31m";      /* Red */
 	const std::string GREEN_TERMINAL_COL = "\033[32m";      /* Green */
-	const std::string YELLOW_TERMINAL_COL = "\033[33m";      /* Yellow */
+	//const std::string YELLOW_TERMINAL_COL = "\033[33m";      /* Yellow */
+	const std::string YELLOW_TERMINAL_COL = "\033[35m";      /* Yellow */
 	const std::string BLUE_TERMINAL_COL = "\033[36m";      /* Blau -> Cyan */
 	const std::string JOKER_WHITE_TERMINAL_COL = "\033[37m";      /* White */
 
@@ -33,7 +34,7 @@ public:
 
 	Token::Usage& getUsage();
 
-	std::string& getPosition();
+	std::string getPosition();
 
 	void setColor(Token::Color newColor);
 

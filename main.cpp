@@ -39,6 +39,12 @@ void startGame() {
 
 	dealTokens(score, tokens, joker1, joker2);
 
+	showTokensOfPlayer(tokens, joker1, joker2, Token::HUMAN_Player);
+	for (int player = 1; player < score.size(); player++)
+	{
+		showTokensOfPlayer(tokens, joker1, joker2, (Token::Usage) player);
+	}
+
 	/*
 	std::cout << std::endl;
 	for (scoreEntry& entry : score)
@@ -58,7 +64,9 @@ void dealTokens(std::vector<scoreEntry>& score, std::vector<std::vector<Token>>&
 }
 
 void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player, int amountOfTokens) {
-	srand((unsigned int)time(NULL));
+	//auto zufall=srand((unsigned int)time(NULL));
+	//srand(1);
+	// TODO: eventuell srand benutzen
 
 	int positionOfToken;
 	int rowOfToken;
@@ -71,24 +79,26 @@ void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& 
 		rowOfToken = (int)positionOfToken / NUMBER_OF_COLUMNS;
 		columnOfToken = positionOfToken % NUMBER_OF_COLUMNS;
 
+		// token + 65, da A=65 (ASCII)
+
 		while (true) {
 
 			//std::cout << std::endl << "Pos.:" << positionOfToken;
 			if (positionOfToken == 104 && joker1.getUsage() == Token::Usage::Stock) {
 				joker1.setUsage(player);
-				joker1.setPosition(std::to_string(token));
+				joker1.setPosition(std::to_string((token + 65)));
 				//printToken(joker1);
 				break;
 			}
 			else if (positionOfToken == 105 && joker2.getUsage() == Token::Usage::Stock) {
 				joker2.setUsage(player);
-				joker2.setPosition(std::to_string(token));
+				joker2.setPosition(std::to_string((token + 65)));
 				//printToken(joker2);
 				break;
 			}
 			else if (positionOfToken < 104 && tokens[rowOfToken][columnOfToken].getUsage() == Token::Usage::Stock) {
 				tokens[rowOfToken][columnOfToken].setUsage(player);
-				tokens[rowOfToken][columnOfToken].setPosition(std::to_string(token));
+				tokens[rowOfToken][columnOfToken].setPosition(std::to_string((token + 65)));
 				//printToken(tokens[rowOfToken][columnOfToken]);
 				break;
 			}
@@ -130,6 +140,78 @@ void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1
 	}
 }
 
+std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player) {
+
+	std::vector<Token> tokensOfPlayer;
+	bool tokenFound = true;
+	int tokenPosition = 65;
+	while (tokenFound) {
+
+		tokenFound = false;
+
+		for (int row = 0; row < NUMBER_OF_ROWS; row++)
+		{
+			for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
+			{
+				Token value = tokens[row][column];
+				if (value.getUsage() == (Token::Usage) player) {
+					if (std::stoi(value.getPosition()) == tokenPosition) {
+						tokensOfPlayer.push_back(value);
+						tokenFound = true;
+					}
+				}
+			}
+		}
+
+		if (joker1.getUsage() == (Token::Usage) player) {
+			if (std::stoi(joker1.getPosition()) == tokenPosition) {
+				tokensOfPlayer.push_back(joker1);
+				tokenFound = true;
+			}
+		}
+
+		if (joker2.getUsage() == (Token::Usage) player) {
+			if (std::stoi(joker2.getPosition()) == tokenPosition) {
+				tokensOfPlayer.push_back(joker2);
+				tokenFound = true;
+			}
+		}
+
+		tokenPosition++;
+	}
+
+	return tokensOfPlayer;
+}
+
+void showTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player) {
+
+	std::vector<Token> tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, player);
+
+	std::cout << std::endl << "Player: " << player << std::endl;
+
+	for (Token& token : tokensOfPlayer)
+	{
+		char position = std::stoi(token.getPosition());	//ASCII int to char
+		std::cout << position << "  ";
+	}
+	std::cout << std::endl;
+
+	for (Token& token : tokensOfPlayer)
+	{
+		if (token.getColor() == Token::Color::JOKER_WHITE) {
+			std::cout << token.getTerminalColor() << "J" << RESET_TERMINAL_COL << "  ";
+		}
+		else {
+			std::cout << token.getTerminalColor() << token.getValue() << RESET_TERMINAL_COL << " ";
+			if ((token.getValue() / 10) == 0) {
+				std::cout << " ";
+			}
+		}
+	}
+
+	std::cout << std::endl;
+}
+
 void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
 {
 	for (int row = 0; row < NUMBER_OF_ROWS; row++)
@@ -146,6 +228,24 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 	std::cout << joker2.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
 	std::cout << std::endl;
 }
+
+/*void printPlayground(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
+{
+	for (int row = 0; row < NUMBER_OF_ROWS; row++)
+	{
+		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
+		{
+			if(tokens[row][column])
+			Token value = tokens[row][column];
+			std::cout << value.getTerminalColor() << value.getValue() << RESET_TERMINAL_COL << " ";
+		}
+		std::cout << std::endl;
+	}
+
+	std::cout << joker1.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
+	std::cout << joker2.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
+	std::cout << std::endl;
+}*/
 
 void printToken(Token token) {
 	std::cout
@@ -376,7 +476,7 @@ Token::Usage& Token::getUsage()
 	return usage;
 }
 
-std::string& Token::getPosition()
+std::string Token::getPosition()
 {
 	return position;
 }
