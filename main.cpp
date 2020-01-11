@@ -172,12 +172,157 @@ void testSearchForGroups(std::vector<std::vector<std::vector<int>>>& x, std::vec
 	}
 }
 
-std::vector<std::vector<std::map < Token::Color, int >>> searchForGroups(std::vector<std::vector<Token>>& tokens)
+int main()
 {
-	std::vector<std::vector<std::map < Token::Color, int >>> foundedGroupsAllColumns;
+	std::vector<std::vector<Token>> tokens;
+	Token joker1(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "");
+	Token joker2(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "");
+	setStartingCondition(tokens, joker1, joker2);
+	printMemoryStructure(tokens, joker1, joker2);
+	std::vector<std::vector<std::map < Token::Color, int >>> x = searchForGroups(tokens);
+	//std::cout << x.size() << std::endl;
+	//std::cout << x[0].size() << std::endl;
+	//std::cout << x[0][0].size() << std::endl;
+	/*for (int i = 0; i < x.size(); i++)
+	{
+		for (int j = 0; j < x[i].size(); j++)
+		{
+			for (int color = 0; color < x[i][j].size(); color++)
+			{
+				std::cout << "index" << i << ", " << color /*<< "has color" << tokens[i][color] << std::endl;
+			}
+		}
+	}*/
+	//testSearchForGroups(x,tokens);
+}
+
+void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
+{
+	for (int color = 0; color < 4; color++)
+	{
+		std::vector<Token> toAdd;
+		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
+		{
+			Token::Color c = (Token::Color) color;
+			//std::cout << c << std::endl;
+			Token token(c, column + 1, Token::Usage::Playground, "");
+			toAdd.push_back(token);
+		}
+		tokens.push_back(toAdd);
+		tokens.push_back(toAdd);
+	}
+}
+
+void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
+{
+	for (int row = 0; row < NUMBER_OF_ROWS; row++)
+	{
+		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
+		{
+			Token value = tokens[row][column];
+			std::cout << value.getTerminalColor() << value.getValue() << RESET_TERMINAL_COL << " ";
+		}
+		std::cout << std::endl;
+	}
+
+	std::cout << joker1.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
+	std::cout << joker2.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
+	std::cout << std::endl;
+}
+
+/*std::vector<Token> void searchForGroups(std::vector<std::vector<Token>> &tokens)
+{
+	Token::Color color;
 	for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
 	{
-		std::vector<std::map<Token::Color, int>>foundedGroups;
+		std::map<int, Token::Color> indexWithColor;
+		for (int j = 0; j < NUMBER_OF_ROWS; j++)
+		{
+			if (tokens[i][j].getUsage() == Token::Usage::Playground) //|| (field[i][j].location == "HandToPlayground"))
+			{
+				indexWithColor[j] = (Token::Color)tokens[i][j].getColor(); //increase number of fields with same color
+			}
+		}
+
+		//speichere alle sich wiederholenden Farben der Spalte ab
+		std::map<Token::Color, int> repeated;
+		for (std::map<int, Token::Color>::iterator it = indexWithColor.begin(); it != indexWithColor.end(); ++it)
+		{
+			repeated[it->second] = repeated[it->second]++;
+		}
+		std::vector<std::vector<int>> foundedGroups;
+		while (repeated.size() > 2)
+		{
+			std::vector<int> newGroup;
+			while (newGroup.size() < 4)
+			{
+				//füge doppelte zu Gruppe hinzu
+				for (std::map<Token::Color, int>::iterator it = repeated.begin(); it != repeated.end(); ++it)
+				{
+					//if (it->second > 1)
+					if (it->second > 0)
+					{
+						//find out repeated keys to add
+						for (std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++it)
+						{
+							if (repeated[iter->second] == it->first) //gleiche Farbe
+							{
+								newGroup.push_back(iter->first);
+								repeated[iter->second]--;
+								if (it->second==0)
+								{
+									repeated.erease(iter);
+								}
+								break; //farbe muss nicht weiter gesucht werden, schon vorhanden
+							}
+						}
+					}
+				}
+			}
+			foundedGroups.add(newGroup);
+		}
+		//versuche restliche elemente zu bestehenden gruppen hinzuzufügen
+		int indexOfGroups=0;
+		bool successfull=true;
+		while (repeated.size()>0 && successfull)
+		{
+			for (int i = 0; i < repeated.size(); i++)
+			{
+
+			}
+			for (std::vector<std::vector<int>>::iterator i = foundedGroups.begin(); iter != foundedGroups.end(); ++it)
+			{
+
+			}
+		}
+
+		}
+
+
+	}
+}*/
+
+void testSearchForGroups(std::vector<std::vector<std::vector<int>>>& x, std::vector<std::vector<Token>>& tokens)
+{
+	for (int i = 0; i < x.size(); i++)
+	{
+		for (int j = 0; j < x[i].size(); j++)
+		{
+
+			for (int color = 0; color < x[i][j].size(); color++)
+			{
+				std::cout << "index" << i << ", " << color /*<< "has color" << tokens[i][color]*/ << std::endl;
+			}
+		}
+	}
+}
+
+std::vector<std::vector<std::map < Token::Color, int >>> searchForGroups(std::vector<std::vector<Token>>& tokens)
+{
+	std::vector<std::vector<std::map < Token::Color, int >>> foundGroupsAllColumns;
+	for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
+	{
+		std::vector<std::map<Token::Color, int>>foundGroups;
 		std::map<int, Token::Color> indexWithColor;
 		std::set<int> processed;
 		for (int j = 0; j < NUMBER_OF_ROWS; j++)
@@ -189,65 +334,112 @@ std::vector<std::vector<std::map < Token::Color, int >>> searchForGroups(std::ve
 		}
 		int numberOfRemainingColors = indexWithColor.size();
 		bool notEqual = true;
-		while (notEqual && numberOfRemainingColors > 2)
+		std::shared_ptr<std::map<Token::Color, int>> newGroup(new std::map<Token::Color, int>());
+		//std::map<Token::Color, int>* newGroup;
+		std::shared_ptr<std::map<Token::Color, int>> group(new std::map<Token::Color, int>());
+		std::shared_ptr<std::map<Token::Color, int>> nextGroup(new std::map<Token::Color, int>());
+		newGroup = group;
+		if (numberOfRemainingColors > 2)
 		{
-			std::map<Token::Color,int>* newGroup;
-			std::map<Token::Color, int> group;
-			newGroup = &group;
-			for (std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++iter)
-			{	
-				if (numberOfRemainingColors > 2) {
-					if (newGroup->size() != 0) {
+			while (notEqual)
+			{
+				if (foundGroups.size()==1)
+				{
+					newGroup = nextGroup;
+				}
+				int size;
+				if (newGroup == nullptr)
+				{
+					size = 0;
+				}
+				else {
+					size = newGroup->size();
+				}
+				int sufficientColors = numberOfRemainingColors + size;
+				if (sufficientColors > 2)
+				{
+					for (std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++iter)
+					{
+						if (newGroup->size()==0 && nextGroup->size()>0)
+						{
+							newGroup = nextGroup;
+						}
 						bool colorWithIndexProcessed = processed.find(iter->first) != processed.end();
 						if (!colorWithIndexProcessed) {
-							processed.insert(iter->first);
-							newGroup->insert(std::pair<Token::Color, int>(iter->second, iter->first));
-							numberOfRemainingColors--;
-							if (newGroup->size() == 3)
-							{
-								foundedGroups.push_back(*newGroup);
-								std::map<Token::Color, int> nextGroup;
-								newGroup = &nextGroup;
+							if (newGroup->size() != 0 && newGroup->size() < 3) {
+								bool colorInNewGroup = newGroup->find(iter->second) != newGroup->end();
+								if (!colorInNewGroup)
+								{
+									processed.insert(iter->first);
+									newGroup->insert(std::pair<Token::Color, int>(iter->second, iter->first));
+									numberOfRemainingColors--;
+								}
+								if (newGroup->size() > 2)
+								{
+									foundGroups.push_back(*newGroup);
+									if (numberOfRemainingColors > 2)
+									{
+										newGroup = nextGroup;
+									}
+								}
+							}
+							else {
+								if (newGroup == nullptr)
+								{
+									size = 0;
+								}
+								else {
+									size = newGroup->size();
+								}
+								if (size==0)
+								{
+									newGroup->insert(std::pair<Token::Color, int>(iter->second, iter->first));
+									processed.insert(iter->first);
+									numberOfRemainingColors--;
+								}
 							}
 						}
 					}
-					else {
-						newGroup->insert(std::pair<Token::Color, int>(iter->second, iter->first));
+				}
+				else
+				{
+					notEqual = false;
+				}
+				newGroup=nullptr;
+				//nicht geprüfter teil kleiner 5
+				//if (numberOfRemainingColors < 5)
+				std::map<Token::Color, int> repeated;
+				for (std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++iter)
+				{
+					repeated[iter->second] = repeated[iter->second]++;
+				}
+				if (repeated.size() < 3) {
+					notEqual = false;
+				}
+			}
+		}
+		int indexOfFoundGroup = 0;
+		while (numberOfRemainingColors > 0 && indexOfFoundGroup < foundGroups.size())
+		{
+			for (std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++iter)
+			{
+				bool colorWithIndexProcessed = processed.find(iter->first) != processed.end();
+				bool colorInNewGroup = foundGroups[indexOfFoundGroup].find(iter->second) != foundGroups[indexOfFoundGroup].end();
+				if (!colorInNewGroup)
+				{
+					if (!colorWithIndexProcessed && foundGroups[indexOfFoundGroup].size() < 4)
+					{
+						foundGroups[indexOfFoundGroup].insert(std::pair<Token::Color, int>(iter->second, iter->first));
 						processed.insert(iter->first);
 						numberOfRemainingColors--;
 					}
 				}
 			}
-			//delete newGroup;
-			//nicht geprüfter teil kleiner 5
-			//if (numberOfRemainingColors < 5)
-			std::map<Token::Color, int> repeated;
-			for (std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++iter)
-			{
-				repeated[iter->second] = repeated[iter->second]++;
-			}
-			if (repeated.size() < 3){
-				notEqual = false;
-			}
+			indexOfFoundGroup++;
 		}
-		int indexOfFoundedGroups = 0;
-		while (numberOfRemainingColors > 0 && indexOfFoundedGroups < foundedGroups.size())
-		{
-			for (std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++iter)
-			{
-				bool colorWithIndexProcessed = processed.find(iter->first) != processed.end();
-				if (!colorWithIndexProcessed && foundedGroups[indexOfFoundedGroups].size()<4)
-				{
-					foundedGroups[indexOfFoundedGroups].insert(std::pair<Token::Color,int>(iter->second,iter->first));
-					processed.insert(iter->first);
-					numberOfRemainingColors--;
-				}
-			}
-			indexOfFoundedGroups++;
-		}
-		foundedGroupsAllColumns.push_back(foundedGroups);
+		foundGroupsAllColumns.push_back(foundGroups);
 	}
-	return foundedGroupsAllColumns;
+	return foundGroupsAllColumns;
 }
 
 Token::Token(Token::Color newColor, int newValue, Token::Usage currentLocation, std::string currentPosition)
