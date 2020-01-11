@@ -4,32 +4,36 @@
 int main()
 {
 	std::cout << WELCOME << std::endl;
-	firstUserInteraction();
-}
-
-int determineIndexPlayerToStart(std::vector<scoreEntry>& score) {
-	int numberOfPlayer = score.size();
-	srand((unsigned int)time(NULL));
-	int indexOfPlayerToStartGame = rand() % numberOfPlayer;
-
-	return indexOfPlayerToStartGame;
+	std::vector<std::vector<Token>> tokens;
+	Token joker1(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "", -1, -1);
+	Token joker2(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "", -1, -1);
+	setStartingCondition(tokens, joker1, joker2);
+	printMemoryStructure(tokens, joker1, joker2);
+	std::vector<std::vector<std::map < Token::Color, int >>> x = searchForGroups(tokens);
+	//firstUserInteraction();
 }
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
 {
+	int row = 0;
 	for (int color = 0; color < 4; color++)
 	{
-		std::vector<Token> toAdd;
+		std::vector<Token> toAdd1;
+		std::vector<Token> toAdd2;
 		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
 		{
-			Token::Color c = (Token::Color) color;
+			Token::Color col = (Token::Color) color;
 			//std::cout << c << std::endl;
-			Token token(c, column + 1, Token::Usage::Stock, "");
-			toAdd.push_back(token);
+			Token token1(col, column + 1, Token::Usage::Stock, "", column, row);
+			toAdd1.push_back(token1);
+			Token token2(col, column + 1, Token::Usage::Stock, "", column, row + 1);
+			toAdd2.push_back(token2);
 		}
-		tokens.push_back(toAdd);
-		tokens.push_back(toAdd);
+		tokens.push_back(toAdd1);
+		tokens.push_back(toAdd2);
+		row = row + 2;
 	}
+
 }
 
 void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
@@ -57,152 +61,6 @@ void printToken(Token token) {
 		<< ", Verw.: " << token.getUsage()
 		<< ", Pos.: " << token.getPosition()
 		<< std::endl;
-}
-
-void testSearchForGroups(std::vector<std::vector<std::vector<int>>>& x, std::vector<std::vector<Token>>& tokens)
-{
-	for (int i = 0; i < x.size(); i++)
-	{
-		for (int j = 0; j < x[i].size(); j++)
-		{
-
-			for (int color = 0; color < x[i][j].size(); color++)
-			{
-				std::cout << "index" << i << ", " << color /*<< "has color" << tokens[i][color]*/ << std::endl;
-			}
-		}
-	}
-}
-
-int main()
-{
-	std::vector<std::vector<Token>> tokens;
-	Token joker1(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "");
-	Token joker2(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "");
-	setStartingCondition(tokens, joker1, joker2);
-	printMemoryStructure(tokens, joker1, joker2);
-	std::vector<std::vector<std::map < Token::Color, int >>> x = searchForGroups(tokens);
-	//std::cout << x.size() << std::endl;
-	//std::cout << x[0].size() << std::endl;
-	//std::cout << x[0][0].size() << std::endl;
-	/*for (int i = 0; i < x.size(); i++)
-	{
-		for (int j = 0; j < x[i].size(); j++)
-		{
-			for (int color = 0; color < x[i][j].size(); color++)
-			{
-				std::cout << "index" << i << ", " << color /*<< "has color" << tokens[i][color] << std::endl;
-			}
-		}
-	}*/
-	//testSearchForGroups(x,tokens);
-}
-
-void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
-{
-	for (int color = 0; color < 4; color++)
-	{
-		std::vector<Token> toAdd;
-		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
-		{
-			Token::Color c = (Token::Color) color;
-			//std::cout << c << std::endl;
-			Token token(c, column + 1, Token::Usage::Playground, "");
-			toAdd.push_back(token);
-		}
-		tokens.push_back(toAdd);
-		tokens.push_back(toAdd);
-	}
-}
-
-void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
-{
-	for (int row = 0; row < NUMBER_OF_ROWS; row++)
-	{
-		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
-		{
-			Token value = tokens[row][column];
-			std::cout << value.getTerminalColor() << value.getValue() << RESET_TERMINAL_COL << " ";
-		}
-		std::cout << std::endl;
-	}
-
-	std::cout << joker1.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
-	std::cout << joker2.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
-	std::cout << std::endl;
-}
-
-std::vector<std::vector<std::vector<Token>>> searchForRows(std::vector<std::vector<Token>>& tokens)
-{
-	std::vector<std::vector<std::vector<Token>>> foundRowsAllColors;
-	for (int i = 0; i < NUMBER_OF_ROWS; i++)
-	{
-		std::vector<std::vector<Token>>foundRows;
-		bool processed[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS] = { false };
-		std::vector<Token> row;
-		int shift;
-		if (i % 2 == 0) {
-			shift = 1;
-		}
-		else
-		{
-			shift = -1;
-		}
-		for (int j = 0; j < NUMBER_OF_COLUMNS;j++)
-		{
-			if (tokens[i][j].getUsage() == Token::Usage::Playground && !processed[i][j]) {
-				if (row.size() > 0)
-				{
-					if ((row[row.size()-1]).getValue()==j)
-					{
-						row.push_back(tokens[i][j]);
-						processed[i][j] = true;
-					}
-					else
-					{
-						if (row.size()>2) {
-							foundRows.push_back(row);
-						}
-						//new vector for new row
-					}
-				}
-				else
-				{
-					row.push_back(tokens[i][j]);
-					processed[i][j] = true;
-				}
-			}
-			else {
-				if (tokens[i+shift][j].getUsage() == Token::Usage::Playground && !processed[i+shift][j]) {
-					if (row.size() > 0)
-					{
-						if ((row[row.size() - 1]).getValue() == j)
-						{
-							row.push_back(tokens[i+shift][j]);
-							processed[i+shift][j] = true;
-						}
-						else
-						{
-							if (row.size() > 2) {
-								foundRows.push_back(row);
-							}
-						}
-					}
-					else
-					{
-						row.push_back(tokens[i+shift][j]);
-						processed[i + shift][j] = true;
-					}
-				}
-			}
-
-		}
-		if (row.size() > 2) {
-			foundRows.push_back(row);
-		}
-		foundRowsAllColors.push_back(foundRows);
-	}
-	return foundRowsAllColors;
 }
 
 void testSearchForGroups(std::vector<std::vector<std::vector<int>>>& x, std::vector<std::vector<Token>>& tokens)
@@ -542,29 +400,6 @@ int determineIndexPlayerToStart(std::vector<scoreEntry>& score) {
 	return indexOfPlayerToStartGame;
 }
 
-void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
-{
-	int row = 0;
-	for (int color = 0; color < 4; color++)
-	{
-		std::vector<Token> toAdd1;
-		std::vector<Token> toAdd2;
-		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
-		{
-			Token::Color col = (Token::Color) color;
-			//std::cout << c << std::endl;
-			Token token1(col, column + 1, Token::Usage::Stock, "", column, row);
-			toAdd1.push_back(token1);
-			Token token2(col, column + 1, Token::Usage::Stock, "", column, row + 1);
-			toAdd2.push_back(token2);
-		}
-		tokens.push_back(toAdd1);
-		tokens.push_back(toAdd2);
-		row = row + 2;
-	}
-
-}
-
 std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player) {
 
 	std::vector<Token> tokensOfPlayer;
@@ -637,23 +472,6 @@ void showTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, 
 	std::cout << std::endl;
 }
 
-void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
-{
-	for (int row = 0; row < NUMBER_OF_ROWS; row++)
-	{
-		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
-		{
-			Token value = tokens[row][column];
-			std::cout << value.getTerminalColor() << value.getValue() << RESET_TERMINAL_COL << " ";
-		}
-		std::cout << std::endl;
-	}
-
-	std::cout << joker1.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
-	std::cout << joker2.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
-	std::cout << std::endl;
-}
-
 /*void printPlayground(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
 {
 	for (int row = 0; row < NUMBER_OF_ROWS; row++)
@@ -672,16 +490,6 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 	std::cout << std::endl;
 }*/
 
-void printToken(Token token) {
-	std::cout
-		<< std::endl
-		<< "Farbe: " << token.getColor()
-		<< ", Wert: " << token.getValue()
-		<< ", Verw.: " << token.getUsage()
-		<< ", Pos.: " << token.getPosition()
-		<< std::endl;
-}
-
 void checkRegex() {
 	//std::regex commandMoveTokenPlayerTotoken("([a-zA-Z]|[[:digit:]]+),[ ]*([a-zA-Z]|[[:digit:]]+),[ ]*(R|G|M|C),[ ]*([2-9]|1[0-3]?),[ ]*(J)?");
 	//std::regex commandMoveTokenPlayerToTokenCorrect("([a-zA-Z]|[[:digit:]]+),[ ]*([a-zA-Z]|[[:digit:]]+),[ ]*(R|G|M|C),[ ]*([2-9]|1[0-3]?)(,)?[ ]*(J)?");
@@ -691,7 +499,7 @@ void checkRegex() {
 	std::regex& regex = commandMoveMultipleTokens;
 
 	std::cin.clear();
-	std::cin.ignore(INT_MAX, '\n');
+	std::cin.ignore(INT8_MAX, '\n');
 	while (true)
 	{
 		char testStr[50];
