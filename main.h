@@ -4,6 +4,8 @@
 #include <memory>
 #include <map>
 #include <time.h>
+#include <algorithm>
+#include <regex>
 #include "shared.h";
 
 const std::string ERROR_OCCURRED = "Ein Fehler im Programm ist aufgetreten!";
@@ -29,6 +31,10 @@ int determineIndexPlayerToStart(std::vector<scoreEntry>& score);
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 
+std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player);
+
+void showTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player);
+
 void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage drawingPlayer, int amountOfTokens);
 
 void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
@@ -38,3 +44,5 @@ void printToken(Token token);
 std::vector<std::vector<std::vector<int>>> searchForGroups(std::vector<std::vector<Token>>& tokens);
 
 void testSearchForGroups(std::vector<std::vector<int>>& x, std::vector<std::vector<Token>>& tokens);
+
+void checkRegex();
