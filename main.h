@@ -5,14 +5,13 @@
 #include <map>
 #include <time.h>
 #include <algorithm>
-#include "shared.h";
+#include <regex>
+#include "shared.h"
 
 const std::string ERROR_OCCURRED = "Ein Fehler im Programm ist aufgetreten!";
 const std::string WELCOME = "Herzlich Willkommen bei Rummikub!";
 const std::string MESSAGE_PLAYER_TO_START = "Folgender Spieler darf das Spiel beginnen: ";
 
-const int NUMBER_OF_ROWS = 8;
-const int NUMBER_OF_COLUMNS = 13;
 const int VALUE_OF_JOKER = 30;
 const int TOTAL_AMOUNT_OF_TOKEN = 106;
 const int AMOUNT_OF_TOKENS_TO_DRAW_BEGINNING = 14;
@@ -43,3 +42,7 @@ void printToken(Token token);
 std::vector<std::vector<std::vector<int>>> searchForGroups(std::vector<std::vector<Token>>& tokens);
 
 void testSearchForGroups(std::vector<std::vector<int>>& x, std::vector<std::vector<Token>>& tokens);
+
+void checkRegex();
+
+std::vector<std::vector<Token>> getPlaygroundToDisplay();
