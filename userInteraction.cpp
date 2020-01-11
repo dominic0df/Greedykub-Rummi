@@ -9,7 +9,8 @@ int showFirstSelectMenu()
 		<< QUIT_GAME << std::endl
 		<< SHOW_MANUAL << std::endl
 		<< START_GAME << std::endl
-		<< std::endl;
+		<< std::endl
+		<< INSTRUCTION_ENTER_OPTION;
 
 	int selection;
 	std::cin >> selection;
@@ -58,4 +59,24 @@ int requestNumberOfOpponents() {
 	else {
 		return numberOfOpponents;
 	}
+}
+
+std::string showSelectMenuMove() {
+	std::cout
+		<< std::endl
+		<< AVAILABLE_OPTIONS << std::endl
+		<< QUIT_GAME << std::endl
+		<< SHOW_MANUAL << std::endl
+		<< SHOW_COMMANDS << std::endl
+		<< std::endl
+		<< DRAW_TOKEN << std::endl
+		<< CONTINUE << std::endl
+		<< REPAIR_PLAYGROUND << std::endl
+		<< MOVE_TOKEN << std::endl
+		<< std::endl
+		<< INSTRUCTION_ENTER_OPTION;
+
+	std::string selection;
+	std::cin >> selection;
+	return selection;
 }

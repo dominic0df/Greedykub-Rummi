@@ -8,3 +8,7 @@
 void firstUserInteraction();
 
 void setPlayerInformation(std::vector<scoreEntry>& score, std::string& nameOfHumanPlayer);
+
+void makeMovePlayer();
+
+bool isNumber(const std::string& s);
