@@ -230,77 +230,78 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 	std::cout << std::endl;
 }
 
-/*std::vector<Token> void searchForGroups(std::vector<std::vector<Token>> &tokens)
+std::vector<std::vector<std::vector<Token>>> searchForRows(std::vector<std::vector<Token>>& tokens)
 {
-	Token::Color color;
-	for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
+	std::vector<std::vector<std::vector<Token>>> foundRowsAllColors;
+	for (int i = 0; i < NUMBER_OF_ROWS; i++)
 	{
-		std::map<int, Token::Color> indexWithColor;
-		for (int j = 0; j < NUMBER_OF_ROWS; j++)
-		{
-			if (tokens[i][j].getUsage() == Token::Usage::Playground) //|| (field[i][j].location == "HandToPlayground"))
-			{
-				indexWithColor[j] = (Token::Color)tokens[i][j].getColor(); //increase number of fields with same color
-			}
+		std::vector<std::vector<Token>>foundRows;
+		bool processed[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS] = { false };
+		std::vector<Token> row;
+		int shift;
+		if (i % 2 == 0) {
+			shift = 1;
 		}
-
-		//speichere alle sich wiederholenden Farben der Spalte ab
-		std::map<Token::Color, int> repeated;
-		for (std::map<int, Token::Color>::iterator it = indexWithColor.begin(); it != indexWithColor.end(); ++it)
+		else
 		{
-			repeated[it->second] = repeated[it->second]++;
+			shift = -1;
 		}
-		std::vector<std::vector<int>> foundedGroups;
-		while (repeated.size() > 2)
+		for (int j = 0; j < NUMBER_OF_COLUMNS;j++)
 		{
-			std::vector<int> newGroup;
-			while (newGroup.size() < 4)
-			{
-				//füge doppelte zu Gruppe hinzu
-				for (std::map<Token::Color, int>::iterator it = repeated.begin(); it != repeated.end(); ++it)
+			if (tokens[i][j].getUsage() == Token::Usage::Playground && !processed[i][j]) {
+				if (row.size() > 0)
 				{
-					//if (it->second > 1)
-					if (it->second > 0)
+					if ((row[row.size()-1]).getValue()==j)
 					{
-						//find out repeated keys to add
-						for (std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++it)
+						row.push_back(tokens[i][j]);
+						processed[i][j] = true;
+					}
+					else
+					{
+						if (row.size()>2) {
+							foundRows.push_back(row);
+						}
+						//new vector for new row
+					}
+				}
+				else
+				{
+					row.push_back(tokens[i][j]);
+					processed[i][j] = true;
+				}
+			}
+			else {
+				if (tokens[i+shift][j].getUsage() == Token::Usage::Playground && !processed[i+shift][j]) {
+					if (row.size() > 0)
+					{
+						if ((row[row.size() - 1]).getValue() == j)
 						{
-							if (repeated[iter->second] == it->first) //gleiche Farbe
-							{
-								newGroup.push_back(iter->first);
-								repeated[iter->second]--;
-								if (it->second==0)
-								{
-									repeated.erease(iter);
-								}
-								break; //farbe muss nicht weiter gesucht werden, schon vorhanden
+							row.push_back(tokens[i+shift][j]);
+							processed[i+shift][j] = true;
+						}
+						else
+						{
+							if (row.size() > 2) {
+								foundRows.push_back(row);
 							}
 						}
 					}
+					else
+					{
+						row.push_back(tokens[i+shift][j]);
+						processed[i + shift][j] = true;
+					}
 				}
 			}
-			foundedGroups.add(newGroup);
-		}
-		//versuche restliche elemente zu bestehenden gruppen hinzuzufügen
-		int indexOfGroups=0;
-		bool successfull=true;
-		while (repeated.size()>0 && successfull)
-		{
-			for (int i = 0; i < repeated.size(); i++)
-			{
-
-			}
-			for (std::vector<std::vector<int>>::iterator i = foundedGroups.begin(); iter != foundedGroups.end(); ++it)
-			{
-
-			}
-		}
 
 		}
-
-
+		if (row.size() > 2) {
+			foundRows.push_back(row);
+		}
+		foundRowsAllColors.push_back(foundRows);
 	}
-}*/
+	return foundRowsAllColors;
+}
 
 void testSearchForGroups(std::vector<std::vector<std::vector<int>>>& x, std::vector<std::vector<Token>>& tokens)
 {
@@ -441,6 +442,87 @@ std::vector<std::vector<std::map < Token::Color, int >>> searchForGroups(std::ve
 	}
 	return foundGroupsAllColumns;
 }
+
+std::vector<std::vector<std::vector<Token>>> searchForRows(std::vector<std::vector<Token>>& tokens)
+{
+	std::vector<std::vector<std::vector<Token>>> foundRowsAllColors;
+	bool processed[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS] = { false };
+	for (int i = 0; i < NUMBER_OF_ROWS; i++)
+	{
+		std::vector<std::vector<Token>>foundRows;
+		std::shared_ptr<std::vector<Token>> row(new std::vector<Token>());
+		std::shared_ptr<std::vector<Token>> firstRow(new std::vector<Token>());
+		row = firstRow;
+		int shift;
+		if (i % 2 == 0) {
+			shift = 1;
+		}
+		else
+		{
+			shift = -1;
+		}
+		for (int j = 0; j < NUMBER_OF_COLUMNS; j++)
+		{
+			if (tokens[i][j].getUsage() == Token::Usage::Playground && !processed[i][j]) {
+				if (row->size() > 0)
+				{
+					if ((*row)[row->size() - 1].getValue() == j)
+					{
+						row->push_back(tokens[i][j]);
+						processed[i][j] = true;
+					}
+					else
+					{
+						if (row->size() > 2) {
+							foundRows.push_back(*row);
+						}
+						std::shared_ptr<std::vector<Token>> nextRow(new std::vector<Token>());
+						row = nextRow;
+						row->push_back(tokens[i][j]);
+					}
+				}
+				else
+				{
+					row->push_back(tokens[i][j]);
+					processed[i][j] = true;
+				}
+			}
+			else {
+				if (tokens[i + shift][j].getUsage() == Token::Usage::Playground && !processed[i + shift][j]) {
+					if (row->size() > 0)
+					{
+						if ((*row)[row->size() - 1].getValue() == j)
+						{
+							row->push_back(tokens[i + shift][j]);
+							processed[i + shift][j] = true;
+						}
+						else
+						{
+							if (row->size() > 2) {
+								foundRows.push_back(*row);
+							}
+							std::shared_ptr<std::vector<Token>> nextRow(new std::vector<Token>());
+							row = nextRow;
+							row->push_back(tokens[i][j]);
+						}
+					}
+					else
+					{
+						row->push_back(tokens[i + shift][j]);
+						processed[i + shift][j] = true;
+					}
+				}
+			}
+
+		}
+		if (row->size() > 2) {
+			foundRows.push_back(*row);
+		}
+		foundRowsAllColors.push_back(foundRows);
+	}
+	return foundRowsAllColors;
+}
+
 
 Token::Token(Token::Color newColor, int newValue, Token::Usage currentLocation, std::string currentPosition)
 {

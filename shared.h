@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #ifndef SHARED_H
 #define SHARED_H
