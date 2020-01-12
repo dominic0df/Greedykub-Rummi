@@ -10,7 +10,7 @@ int main()
 	setStartingCondition(tokens, joker1, joker2);
 	printMemoryStructure(tokens, joker1, joker2);
 	std::vector<std::vector<std::map < Token::Color, int >>> x = searchForGroups(tokens);
-	//firstUserInteraction();
+	firstUserInteraction();
 }
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
