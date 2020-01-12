@@ -17,7 +17,7 @@ int showFirstSelectMenu()
 	if (!std::cin.good() || (selection != 0 && selection != 1 && selection != 2))
 	{
 		std::cin.clear();
-		std::cin.ignore(INT_MAX, '\n');
+		std::cin.ignore(INT8_MAX, '\n');
 		std::cout << UNAVAILABLE_OPTION_CHOOSED << std::endl;
 		return showFirstSelectMenu();
 	}
@@ -36,7 +36,7 @@ std::string requestNameOfPlayer() {
 	std::string nameOfHumanPlayer;
 	std::cin >> nameOfHumanPlayer;
 	std::cin.clear();
-	std::cin.ignore(INT_MAX, '\n');
+	std::cin.ignore(INT8_MAX, '\n');
 
 	return nameOfHumanPlayer;
 }
@@ -52,7 +52,7 @@ int requestNumberOfOpponents() {
 	if (!std::cin.good() || (numberOfOpponents != 1 && numberOfOpponents != 2 && numberOfOpponents != 3))
 	{
 		std::cin.clear();
-		std::cin.ignore(INT_MAX, '\n');
+		std::cin.ignore(INT8_MAX, '\n');
 		std::cout << UNAVAILABLE_OPTION_CHOOSED << std::endl;
 		return requestNumberOfOpponents();
 	}
