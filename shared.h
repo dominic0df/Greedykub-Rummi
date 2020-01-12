@@ -33,9 +33,11 @@ private:
 	Color color;
 	int value;
 	Token::Usage usage;
-	std::string position;
-	int column;
-	int row;
+	int positionPlayerBoard;
+	int column;		//memory -> vector "tokens" which includes all Tokens
+	int row;		//memory -> vector "tokens" which includes all Tokens
+	int columnPlayground;
+	int rowPlayground;
 
 public:
 
@@ -47,11 +49,15 @@ public:
 
 	Token::Usage& getUsage();
 
-	std::string& getPosition();
+	int& getPositionPlayerBoard();
 
 	int& getColumn();
 
 	int& getRow();
+
+	int& getColumnPlayground();
+
+	int& getRowPlayground();
 
 	void setColor(Token::Color newColor);
 
@@ -59,13 +65,18 @@ public:
 
 	void setUsage(Token::Usage newUsage);
 
-	void setPosition(std::string newPosition);
+	void setPositionPlayerBoard(int newPosition);
 
 	void setColumn(int column);
 
 	void setRow(int row);
 
-	Token(Token::Color newColor, int newValue, Token::Usage currentLocation, std::string currentPosition, int memoryColumn, int memoryRow);
+	void setColumnPlayground(int newColumnPlayground);
+
+	void setRowPlayground(int newRowPlayground);
+
+	Token(Token::Color newColor, int newValue, Token::Usage currentLocation, int currentPosition,
+		int memoryColumn, int memoryRow, int currentColumnPlayground, int currentRowPlayground);
 
 };
 
@@ -79,5 +90,9 @@ void ltrim(std::string& s);
 void rtrim(std::string& s);
 
 void trim(std::string& s);
+
+char indexToAscii(int index);
+
+int asciiToIndex(char asciiValue);
 
 #endif
