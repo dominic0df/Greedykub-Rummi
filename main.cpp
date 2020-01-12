@@ -45,6 +45,8 @@ void startGame() {
 	}*/
 
 	bool gameOn = true;
+	std::cin.clear();
+	std::cin.ignore(INT_MAX, '\n');
 	while (gameOn) {
 		std::vector<std::vector<Token>> currentPlayground = getPlaygroundToDisplay();
 		printMemoryStructure(currentPlayground, joker1, joker2);
@@ -549,7 +551,7 @@ std::vector<std::vector<std::vector<int>>> searchForGroups(std::vector<std::vect
 	return foundedGroupsAllColumns;
 }
 
-void checkRegex() {
+void regexTester() {
 	//std::regex commandMoveTokenPlayerTotoken("([a-zA-Z]|[[:digit:]]+),[ ]*([a-zA-Z]|[[:digit:]]+),[ ]*(R|G|M|C),[ ]*([2-9]|1[0-3]?),[ ]*(J)?");
 	//std::regex commandMoveTokenPlayerToTokenCorrect("([a-zA-Z]|[[:digit:]]+),[ ]*([a-zA-Z]|[[:digit:]]+),[ ]*(R|G|M|C),[ ]*([2-9]|1[0-3]?)(,)?[ ]*(J)?");
 
@@ -564,13 +566,93 @@ void checkRegex() {
 		char testStr[50];
 		std::cout << "Enter a String:" << std::endl;
 		std::cin.getline(testStr, sizeof(testStr));
+		std::string str(testStr);
+		//processCommandInput(str);
+
+		/*
 		if (std::regex_match(testStr, regex)) {
 			std::cout << "YES - Your entered string matches!" << std::endl;
 		}
 		else {
 			std::cout << "NO - Your entered string doesn't match!" << std::endl;
 		}
+		*/
+
 	}
+}
+
+void processCommandInput(std::string& command, Token::Usage player, std::vector<std::vector<Token>>& currentPlayground,
+	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
+	std::regex commandMoveSingleToken("([a-zA-Z]|[[:digit:]]+[a-zA-Z])[ ]*>[ ]*([a-zA-Z]|[[:digit:]]+[a-zA-Z])");
+	std::regex commandMoveMultipleTokens("([a-zA-Z]|[[:digit:]]+[a-zA-Z])[ ]*-[ ]*([a-zA-Z]|[[:digit:]]+[a-zA-Z])[ ]*>[ ]*([a-zA-Z]|[[:digit:]]+[a-zA-Z]|\\+)");
+
+	int fromRow;
+	int fromColumn;
+	int toRow;
+	int toColumn;
+
+	if (std::regex_match(command, commandMoveSingleToken)) {
+		splitCommandMoveSingleToken(command, fromRow, fromColumn, toRow, toColumn);
+		moveToken(fromRow, fromColumn, toRow, toColumn);
+	}
+	/*else if (std::regex_match(command, commandMoveMultipleTokens)) {
+		std::cout << "WRONG!";
+	}*/
+	else {
+		std::cout << "WRONG!";
+	}
+
+}
+
+void splitCommandMoveSingleToken(std::string& command, int& fromRow, int& fromColumn, int& toRow, int& toColumn) {
+	std::string delimiter = ">";
+	std::string from = command.substr(0, command.find(delimiter));
+	std::string to = command.substr(command.find(delimiter) + 1, command.size() - 1);
+
+	trim(from);
+	trim(to);
+	std::cout << "<" << from << ">" << std::endl;
+	std::cout << "<" << to << ">" << std::endl;
+
+	getRowAndColumnOfCommandEntry(from, fromRow, fromColumn);
+	getRowAndColumnOfCommandEntry(to, toRow, toColumn);
+}
+
+void getRowAndColumnOfCommandEntry(std::string& commandEntry, int& row, int& column) {
+	// Bsp.: A (player)
+	if (commandEntry.size() == 1) {
+		row = -1; //-> User want to move Token from player
+		column = ((int)commandEntry.at(0)) - LETTER_A_ASCII_NUMBER;
+	}
+
+	// Bsp.: 1B (playground)
+	if (commandEntry.size() == 2) {
+		row = std::stoi(commandEntry.substr(0, 1)) - 1;
+		column = ((int)commandEntry.at(1)) - LETTER_A_ASCII_NUMBER;
+	}
+
+	// Bsp.: 10B (playground)
+	if (commandEntry.size() == 3) {
+		row = std::stoi(commandEntry.substr(0, 2)) - 1;
+		column = ((int)commandEntry.at(2)) - LETTER_A_ASCII_NUMBER;
+	}
+}
+
+void moveToken(int& fromRow, int& fromColumn, int& toRow, int& toColumn) {
+	// S -> Spielfeld		B -> Brett
+	// Step 1: Brett -> Brett (A > B) -> B: Tauschen der beiden Zahlen
+	// Step 2: Brett -> Spielfeld (A > 1C)  -> S: 1C liegt Karte?	-> JA B: Karten nach rechts verschieben, Karte von B nach S verschieben, B: Karten nach links verschieben
+	//																-> NEIN B: Karte von B nach S verschieben, B: Karten nach links verschieben 
+	// Step 3: Spielfeld -> Brett (1C > A) -> B:  C liegt Karte?	-> JA S: Karten nach rechts verschieben, Karte von S nach B verschieben, B: Karten nach links verschieben
+	//																-> NEIN B: Karte von S nach B verschieben, S: Karten nach links verschieben 
+	// Step 4: Spielfeld -> Spielfeld (1C > 1D) ->	1D liegt Karte) -> JA B: Karten nach rechts verschieben, Karte von S nach S verschieben, S: Karten nach links verschieben 
+	//																-> NEIN B: Karte von S nach S verschieben, B: Karten nach links verschieben 
+
+	std::cout << "Spielstein wird wie folgt verschoben: " << std::endl;
+	std::cout << "Von (Reihe): <" << fromRow << ">" << std::endl;
+	std::cout << "Von (Spalte): <" << fromColumn << ">" << std::endl;
+	std::cout << "Nach (Reihe): <" << toRow << ">" << std::endl;
+	std::cout << "Nach (Spalte): <" << toColumn << ">" << std::endl;
 }
 
 std::vector<std::vector<Token>> getPlaygroundToDisplay() {
@@ -597,90 +679,4 @@ std::vector<std::vector<Token>> getPlaygroundToDisplay() {
 	playgroundBeforeMove.push_back(toAdd2);
 
 	return playgroundBeforeMove;
-}
-
-Token::Token(Token::Color newColor, int newValue, Token::Usage currentLocation, std::string currentPosition, int memoryColumn, int memoryRow)
-{
-	color = newColor;
-	value = newValue;
-	usage = currentLocation;
-	position = currentPosition;
-	column = memoryColumn;
-	row = memoryRow;
-
-}
-
-std::string Token::getTerminalColor()
-{
-	switch (color)
-	{
-	case CYAN:
-		return CYAN_TERMINAL_COL;
-	case RED:
-		return RED_TERMINAL_COL;
-	case YELLOW:
-		return YELLOW_TERMINAL_COL;
-	case PURPLE:
-		return PURPLE_TERMINAL_COL;
-	case JOKER_WHITE:
-		return JOKER_WHITE_TERMINAL_COL;
-	}
-	//Fehlerfall
-	return RESET_TERMINAL_COL;
-}
-
-Token::Color& Token::getColor()
-{
-	return color;
-}
-
-int& Token::getValue()
-{
-	return value;
-}
-
-Token::Usage& Token::getUsage()
-{
-	return usage;
-}
-
-std::string& Token::getPosition()
-{
-	return position;
-}
-
-int& Token::getColumn() {
-	return column;
-}
-
-int& Token::getRow() {
-	return row;
-}
-
-void Token::setColor(Token::Color newColor)
-{
-	color = newColor;
-}
-
-void Token::setValue(int newValue)
-{
-	value = newValue;
-}
-
-void Token::setUsage(Usage newUsage)
-{
-	usage = newUsage;
-}
-
-void Token::setPosition(std::string newPosition)
-{
-	position = newPosition;
-}
-
-void Token::setColumn(int memoryColumn) {
-	column = memoryColumn;
-}
-
-void Token::setRow(int memoryRow) {
-	row = memoryRow;
 }

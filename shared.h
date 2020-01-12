@@ -1,12 +1,16 @@
 #include <string>
+#include <regex>
 #ifndef SHARED_H
 #define SHARED_H
+
 
 
 const int LETTER_A_ASCII_NUMBER = 65;
 const int NUMBER_OF_COLUMNS = 13;
 const int NUMBER_OF_ROWS = 8;
+const std::string RESET_TERMINAL_COL = "\033[0m";
 
+class Token;
 class Token //Spielstein
 {
 
@@ -68,5 +72,11 @@ struct scoreEntry {
 	Token::Usage player;
 	int point;
 };
+
+void ltrim(std::string& s);
+
+void rtrim(std::string& s);
+
+void trim(std::string& s);
 
 #endif

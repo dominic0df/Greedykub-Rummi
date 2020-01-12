@@ -14,7 +14,7 @@ void firstUserInteraction() {
 	case 1:
 		//showGameManual();
 		//std::cout << "1 MANUAL";
-		checkRegex();
+		regexTester();
 		break;
 	case 2:
 		startGame();
@@ -47,7 +47,11 @@ void setPlayerInformation(std::vector<scoreEntry>& score, std::string& nameOfHum
 
 void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, bool& gameOn,
 	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
+
 	std::string selection = showSelectMenuMove();
+	std::cout << "<" << selection << ">" << std::endl;
+	trim(selection);
+	std::cout << "<" << selection << ">" << std::endl;
 
 	if (isNumber(selection)) {
 		int selectionNumber = std::stoi(selection);
@@ -79,8 +83,6 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 			std::cout << "5 Reset Playground";
 			break;
 		default:
-			std::cin.clear();
-			std::cin.ignore(INT_MAX, '\n');
 			std::cout << UNAVAILABLE_OPTION_CHOOSED << std::endl;
 			makeMovePlayer(player, currentPlayground, gameOn, tokens, joker1, joker2);
 			break;
@@ -88,6 +90,7 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 	}
 	else {
 		//checkRegex
+		processCommandInput(selection, player, currentPlayground, tokens, joker1, joker2);
 		std::cout << "Check Regex";
 	}
 }

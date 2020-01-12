@@ -62,6 +62,7 @@ int requestNumberOfOpponents() {
 }
 
 std::string showSelectMenuMove() {
+
 	std::cout
 		<< std::endl
 		<< AVAILABLE_OPTIONS << std::endl
@@ -76,7 +77,8 @@ std::string showSelectMenuMove() {
 		<< std::endl
 		<< INSTRUCTION_ENTER_OPTION;
 
-	std::string selection;
-	std::cin >> selection;
+	char selection_c[50];
+	std::cin.getline(selection_c, sizeof(selection_c));
+	std::string selection(selection_c);
 	return selection;
 }

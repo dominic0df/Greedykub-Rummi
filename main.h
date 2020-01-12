@@ -16,7 +16,6 @@ const std::string BOARD_FILLED = "Dein Brett ist voll -> du kannst keine neuen S
 const int VALUE_OF_JOKER = 30;
 const int TOTAL_AMOUNT_OF_TOKEN = 106;
 const int AMOUNT_OF_TOKENS_TO_DRAW_BEGINNING = 14;
-const std::string RESET_TERMINAL_COL = "\033[0m";
 
 int main();
 
@@ -45,6 +44,15 @@ std::vector<std::vector<std::vector<int>>> searchForGroups(std::vector<std::vect
 
 void testSearchForGroups(std::vector<std::vector<int>>& x, std::vector<std::vector<Token>>& tokens);
 
-void checkRegex();
+void regexTester();
+
+void processCommandInput(std::string& command, Token::Usage player, std::vector<std::vector<Token>>& currentPlayground,
+	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
+
+void splitCommandMoveSingleToken(std::string& command, int& fromRow, int& fromColumn, int& toRow, int& toColumn);
+
+void getRowAndColumnOfCommandEntry(std::string& commandEntry, int& row, int& column);
+
+void moveToken(int& fromRow, int& fromColumn, int& toRow, int& toColumn);
 
 std::vector<std::vector<Token>> getPlaygroundToDisplay();
