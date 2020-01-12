@@ -45,7 +45,8 @@ void setPlayerInformation(std::vector<scoreEntry>& score, std::string& nameOfHum
 	//std::cout << "Length: " << score.size() << std::endl;
 }
 
-void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, bool& gameOn) {
+void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, bool& gameOn,
+	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
 	std::string selection = showSelectMenuMove();
 
 	if (isNumber(selection)) {
@@ -66,7 +67,7 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 			std::cout << "2 CommandSet";
 			break;
 		case 3:
-			//drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player, 1)
+			drawTokenRandomlyFromStock(tokens, joker1, joker2, player, 1);
 			std::cout << "3 Draw Token";
 			break;
 		case 4:
@@ -81,7 +82,7 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 			std::cin.clear();
 			std::cin.ignore(INT_MAX, '\n');
 			std::cout << UNAVAILABLE_OPTION_CHOOSED << std::endl;
-			makeMovePlayer(player, currentPlayground, gameOn);
+			makeMovePlayer(player, currentPlayground, gameOn, tokens, joker1, joker2);
 			break;
 		}
 	}

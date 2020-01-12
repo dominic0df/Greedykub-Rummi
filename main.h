@@ -11,6 +11,7 @@
 const std::string ERROR_OCCURRED = "Ein Fehler im Programm ist aufgetreten!";
 const std::string WELCOME = "Herzlich Willkommen bei Rummikub!";
 const std::string MESSAGE_PLAYER_TO_START = "Folgender Spieler darf das Spiel beginnen: ";
+const std::string BOARD_FILLED = "Dein Brett ist voll -> du kannst keine neuen Spielsteine mehr aufnehmen. Lege Spielsteine auf dem Spielfeld ab!";
 
 const int VALUE_OF_JOKER = 30;
 const int TOTAL_AMOUNT_OF_TOKEN = 106;
@@ -33,7 +34,8 @@ std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, To
 
 void showTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player);
 
-void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage drawingPlayer, int amountOfTokens);
+void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2,
+	Token::Usage drawingPlayer, int amountOfTokens);
 
 void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 

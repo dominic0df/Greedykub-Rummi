@@ -51,7 +51,7 @@ void startGame() {
 		showTokensOfPlayer(tokens, joker1, joker2, Token::HUMAN_Player);
 		//Achtung: Keine Referenz übergeben! -> Kopie -> currentPlayground
 		//std::vector<std::vector<Token>> currentPlayground;
-		makeMovePlayer(Token::Usage::HUMAN_Player, currentPlayground, gameOn);
+		makeMovePlayer(Token::Usage::HUMAN_Player, currentPlayground, gameOn, tokens, joker1, joker2);
 	}
 
 	/*
@@ -72,7 +72,8 @@ void dealTokens(std::vector<scoreEntry>& score, std::vector<std::vector<Token>>&
 	}
 }
 
-void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player, int amountOfTokens) {
+void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2,
+	Token::Usage player, int amountOfTokens) {
 	//auto zufall=srand((unsigned int)time(NULL));
 	//srand(1);
 	// TODO: eventuell srand benutzen
@@ -81,33 +82,74 @@ void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& 
 	int rowOfToken;
 	int columnOfToken;
 
-	for (int token = 0; token < amountOfTokens; token++)
+	int highestTokenPosition = LETTER_A_ASCII_NUMBER;
+	// Tokens are drawn at the Beginning, so no player has Tokens on his board -> The highest letter ist A (=65)
+	if (amountOfTokens != AMOUNT_OF_TOKENS_TO_DRAW_BEGINNING) {
+		for (int row = 0; row < NUMBER_OF_ROWS; row++)
+		{
+			for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
+			{
+				if (tokens[row][column].getUsage() == (Token::Usage) player) {
+					if (std::stoi(tokens[row][column].getPosition()) > highestTokenPosition) {
+						highestTokenPosition = std::stoi(tokens[row][column].getPosition());
+					}
+				}
+			}
+		}
+
+		if (joker1.getUsage() == (Token::Usage) player) {
+
+			if (std::stoi(joker1.getPosition()) > highestTokenPosition) {
+				highestTokenPosition = std::stoi(joker1.getPosition());
+			}
+		}
+
+		if (joker2.getUsage() == (Token::Usage) player) {
+
+			if (std::stoi(joker2.getPosition()) > highestTokenPosition) {
+				highestTokenPosition = std::stoi(joker2.getPosition());
+			}
+		}
+
+		highestTokenPosition++;
+	}
+
+	for (int token = highestTokenPosition; token < amountOfTokens + highestTokenPosition; token++)
 	{
+
+		if (token >= 91 && token <= 96) {
+			token = token + 6;	//skip special Characters
+		}
+		if (token == 123) {
+			std::cout << BOARD_FILLED << std::endl;
+			break;
+		}
+
 		positionOfToken = rand() % TOTAL_AMOUNT_OF_TOKEN;
 
 		rowOfToken = (int)positionOfToken / NUMBER_OF_COLUMNS;
 		columnOfToken = positionOfToken % NUMBER_OF_COLUMNS;
 
-		// token + 65, da A=65 (ASCII)
+		// token + LETTER_A_ASCII_NUMBER (65), da A=65 (ASCII)
 
 		while (true) {
 
 			//std::cout << std::endl << "Pos.:" << positionOfToken;
 			if (positionOfToken == 104 && joker1.getUsage() == Token::Usage::Stock) {
 				joker1.setUsage(player);
-				joker1.setPosition(std::to_string((token + 65)));
+				joker1.setPosition(std::to_string(token));
 				//printToken(joker1);
 				break;
 			}
 			else if (positionOfToken == 105 && joker2.getUsage() == Token::Usage::Stock) {
 				joker2.setUsage(player);
-				joker2.setPosition(std::to_string((token + 65)));
+				joker2.setPosition(std::to_string(token));
 				//printToken(joker2);
 				break;
 			}
 			else if (positionOfToken < 104 && tokens[rowOfToken][columnOfToken].getUsage() == Token::Usage::Stock) {
 				tokens[rowOfToken][columnOfToken].setUsage(player);
-				tokens[rowOfToken][columnOfToken].setPosition(std::to_string((token + 65)));
+				tokens[rowOfToken][columnOfToken].setPosition(std::to_string(token));
 				//printToken(tokens[rowOfToken][columnOfToken]);
 				break;
 			}
@@ -159,7 +201,7 @@ std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, To
 
 	std::vector<Token> tokensOfPlayer;
 	bool tokenFound = true;
-	int tokenPosition = 65;
+	int tokenPosition = LETTER_A_ASCII_NUMBER;
 	while (tokenFound) {
 
 		tokenFound = false;
@@ -192,6 +234,9 @@ std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, To
 			}
 		}
 
+		if (tokenPosition == 90) {
+			tokenPosition = 96; //skip special Characters
+		}
 		tokenPosition++;
 	}
 
@@ -264,6 +309,10 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 	{
 		char index = letter;
 		std::cout << index << "  ";
+
+		if (letter == 90) {
+			letter = 96; //skip special Characters
+		}
 	}
 	std::cout << std::endl;
 
