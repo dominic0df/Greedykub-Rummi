@@ -1,5 +1,6 @@
 #include "main.h"
 #include "userInputProcessing.h"
+#include "shared.h"
 
 int main()
 {
@@ -104,7 +105,7 @@ std::vector<std::vector<std::map < Token::Color, int >>> searchForGroups(std::ve
 		{
 			while (notEqual)
 			{
-				if (foundGroups.size()==1)
+				if (foundGroups.size() == 1)
 				{
 					newGroup = nextGroup;
 				}
@@ -121,7 +122,7 @@ std::vector<std::vector<std::map < Token::Color, int >>> searchForGroups(std::ve
 				{
 					for (std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++iter)
 					{
-						if (newGroup->size()==0 && nextGroup->size()>0)
+						if (newGroup->size() == 0 && nextGroup->size() > 0)
 						{
 							newGroup = nextGroup;
 						}
@@ -152,7 +153,7 @@ std::vector<std::vector<std::map < Token::Color, int >>> searchForGroups(std::ve
 								else {
 									size = newGroup->size();
 								}
-								if (size==0)
+								if (size == 0)
 								{
 									newGroup->insert(std::pair<Token::Color, int>(iter->second, iter->first));
 									processed.insert(iter->first);
@@ -166,7 +167,7 @@ std::vector<std::vector<std::map < Token::Color, int >>> searchForGroups(std::ve
 				{
 					notEqual = false;
 				}
-				newGroup=nullptr;
+				newGroup = nullptr;
 				//nicht geprüfter teil kleiner 5
 				//if (numberOfRemainingColors < 5)
 				std::map<Token::Color, int> repeated;
@@ -223,10 +224,21 @@ std::vector<std::vector<std::vector<Token>>> searchForRows(std::vector<std::vect
 		}
 		for (int j = 0; j < NUMBER_OF_COLUMNS; j++)
 		{
+			int size;
+			if (row == nullptr)
+			{
+				size = 0;
+			}
+			else {
+				size = row->size();
+			}
 			if (tokens[i][j].getUsage() == Token::Usage::Playground && !processed[i][j]) {
-				if (row->size() > 0)
-				{
-					if ((*row)[row->size() - 1].getValue() == j)
+				if (size == 0) {
+					row->push_back(tokens[i][j]);
+					processed[i][j] = true;
+				}
+				else {
+					if (((*row)[row->size() - 1].getValue() == j) && (row->size() < 3))
 					{
 						row->push_back(tokens[i][j]);
 						processed[i][j] = true;
@@ -236,22 +248,36 @@ std::vector<std::vector<std::vector<Token>>> searchForRows(std::vector<std::vect
 						if (row->size() > 2) {
 							foundRows.push_back(*row);
 						}
+						else
+						{
+							if (row->size()==2)
+							{
+								processed[i][j - 2] = false;
+								processed[i][j - 3] = false;
+							}
+							else
+							{
+								if (row->size()==1)
+								{
+									processed[i][j - 2] = false;
+								}
+							}
+						}
 						std::shared_ptr<std::vector<Token>> nextRow(new std::vector<Token>());
 						row = nextRow;
 						row->push_back(tokens[i][j]);
+						processed[i][j] = true;
 					}
-				}
-				else
-				{
-					row->push_back(tokens[i][j]);
-					processed[i][j] = true;
 				}
 			}
 			else {
-				if (tokens[i + shift][j].getUsage() == Token::Usage::Playground && !processed[i + shift][j]) {
-					if (row->size() > 0)
-					{
-						if ((*row)[row->size() - 1].getValue() == j)
+				if (tokens[i+shift][j].getUsage() == Token::Usage::Playground && !processed[i + shift][j]) {
+					if (size == 0) {
+						row->push_back(tokens[i + shift][j]);
+						processed[i + shift][j] = true;
+					}
+					else {
+						if (((*row)[row->size() - 1].getValue() == j) && (row->size() < 3))
 						{
 							row->push_back(tokens[i + shift][j]);
 							processed[i + shift][j] = true;
@@ -264,24 +290,86 @@ std::vector<std::vector<std::vector<Token>>> searchForRows(std::vector<std::vect
 							std::shared_ptr<std::vector<Token>> nextRow(new std::vector<Token>());
 							row = nextRow;
 							row->push_back(tokens[i][j]);
+							processed[i + shift][j] = true;
 						}
 					}
-					else
-					{
-						row->push_back(tokens[i + shift][j]);
-						processed[i + shift][j] = true;
-					}
 				}
+				//processed auch true wenns nicht playground als else
 			}
 
 		}
-		if (row->size() > 2) {
-			foundRows.push_back(*row);
+		if (row->size()==1)
+		{
+			processed[i][NUMBER_OF_COLUMNS - 1] = false;
+		}
+		else
+		{
+			if (row->size()==2)
+			{
+				processed[i][NUMBER_OF_COLUMNS - 1] = false;
+				processed[i][NUMBER_OF_COLUMNS - 2] = false;
+			}
+			else
+			{
+				if (row->size() > 2) {
+					foundRows.push_back(*row);
+				}
+			}
+		}
+
+		int indexOfFoundRow = 0;
+		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
+		{
+			bool c=!processed[i][column];
+			if (c)
+			{
+				if (tokens[i][column].getUsage() == Token::Usage::Playground)
+				{
+					for (int numberOfRemainingRows = 0; numberOfRemainingRows < foundRows.size(); numberOfRemainingRows++)
+					{
+						int sizeOfVector = foundRows[numberOfRemainingRows].size();
+						//Token tokenToFillIn = foundRows[i][column];
+						int valueToFind = tokens[i][column].getValue() - 1;
+						int currentValue = foundRows[numberOfRemainingRows][(sizeOfVector - 1)].getValue();
+						if (currentValue == valueToFind) {
+							foundRows[numberOfRemainingRows].push_back(tokens[i][column]);
+							processed[i][column] = true;
+						}
+					}
+				}
+			}
 		}
 		foundRowsAllColors.push_back(foundRows);
 	}
+	for (int i = 0; i < NUMBER_OF_ROWS; i++) {
+		int shift;
+		if (i % 2 == 0) {
+			shift = 1;
+		}
+		else
+		{
+			shift = -1;
+		}
+		for (int column = 0; column < NUMBER_OF_COLUMNS; column++) {
+			if (tokens[i][column].getUsage() == Token::Usage::Playground && !processed[i+shift][column]) {
+				for (int numberOfRemainingRowsShift = 0; numberOfRemainingRowsShift < foundRowsAllColors[i + shift].size(); numberOfRemainingRowsShift++)
+				{
+					int sizeOfVector = foundRowsAllColors[i + shift][numberOfRemainingRowsShift].size();
+					int currentValueShift = foundRowsAllColors[i + shift][numberOfRemainingRowsShift][(sizeOfVector - 1)].getValue();
+					//Token tokenToFillIn = foundRows[i][column];
+					int valueToFind = tokens[i][column].getValue() - 1;
+					int currentValue = foundRowsAllColors[i + shift][numberOfRemainingRowsShift][(sizeOfVector - 1)].getValue();
+					if (currentValue == valueToFind) {
+							foundRowsAllColors[i + shift][numberOfRemainingRowsShift].push_back(tokens[i][column]);
+							processed[i + shift][column] = true;
+					}
+				}
+			}
+		}
+	}
 	return foundRowsAllColors;
 }
+
 void startGame() {
 	std::vector<std::vector<Token>> tokens;
 	Token joker1(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, "", -1, -1);
@@ -512,90 +600,4 @@ void checkRegex() {
 			std::cout << "NO - Your entered string doesn't match!" << std::endl;
 		}
 	}
-}
-
-Token::Token(Token::Color newColor, int newValue, Token::Usage currentLocation, std::string currentPosition, int memoryColumn, int memoryRow)
-{
-	color = newColor;
-	value = newValue;
-	usage = currentLocation;
-	position = currentPosition;
-	column = memoryColumn;
-	row = memoryRow;
-
-}
-
-std::string Token::getTerminalColor()
-{
-	switch (color)
-	{
-	case CYAN:
-		return CYAN_TERMINAL_COL;
-	case RED:
-		return RED_TERMINAL_COL;
-	case YELLOW:
-		return YELLOW_TERMINAL_COL;
-	case PURPLE:
-		return PURPLE_TERMINAL_COL;
-	case JOKER_WHITE:
-		return JOKER_WHITE_TERMINAL_COL;
-	}
-	//Fehlerfall
-	return RESET_TERMINAL_COL;
-}
-
-Token::Color& Token::getColor()
-{
-	return color;
-}
-
-int& Token::getValue()
-{
-	return value;
-}
-
-Token::Usage& Token::getUsage()
-{
-	return usage;
-}
-
-std::string& Token::getPosition()
-{
-	return position;
-}
-
-int& Token::getColumn() {
-	return column;
-}
-
-int& Token::getRow() {
-	return row;
-}
-
-void Token::setColor(Token::Color newColor)
-{
-	color = newColor;
-}
-
-void Token::setValue(int newValue)
-{
-	value = newValue;
-}
-
-void Token::setUsage(Usage newUsage)
-{
-	usage = newUsage;
-}
-
-void Token::setPosition(std::string newPosition)
-{
-	position = newPosition;
-}
-
-void Token::setColumn(int memoryColumn) {
-	column = memoryColumn;
-}
-
-void Token::setRow(int memoryRow) {
-	row = memoryRow;
 }
