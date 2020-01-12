@@ -3,6 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <map>
+#include <set>
 #include <time.h>
 #include <algorithm>
 #include <regex>
@@ -40,7 +41,7 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 
 void printToken(Token token);
 
-std::vector<std::vector<std::vector<int>>> searchForGroups(std::vector<std::vector<Token>>& tokens);
+std::vector<std::vector<std::map < Token::Color, int >>> searchForGroups(std::vector<std::vector<Token>>& tokens);
 
 void testSearchForGroups(std::vector<std::vector<int>>& x, std::vector<std::vector<Token>>& tokens);
 
