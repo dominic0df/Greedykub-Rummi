@@ -1,5 +1,6 @@
 #include "main.h"
 #include "userInputProcessing.h"
+#include "shared.h"
 
 int main()
 {
@@ -34,33 +35,6 @@ void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1
 		row = row + 2;
 	}
 
-}
-
-void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
-{
-	for (int row = 0; row < NUMBER_OF_ROWS; row++)
-	{
-		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
-		{
-			Token value = tokens[row][column];
-			std::cout << value.getTerminalColor() << value.getValue() << RESET_TERMINAL_COL << " ";
-		}
-		std::cout << std::endl;
-	}
-
-	std::cout << joker1.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
-	std::cout << joker2.getTerminalColor() << "J" << RESET_TERMINAL_COL << " ";
-	std::cout << std::endl;
-}
-
-void printToken(Token token) {
-	std::cout
-		<< std::endl
-		<< "Farbe: " << token.getColor()
-		<< ", Wert: " << token.getValue()
-		<< ", Verw.: " << token.getUsage()
-		<< ", Pos.: " << token.getPosition()
-		<< std::endl;
 }
 
 void testSearchForGroups(std::vector<std::vector<std::vector<int>>>& x, std::vector<std::vector<Token>>& tokens)
@@ -408,7 +382,7 @@ void startGame() {
 
 	bool gameOn = true;
 	std::cin.clear();
-	std::cin.ignore(INT_MAX, '\n');
+	std::cin.ignore(INT8_MAX, '\n');
 	while (gameOn) {
 		std::vector<std::vector<Token>> currentPlayground = getPlaygroundToDisplay();
 		printMemoryStructure(currentPlayground, joker1, joker2);
@@ -536,29 +510,6 @@ int determineIndexPlayerToStart(std::vector<scoreEntry>& score) {
 	int indexOfPlayerToStartGame = rand() % numberOfPlayer;
 
 	return indexOfPlayerToStartGame;
-}
-
-void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
-{
-	int row = 0;
-	for (int color = 0; color < 4; color++)
-	{
-		std::vector<Token> toAdd1;
-		std::vector<Token> toAdd2;
-		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
-		{
-			Token::Color col = (Token::Color) color;
-			//std::cout << c << std::endl;
-			Token token1(col, column + 1, Token::Usage::Stock, "", column, row);
-			toAdd1.push_back(token1);
-			Token token2(col, column + 1, Token::Usage::Stock, "", column, row + 1);
-			toAdd2.push_back(token2);
-		}
-		tokens.push_back(toAdd1);
-		tokens.push_back(toAdd2);
-		row = row + 2;
-	}
-
 }
 
 std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player) {
@@ -736,19 +687,6 @@ void printToken(Token token) {
 		<< std::endl;
 }
 
-
-
-
-
-			}
-		}
-
-
-
-				
-
-
-
 void regexTester() {
 	//std::regex commandMoveTokenPlayerTotoken("([a-zA-Z]|[[:digit:]]+),[ ]*([a-zA-Z]|[[:digit:]]+),[ ]*(R|G|M|C),[ ]*([2-9]|1[0-3]?),[ ]*(J)?");
 	//std::regex commandMoveTokenPlayerToTokenCorrect("([a-zA-Z]|[[:digit:]]+),[ ]*([a-zA-Z]|[[:digit:]]+),[ ]*(R|G|M|C),[ ]*([2-9]|1[0-3]?)(,)?[ ]*(J)?");
@@ -758,7 +696,7 @@ void regexTester() {
 	std::regex& regex = commandMoveMultipleTokens;
 
 	std::cin.clear();
-	std::cin.ignore(INT_MAX, '\n');
+	std::cin.ignore(INT8_MAX, '\n');
 	while (true)
 	{
 		char testStr[50];
