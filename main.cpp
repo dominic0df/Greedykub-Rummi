@@ -239,9 +239,10 @@ void identifyColorByIndexWithCorrectUsageOneColumn(std::vector<Token::Usage>& us
 
 //Input: tokens and references for the output. Return value
 //Input: tokens and the usage conditions, references for the output. Return value is a success message
-bool searchForRows(std::vector<std::vector<Token>>& tokens, 
-	std::vector<std::vector<bool>> &processed, 
-	std::vector<std::vector<std::vector<Token>>> &foundRowsAllColors, 
+//Input: tokens and the usage conditions, references for the output. Return value is a success message
+bool searchForRows(std::vector<std::vector<Token>>& tokens,
+	std::vector<std::vector<bool>>& processed,
+	std::vector<std::vector<std::vector<Token>>>& foundRowsAllColors,
 	std::vector<Token::Usage>& usageConditions)
 {
 	for (int i = 0; i < NUMBER_OF_ROWS; i++)
@@ -250,148 +251,80 @@ bool searchForRows(std::vector<std::vector<Token>>& tokens,
 		std::shared_ptr<std::vector<Token>> row(new std::vector<Token>());
 		std::shared_ptr<std::vector<Token>> firstRow(new std::vector<Token>());
 		row = firstRow;
-		int shift;
-		if (i % 2 == 0) {
-			shift = 1;
-		}
-		else
-		{
-			shift = -1;
-		}
+		int shift=getValueToShiftBetweenTwoRows(i, shift);
 		for (int j = 0; j < NUMBER_OF_COLUMNS; j++)
 		{
-			int size;
-			if (row == nullptr)
-			{
-				size = 0;
-			}
-			else {
-				size = row->size();
-			}
+			int size = getSizeOfRow(row, size);
 			for (int condition = 0; condition < usageConditions.size(); condition++)
 			{
-				if (tokens[i][j].getUsage() == usageConditions[condition] && !processed[i][j]) {
-					if (size == 0) {
-						row->push_back(tokens[i][j]);
-						processed[i][j] = true;
-					}
-					else {
-						if (((*row)[row->size() - 1].getValue() == j) && (row->size() < 3))
-						{
-							row->push_back(tokens[i][j]);
-							processed[i][j] = true;
-						}
-						else
-						{
-							if (row->size() > 2) {
-								foundRows.push_back(*row);
-							}
-							else
-							{
-								if (row->size() == 2)
-								{
-									processed[i][j - 2] = false;
-									processed[i][j - 3] = false;
-								}
-								else
-								{
-									if (row->size() == 1)
-									{
-										processed[i][j - 2] = false;
-									}
-								}
-							}
-							std::shared_ptr<std::vector<Token>> nextRow(new std::vector<Token>());
-							row = nextRow;
-							row->push_back(tokens[i][j]);
-							processed[i][j] = true;
-						}
-					}
-				}
-				else {
-					if (tokens[i + shift][j].getUsage() == usageConditions[condition] && !processed[i + shift][j]) {
-						if (size == 0) {
-							row->push_back(tokens[i + shift][j]);
-							processed[i + shift][j] = true;
-						}
-						else {
-							if (((*row)[row->size() - 1].getValue() == j) && (row->size() < 3))
-							{
-								row->push_back(tokens[i + shift][j]);
-								processed[i + shift][j] = true;
-							}
-							else
-							{
-								if (row->size() > 2) {
-									foundRows.push_back(*row);
-								}
-								std::shared_ptr<std::vector<Token>> nextRow(new std::vector<Token>());
-								row = nextRow;
-								row->push_back(tokens[i][j]);
-								processed[i + shift][j] = true;
-							}
-						}
-					}
-					//processed auch true wenns nicht playground als else
+				if (!pushTokenToRowUntilRowSize3(tokens, i, 0, j, usageConditions, condition, processed, size, row, foundRows)) {
+					pushTokenToRowUntilRowSize3(tokens, i, shift, j, usageConditions, condition, processed, size, row, foundRows);
 				}
 			}
 
 		}
-		if (row->size()==1)
-		{
-			processed[i][NUMBER_OF_COLUMNS - 1] = false;
-		}
-		else
-		{
-			if (row->size()==2)
-			{
-				processed[i][NUMBER_OF_COLUMNS - 1] = false;
-				processed[i][NUMBER_OF_COLUMNS - 2] = false;
-			}
-			else
-			{
-				if (row->size() > 2) {
-					foundRows.push_back(*row);
-				}
-			}
-		}
-
-		int indexOfFoundRow = 0;
-		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
-		{
-			bool c=!processed[i][column];
-			if (c)
-			{
-				for (int condition = 0; condition < usageConditions.size(); condition++)
-				{
-					if (tokens[i][column].getUsage() == usageConditions[condition])
-					{
-						for (int numberOfRemainingRows = 0; numberOfRemainingRows < foundRows.size(); numberOfRemainingRows++)
-						{
-							int sizeOfVector = foundRows[numberOfRemainingRows].size();
-							//Token tokenToFillIn = foundRows[i][column];
-							int valueToFind = tokens[i][column].getValue() - 1;
-							int currentValue = foundRows[numberOfRemainingRows][(sizeOfVector - 1)].getValue();
-							if (currentValue == valueToFind) {
-								foundRows[numberOfRemainingRows].push_back(tokens[i][column]);
-								processed[i][column] = true;
-							}
-						}
-					}
-				}
-			}
-		}
+		correctFalseInputToProcessedAndPush(row, processed, i, foundRows);
+		findRemainingTokensToAddWithoutShift(processed, i, usageConditions, tokens, foundRows);
 		foundRowsAllColors.push_back(foundRows);
 	}
-	for (int i = 0; i < NUMBER_OF_ROWS; i++) {
-		int shift;
-		if (i % 2 == 0) {
-			shift = 1;
+	findRemainingTokensToAddShift(usageConditions, tokens, processed, foundRowsAllColors);
+	return checkSuccessOfSearchForRowsByUsage(usageConditions, tokens, processed);
+}
+
+void correctFalseInputToProcessedAndPush(std::shared_ptr<std::vector<Token>>& row, std::vector<std::vector<bool>>& processed, int i, std::vector<std::vector<Token>>& foundRows)
+{
+	if (row->size() == 1)
+	{
+		processed[i][NUMBER_OF_COLUMNS - 1] = false;
+	}
+	else
+	{
+		if (row->size() == 2)
+		{
+			processed[i][NUMBER_OF_COLUMNS - 1] = false;
+			processed[i][NUMBER_OF_COLUMNS - 2] = false;
 		}
 		else
 		{
-			shift = -1;
+			if (row->size() > 2) {
+				foundRows.push_back(*row);
+			}
 		}
+	}
+}
+
+void findRemainingTokensToAddWithoutShift(std::vector<std::vector<bool>>& processed, int i, std::vector<Token::Usage>& usageConditions, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& foundRows)
+{
+	int indexOfFoundRow = 0;
+	for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
+	{
+		if (!processed[i][column])
+		{
+			for (int condition = 0; condition < usageConditions.size(); condition++)
+			{
+				if (tokens[i][column].getUsage() == usageConditions[condition])
+				{
+					for (int numberOfRemainingRows = 0; numberOfRemainingRows < foundRows.size(); numberOfRemainingRows++)
+					{
+						int sizeOfVector = foundRows[numberOfRemainingRows].size();
+						//Token tokenToFillIn = foundRows[i][column];
+						int valueToFind = tokens[i][column].getValue() - 1;
+						int currentValue = foundRows[numberOfRemainingRows][(sizeOfVector - 1)].getValue();
+						if (currentValue == valueToFind) {
+							foundRows[numberOfRemainingRows].push_back(tokens[i][column]);
+							processed[i][column] = true;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void findRemainingTokensToAddShift(std::vector<Token::Usage>& usageConditions, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::vector<Token>>>& foundRowsAllColors)
+{
+	for (int i = 0; i < NUMBER_OF_ROWS; i++) {
+		int shift = getValueToShiftBetweenTwoRows(i, shift);
 		for (int column = 0; column < NUMBER_OF_COLUMNS; column++) {
 			for (int condition = 0; condition < usageConditions.size(); condition++)
 			{
@@ -412,6 +345,67 @@ bool searchForRows(std::vector<std::vector<Token>>& tokens,
 			}
 		}
 	}
+}
+
+bool pushTokenToRowUntilRowSize3(std::vector<std::vector<Token>>& tokens, int i, int shift, int j, std::vector<Token::Usage>& usageConditions, int condition, std::vector<std::vector<bool>>& processed, int size, std::shared_ptr<std::vector<Token>>& row, std::vector<std::vector<Token>>& foundRows)
+{
+	bool tokenFullfillsCondition=tokens[i + shift][j].getUsage() == usageConditions[condition] && !processed[i + shift][j];
+	if (tokenFullfillsCondition) {
+		if (size == 0) {
+			row->push_back(tokens[i + shift][j]);
+			processed[i + shift][j] = true;
+		}
+		else {
+			if (((*row)[row->size() - 1].getValue() == j) && (row->size() < 3))
+			{
+				row->push_back(tokens[i + shift][j]);
+				processed[i + shift][j] = true;
+			}
+			else
+			{
+				if (row->size() > 2) {
+					foundRows.push_back(*row);
+				}
+				else
+				{
+					if (row->size() == 2)
+					{
+						processed[i + shift][j - 2] = false;
+						processed[i + shift][j - 3] = false;
+					}
+					else
+					{
+						if (row->size() == 1)
+						{
+							processed[i + shift][j - 2] = false;
+						}
+					}
+				}
+				std::shared_ptr<std::vector<Token>> nextRow(new std::vector<Token>());
+				row = nextRow;
+				row->push_back(tokens[i + shift][j]);
+				processed[i + shift][j] = true;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+int& getSizeOfRow(std::shared_ptr<std::vector<Token>>& row, int& size)
+{
+	if (row == nullptr)
+	{
+		size = 0;
+	}
+	else {
+		size = row->size();
+	}
+	return size;
+}
+
+bool checkSuccessOfSearchForRowsByUsage(std::vector<Token::Usage>& usageConditions, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<bool>>& processed)
+{
 	for (int i = 0; i < NUMBER_OF_ROWS; i++) {
 		for (int j = 0; j < NUMBER_OF_COLUMNS; j++) {
 			for (int condition = 0; condition < usageConditions.size(); condition++)
@@ -423,6 +417,18 @@ bool searchForRows(std::vector<std::vector<Token>>& tokens,
 		}
 	}
 	return true;
+}
+
+int& getValueToShiftBetweenTwoRows(int i, int& shift)
+{
+	if (i % 2 == 0) {
+		shift = 1;
+	}
+	else
+	{
+		shift = -1;
+	}
+	return shift;
 }
 
 std::vector<std::vector<Token>> searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens) {

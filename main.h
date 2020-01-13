@@ -75,5 +75,13 @@ void swapValuesOfTwoTokens(Token& token1, Token& token2);
 std::vector<std::vector<Token>> getPlaygroundToDisplay();
 
 bool searchForRows(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<bool>> &processed, std::vector<std::vector<std::vector<Token>>> &foundRowsAllColors, std::vector<Token::Usage>& usageConditions);
+int& getValueToShiftBetweenTwoRows(int i, int& shift);
+bool checkSuccessOfSearchForRowsByUsage(std::vector<Token::Usage>& usageConditions, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<bool>>& processed);
+int& getSizeOfRow(std::shared_ptr<std::vector<Token>>& row, int& size);
+bool pushTokenToRowUntilRowSize3(std::vector<std::vector<Token>>& tokens, int i, int shift, int j, std::vector<Token::Usage>& usageConditions, int condition, std::vector<std::vector<bool>>& processed, int size, std::shared_ptr<std::vector<Token>>& row, std::vector<std::vector<Token>>& foundRows);
+void findRemainingTokensToAddShift(std::vector<Token::Usage>& usageConditions, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::vector<Token>>>& foundRowsAllColors);
+void findRemainingTokensToAddWithoutShift(std::vector<std::vector<bool>>& processed, int i, std::vector<Token::Usage>& usageConditions, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& foundRows);
+void correctFalseInputToProcessedAndPush(std::shared_ptr<std::vector<Token>>& row, std::vector<std::vector<bool>>& processed, int i, std::vector<std::vector<Token>>& foundRows);
+
 
 std::vector<std::vector<Token>> searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens);
