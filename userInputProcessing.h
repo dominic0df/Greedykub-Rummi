@@ -9,7 +9,7 @@ void firstUserInteraction();
 
 void setPlayerInformation(std::vector<scoreEntry>& score, std::string& nameOfHumanPlayer);
 
-void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, bool& gameOn,
-	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
+void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer,
+	bool& gameOn, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 
 bool isNumber(const std::string& s);
