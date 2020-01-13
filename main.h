@@ -47,13 +47,23 @@ void testSearchForGroups(std::vector<std::vector<int>>& x, std::vector<std::vect
 
 void regexTester();
 
-void processCommandInput(std::string& command, Token::Usage player, std::vector<std::vector<Token>>& currentPlayground,
+void processCommandInput(std::string& command, Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer,
 	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 
 void splitCommandMoveSingleToken(std::string& command, int& fromRow, int& fromColumn, int& toRow, int& toColumn);
 
 void getRowAndColumnOfCommandEntry(std::string& commandEntry, int& row, int& column);
 
-void moveToken(int& fromRow, int& fromColumn, int& toRow, int& toColumn);
+void moveToken(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, int& fromRow, int& fromColumn, int& toRow, int& toColumn);
+
+void deleteTokenAndMoveElementsLeft(std::vector<Token>& tokensOfPlayer, int& columnOfElementToDelete);
+
+void insertTokenAndMoveElementsRight(std::vector<Token>& tokensOfPlayer, int& columnOfElementToInsert, int& toColumn);
+
+void insertTokenAndMoveElementsLeft(std::vector<Token>& tokensOfPlayer, int& columnOfElementToInsert, int& toColumn);
+
+void setValuesOfAnotherToken(Token& toBeModified, Token& toBeCopied);
+
+void swapValuesOfTwoTokens(Token& token1, Token& token2);
 
 std::vector<std::vector<Token>> getPlaygroundToDisplay();

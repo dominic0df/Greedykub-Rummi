@@ -383,15 +383,15 @@ void startGame() {
 	bool gameOn = true;
 	std::cin.clear();
 	std::cin.ignore(INT8_MAX, '\n');
+	std::vector<std::vector<Token>> currentPlayground = getPlaygroundToDisplay();
+	std::vector<Token> tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, Token::HUMAN_Player);
 	while (gameOn) {
-		std::vector<std::vector<Token>> currentPlayground = getPlaygroundToDisplay();
 		printMemoryStructure(currentPlayground, joker1, joker2);
-		std::vector<Token> tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, Token::HUMAN_Player);
 		showTokensOfPlayer(tokensOfPlayer, nameOfHumanPlayer);
 
 		//Achtung: Keine Referenz übergeben! -> Kopie -> currentPlayground
 		//std::vector<std::vector<Token>> currentPlayground;
-		makeMovePlayer(Token::Usage::HUMAN_Player, currentPlayground, gameOn, tokens, joker1, joker2);
+		makeMovePlayer(Token::Usage::HUMAN_Player, currentPlayground, tokensOfPlayer, gameOn, tokens, joker1, joker2);
 	}
 
 	/*
@@ -709,7 +709,7 @@ void regexTester() {
 	}
 }
 
-void processCommandInput(std::string& command, Token::Usage player, std::vector<std::vector<Token>>& currentPlayground,
+void processCommandInput(std::string& command, Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer,
 	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
 	std::regex commandMoveSingleToken("([a-zA-Z]|[[:digit:]]+[a-zA-Z])[ ]*>[ ]*([a-zA-Z]|[[:digit:]]+[a-zA-Z])");
 	std::regex commandMoveMultipleTokens("([a-zA-Z]|[[:digit:]]+[a-zA-Z])[ ]*-[ ]*([a-zA-Z]|[[:digit:]]+[a-zA-Z])[ ]*>[ ]*([a-zA-Z]|[[:digit:]]+[a-zA-Z]|\\+)");
@@ -721,7 +721,7 @@ void processCommandInput(std::string& command, Token::Usage player, std::vector<
 
 	if (std::regex_match(command, commandMoveSingleToken)) {
 		splitCommandMoveSingleToken(command, fromRow, fromColumn, toRow, toColumn);
-		moveToken(fromRow, fromColumn, toRow, toColumn);
+		moveToken(currentPlayground, tokensOfPlayer, fromRow, fromColumn, toRow, toColumn);
 	}
 	/*else if (std::regex_match(command, commandMoveMultipleTokens)) {
 		std::cout << "WRONG!";
@@ -749,7 +749,7 @@ void splitCommandMoveSingleToken(std::string& command, int& fromRow, int& fromCo
 void getRowAndColumnOfCommandEntry(std::string& commandEntry, int& row, int& column) {
 	// Bsp.: A (player)
 	if (commandEntry.size() == 1) {
-		row = -1; //-> User want to move Token from player
+		row = -1; //-> User want to move Token from/to player
 		column = ((int)commandEntry.at(0)) - LETTER_A_ASCII_NUMBER;
 	}
 
@@ -766,7 +766,7 @@ void getRowAndColumnOfCommandEntry(std::string& commandEntry, int& row, int& col
 	}
 }
 
-void moveToken(int& fromRow, int& fromColumn, int& toRow, int& toColumn) {
+void moveToken(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, int& fromRow, int& fromColumn, int& toRow, int& toColumn) {
 	// S -> Spielfeld		B -> Brett
 	// Step 1: Brett -> Brett (A > B) -> B: Tauschen der beiden Zahlen
 	// Step 2: Brett -> Spielfeld (A > 1C)  -> S: 1C liegt Karte?	-> JA B: Karten nach rechts verschieben, Karte von B nach S verschieben, B: Karten nach links verschieben
@@ -775,12 +775,117 @@ void moveToken(int& fromRow, int& fromColumn, int& toRow, int& toColumn) {
 	//																-> NEIN B: Karte von S nach B verschieben, S: Karten nach links verschieben 
 	// Step 4: Spielfeld -> Spielfeld (1C > 1D) ->	1D liegt Karte) -> JA B: Karten nach rechts verschieben, Karte von S nach S verschieben, S: Karten nach links verschieben 
 	//																-> NEIN B: Karte von S nach S verschieben, B: Karten nach links verschieben 
+	// row = -1 -> User want to move Token from/to player
 
 	std::cout << "Spielstein wird wie folgt verschoben: " << std::endl;
 	std::cout << "Von (Reihe): <" << fromRow << ">" << std::endl;
 	std::cout << "Von (Spalte): <" << fromColumn << ">" << std::endl;
 	std::cout << "Nach (Reihe): <" << toRow << ">" << std::endl;
 	std::cout << "Nach (Spalte): <" << toColumn << ">" << std::endl;
+
+	bool fromValuesValid = false;
+	// check from value (currently on board of the player)
+	if (fromRow == -1) {
+		if (fromColumn >= tokensOfPlayer.size()) {
+			std::cout << "An der angebenen Stelle zur Spielstein-Entnahme liegt kein Spielstein vor! -> Wert zu groß!";
+		}
+		else {
+			fromValuesValid = true;
+		}
+	}
+	else {
+		// Playground
+	}
+	//Board 2 Board
+	if (fromValuesValid) {
+		if (toRow == -1) {
+			if (tokensOfPlayer.size() >= toColumn) {
+				// Insert Token on the left side: Ex.: 1 2 3 4 5 -> Command: D > B
+				if (fromColumn > toColumn) {
+					insertTokenAndMoveElementsRight(tokensOfPlayer, fromColumn, toColumn);
+				}
+				else if (fromColumn == toColumn) {
+					std::cout << "Gebe bitte 2 unterschiedliche Positionen zum Verschieben an!";
+				}
+				// Insert Token on the right side: Ex.: 1 2 3 4 5 -> Command: B > D
+				else {
+					insertTokenAndMoveElementsLeft(tokensOfPlayer, fromColumn, toColumn);
+				}
+				//deleteTokenAndMoveElementsLeft(tokensOfPlayer, fromColumn);
+			}
+			// Insert Token at last position (empty) of board: Ex.: 1 2 3 4 -> Command: B > E
+			/*else if (tokensOfPlayer.size() == toColumn) {
+				tokensOfPlayer[fromColumn].setColumn(tokensOfPlayer.size());
+				tokensOfPlayer.push_back(tokensOfPlayer[fromColumn]);
+				deleteTokenAndMoveElementsLeft(tokensOfPlayer, fromColumn);
+			}*/
+			else {
+				std::cout << "Es kann nur an der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
+			}
+		}
+	}
+}
+
+/*void deleteTokenAndMoveElementsLeft(std::vector<Token>& tokensOfPlayer, int& columnOfElementToDelete) {
+	for (int column = columnOfElementToDelete; column < tokensOfPlayer.size() - 2; column++)
+	{
+		setValuesOfAnotherToken(tokensOfPlayer.at(column), tokensOfPlayer.at(column + 1));
+	}
+}*/
+
+void insertTokenAndMoveElementsRight(std::vector<Token>& tokensOfPlayer, int& columnOfElementToInsert, int& toColumn) {
+	for (int column = columnOfElementToInsert; column != toColumn; column--)
+	{
+		swapValuesOfTwoTokens(tokensOfPlayer.at(column), tokensOfPlayer.at(column - 1));
+	}
+}
+
+void insertTokenAndMoveElementsLeft(std::vector<Token>& tokensOfPlayer, int& columnOfElementToInsert, int& toColumn) {
+	for (int column = columnOfElementToInsert; column != toColumn - 1; column++)
+	{
+		swapValuesOfTwoTokens(tokensOfPlayer.at(column), tokensOfPlayer.at(column + 1));
+	}
+}
+
+void setValuesOfAnotherToken(Token& toBeModified, Token& toBeCopied) {
+	toBeModified.setColor(toBeCopied.getColor());
+	toBeModified.setValue(toBeCopied.getValue());
+	toBeModified.setUsage(toBeCopied.getUsage());
+	//toBeModified.setPositionPlayerBoard(toBeCopied.getPositionPlayerBoard());
+	toBeModified.setColumn(toBeCopied.getColumn());
+	toBeModified.setRow(toBeCopied.getRow());
+	toBeModified.setColumnPlayground(toBeCopied.getColumnPlayground());
+	toBeModified.setRowPlayground(toBeCopied.getRowPlayground());
+}
+
+void swapValuesOfTwoTokens(Token& token1, Token& token2) {
+
+	Token::Color color = token1.getColor();
+	int value = token1.getValue();
+	Token::Usage usage = token1.getUsage();
+	//int positionPlayerBoard = token1.getPositionPlayerBoard();
+	int column = token1.getColumn();
+	int row = token1.getRow();
+	int columnPlayground = token1.getColumnPlayground();
+	int rowPlayground = token1.getRowPlayground();
+
+	token1.setColor(token2.getColor());
+	token1.setValue(token2.getValue());
+	token1.setUsage(token2.getUsage());
+	//token1.setPositionPlayerBoard(token2.getPositionPlayerBoard());
+	token1.setColumn(token2.getColumn());
+	token1.setRow(token2.getRow());
+	token1.setColumnPlayground(token2.getColumnPlayground());
+	token1.setRowPlayground(token2.getRowPlayground());
+
+	token2.setColor(color);
+	token2.setValue(value);
+	token2.setUsage(usage);
+	//token2.setPositionPlayerBoard(positionPlayerBoard);
+	token2.setColumn(column);
+	token2.setRow(row);
+	token2.setColumnPlayground(columnPlayground);
+	token2.setRowPlayground(rowPlayground);
 }
 
 std::vector<std::vector<Token>> getPlaygroundToDisplay() {

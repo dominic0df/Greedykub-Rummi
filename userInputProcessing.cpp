@@ -47,7 +47,7 @@ void setPlayerInformation(std::vector<scoreEntry>& score, std::string& nameOfHum
 	//std::cout << "Length: " << score.size() << std::endl;
 }
 
-void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, bool& gameOn,
+void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, bool& gameOn,
 	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
 
 	std::string selection = showSelectMenuMove();
@@ -86,13 +86,13 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 			break;
 		default:
 			std::cout << UNAVAILABLE_OPTION_CHOOSED << std::endl;
-			makeMovePlayer(player, currentPlayground, gameOn, tokens, joker1, joker2);
+			makeMovePlayer(player, currentPlayground, tokensOfPlayer, gameOn, tokens, joker1, joker2);
 			break;
 		}
 	}
 	else {
 		//checkRegex
-		processCommandInput(selection, player, currentPlayground, tokens, joker1, joker2);
+		processCommandInput(selection, player, currentPlayground, tokensOfPlayer, tokens, joker1, joker2);
 		std::cout << "Check Regex";
 	}
 }
