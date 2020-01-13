@@ -1016,6 +1016,47 @@ void moveToken(std::vector<std::vector<Token>>& currentPlayground, std::vector<T
 			tokensOfPlayer.pop_back();
 		}
 	}
+
+	// Playground 2 Playground
+	if (fromValuesValid && fromRow != -1 && toRow != -1) {
+		if (currentPlayground.size() < toRow) {
+			std::cout << "Es kann nicht nach der letzten Zeile eingefuegt werden! -> Gebe zum Einfuegen in der letzte Zeile, deren Index an!";
+		}
+		else {
+			if (currentPlayground.size() > toRow) {
+				if (currentPlayground[toRow].size() >= toColumn) {
+					// Add Token as last element Ex.: insert 5
+					// Insert Token on the left side: Ex.: 1 2 6 7 5 -> Command: E > ...
+					currentPlayground[toRow].push_back(currentPlayground[fromRow][fromColumn]);
+					if (currentPlayground[toRow].size() - 1 > toColumn) {
+						insertTokenAndMoveElementsRight(currentPlayground[toRow], currentPlayground[toRow].size() - 1, toColumn);
+					}
+				}
+				else {
+					std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
+				}
+			}
+			else if (currentPlayground.size() == toRow) {
+				if (toColumn == 0) {
+					std::vector<Token> toAdd;
+					toAdd.push_back(currentPlayground[fromRow][fromColumn]);
+					currentPlayground.push_back(toAdd);
+				}
+				else {
+					std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
+				}
+			}
+			// Delete from playground -> move Token to last element -> delete last Element
+			if (currentPlayground[fromRow].size() != fromColumn - 1) {
+				insertTokenAndMoveElementsLeft(currentPlayground[fromRow], fromColumn, currentPlayground[fromRow].size());
+			}
+			currentPlayground[fromRow].pop_back();
+			// delete empty Row, if row is before last row
+			if (currentPlayground[fromRow].empty() && currentPlayground.size() - 1 == fromRow) {
+				currentPlayground.pop_back();
+			}
+		}
+	}
 }
 
 /*void deleteTokenAndMoveElementsLeft(std::vector<Token>& tokensOfPlayer, int& columnOfElementToDelete) {
