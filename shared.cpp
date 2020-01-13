@@ -1,14 +1,16 @@
 #include "shared.h"
 
-Token::Token(Token::Color newColor, int newValue, Token::Usage currentLocation, std::string currentPosition, int memoryColumn, int memoryRow)
+Token::Token(Token::Color newColor, int newValue, Token::Usage currentLocation, int currentPosition,
+	int memoryColumn, int memoryRow, int currentColumnPlayground, int currentRowPlayground)
 {
 	color = newColor;
 	value = newValue;
 	usage = currentLocation;
-	position = currentPosition;
+	positionPlayerBoard = currentPosition;
 	column = memoryColumn;
 	row = memoryRow;
-
+	columnPlayground = currentColumnPlayground;
+	rowPlayground = currentRowPlayground;
 }
 
 std::string Token::getTerminalColor()
@@ -45,9 +47,9 @@ Token::Usage& Token::getUsage()
 	return usage;
 }
 
-std::string& Token::getPosition()
+int& Token::getPositionPlayerBoard()
 {
-	return position;
+	return positionPlayerBoard;
 }
 
 int& Token::getColumn() {
@@ -56,6 +58,14 @@ int& Token::getColumn() {
 
 int& Token::getRow() {
 	return row;
+}
+
+int& Token::getColumnPlayground() {
+	return columnPlayground;
+}
+
+int& Token::getRowPlayground() {
+	return rowPlayground;
 }
 
 void Token::setColor(Token::Color newColor)
@@ -73,9 +83,9 @@ void Token::setUsage(Usage newUsage)
 	usage = newUsage;
 }
 
-void Token::setPosition(std::string newPosition)
+void Token::setPositionPlayerBoard(int newPosition)
 {
-	position = newPosition;
+	positionPlayerBoard = newPosition;
 }
 
 void Token::setColumn(int memoryColumn) {
@@ -84,6 +94,14 @@ void Token::setColumn(int memoryColumn) {
 
 void Token::setRow(int memoryRow) {
 	row = memoryRow;
+}
+
+void Token::setColumnPlayground(int newColumnPlayground) {
+	columnPlayground = newColumnPlayground;
+}
+
+void Token::setRowPlayground(int currentRowPlayground) {
+	rowPlayground = currentRowPlayground;
 }
 
 
@@ -105,4 +123,21 @@ void rtrim(std::string& s) {
 void trim(std::string& s) {
 	ltrim(s);
 	rtrim(s);
+}
+
+char indexToAscii(int index) {
+	index = index + LETTER_A_ASCII_NUMBER;
+	if (index >= 91) {
+		index = index + 6;	//skip special Characters
+	}
+	return index;
+}
+
+int asciiToIndex(char asciiValue) {
+	int index = (int)asciiValue;
+	if (index >= 97) {
+		index = index - 6;
+	}
+	index = index - LETTER_A_ASCII_NUMBER;
+	return index;
 }

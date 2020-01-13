@@ -32,7 +32,7 @@ void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1
 
 std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player);
 
-void showTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player);
+void showTokensOfPlayer(std::vector<Token> tokensOfPlayer, std::string nameOfHumanPlayer);
 
 void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2,
 	Token::Usage drawingPlayer, int amountOfTokens);

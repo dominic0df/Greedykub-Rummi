@@ -14,7 +14,9 @@ void firstUserInteraction() {
 	case 1:
 		//showGameManual();
 		//std::cout << "1 MANUAL";
-		regexTester();
+		//regexTester();
+		std::cout << "Implementierung ausstehend!";
+		firstUserInteraction();
 		break;
 	case 2:
 		startGame();
