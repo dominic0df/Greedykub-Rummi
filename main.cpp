@@ -10,7 +10,7 @@ int main()
 	Token joker2(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, -1, -1, -1, -1, -1);
 	setStartingCondition(tokens, joker1, joker2);
 	printMemoryStructure(tokens, joker1, joker2);
-	std::vector<std::vector<std::map < Token::Color, int >>> x = searchForGroups(tokens);
+	//std::vector<std::vector<std::map < Token::Color, int >>> x = searchForGroups(tokens);
 	firstUserInteraction();
 }
 
@@ -52,14 +52,14 @@ void testSearchForGroups(std::vector<std::vector<std::vector<int>>>& x, std::vec
 	}
 }
 
-bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::map < Token::Color, int >>> &foundGroupsAllColumns)
+bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::map < Token::Color, int >>>& foundGroupsAllColumns)
 {
 	int remainingTokens = 0;
 	for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
 	{
 		std::vector<std::map<Token::Color, int>>foundGroups;
 		std::map<int, Token::Color> indexWithColor;
-		std::map<Token::Color,int> numberOfEachColor;
+		std::map<Token::Color, int> numberOfEachColor;
 		std::set<int> processed;
 		for (int j = 0; j < NUMBER_OF_ROWS; j++)
 		{
@@ -100,7 +100,7 @@ bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::v
 				{
 					if (numberOfRemainingColors == indexWithColor.size())
 					{
-						for (std::map<Token::Color, int>::iterator color = numberOfEachColor.begin(); color!= numberOfEachColor.end(); ++color)
+						for (std::map<Token::Color, int>::iterator color = numberOfEachColor.begin(); color != numberOfEachColor.end(); ++color)
 						{
 							if (newGroup->size() == 0 && nextGroup->size() > 0)
 							{
@@ -111,22 +111,22 @@ bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::v
 								if (valueToAdd != indexWithColor.end()) {
 									bool colorWithIndexProcessed = processed.find(valueToAdd->first) != processed.end();
 									if (!colorWithIndexProcessed) {
-											bool colorInNewGroup = newGroup->find(valueToAdd->second) != newGroup->end();
-												if (!colorInNewGroup) {
-													processed.insert(valueToAdd->first);
-														newGroup->insert(std::pair<Token::Color, int>(valueToAdd->second, valueToAdd->first));
-														numberOfRemainingColors--;
-														numberOfEachColor[valueToAdd->second] = numberOfEachColor[valueToAdd->second] - 1;
-														if (newGroup->size() > 2)
-														{
-															foundGroups.push_back(*newGroup);
-															if (numberOfRemainingColors > 2)
-															{
-																newGroup = nextGroup;
-															}
-														}
+										bool colorInNewGroup = newGroup->find(valueToAdd->second) != newGroup->end();
+										if (!colorInNewGroup) {
+											processed.insert(valueToAdd->first);
+											newGroup->insert(std::pair<Token::Color, int>(valueToAdd->second, valueToAdd->first));
+											numberOfRemainingColors--;
+											numberOfEachColor[valueToAdd->second] = numberOfEachColor[valueToAdd->second] - 1;
+											if (newGroup->size() > 2)
+											{
+												foundGroups.push_back(*newGroup);
+												if (numberOfRemainingColors > 2)
+												{
+													newGroup = nextGroup;
 												}
+											}
 										}
+									}
 								}
 							}
 						}
@@ -213,7 +213,7 @@ bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::v
 		remainingTokens = remainingTokens + numberOfRemainingColors;
 		foundGroupsAllColumns.push_back(foundGroups);
 	}
-	if (remainingTokens==0)
+	if (remainingTokens == 0)
 	{
 		return true;
 	}
@@ -224,9 +224,9 @@ bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::v
 }
 
 //Input: tokens and references for the output. Return value
-bool searchForRows(std::vector<std::vector<Token>>& tokens, 
-	std::vector<std::vector<bool>> &processed, 
-	std::vector<std::vector<std::vector<Token>>> &foundRowsAllColors)
+bool searchForRows(std::vector<std::vector<Token>>& tokens,
+	std::vector<std::vector<bool>>& processed,
+	std::vector<std::vector<std::vector<Token>>>& foundRowsAllColors)
 {
 	for (int i = 0; i < NUMBER_OF_ROWS; i++)
 	{
@@ -399,12 +399,12 @@ bool searchForRows(std::vector<std::vector<Token>>& tokens,
 
 std::vector<std::vector<Token>> searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens) {
 	std::vector<std::vector<std::map < Token::Color, int >>> groups;
-	bool allTokensInAGroup=searchForGroups(tokens, groups);
+	bool allTokensInAGroup = searchForGroups(tokens, groups);
 	std::vector<std::vector<bool>> processed(
 		NUMBER_OF_ROWS,
 		std::vector<bool>(NUMBER_OF_COLUMNS, false));
 	std::vector<std::vector<std::vector<Token>>> rows;
-	bool allTokensInARow=searchForRows(tokens,processed,rows);
+	bool allTokensInARow = searchForRows(tokens, processed, rows);
 	for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
 		for (int j = 0; j < NUMBER_OF_ROWS; j++) {
 			if (processed[j][i])
@@ -414,13 +414,13 @@ std::vector<std::vector<Token>> searchForGroupsAndRows(std::vector<std::vector<T
 					std::map < Token::Color, int >::iterator it = groups[i][groupsOfColumn].find(tokens[j][i].getColor());
 					if (it != groups[i][groupsOfColumn].end())
 					{
-						if (groups[i][groupsOfColumn].size()==4)
+						if (groups[i][groupsOfColumn].size() == 4)
 						{
 							groups[i][groupsOfColumn].erase(it);
 						}
 						else
 						{
-							
+
 						}
 					}
 				}
@@ -882,13 +882,13 @@ void getRowAndColumnOfCommandEntry(std::string& commandEntry, int& row, int& col
 
 	// Bsp.: 1B (playground)
 	if (commandEntry.size() == 2) {
-		row = std::stoi(commandEntry.substr(0, 1)) - 1;
+		row = std::stoi(commandEntry.substr(0, 1));
 		column = ((int)commandEntry.at(1)) - LETTER_A_ASCII_NUMBER;
 	}
 
 	// Bsp.: 10B (playground)
 	if (commandEntry.size() == 3) {
-		row = std::stoi(commandEntry.substr(0, 2)) - 1;
+		row = std::stoi(commandEntry.substr(0, 2));
 		column = ((int)commandEntry.at(2)) - LETTER_A_ASCII_NUMBER;
 	}
 }
@@ -914,41 +914,72 @@ void moveToken(std::vector<std::vector<Token>>& currentPlayground, std::vector<T
 	// check from value (currently on board of the player)
 	if (fromRow == -1) {
 		if (fromColumn >= tokensOfPlayer.size()) {
-			std::cout << "An der angebenen Stelle zur Spielstein-Entnahme liegt kein Spielstein vor! -> Wert zu groß!";
+			std::cout << "An der angebenen Stelle zur Spielstein-Entnahme liegt kein Spielstein vor!";
 		}
 		else {
 			fromValuesValid = true;
 		}
 	}
 	else {
-		// Playground
+		if (fromRow >= currentPlayground.size()) {
+			std::cout << "An der angebenen Stelle zur Spielstein-Entnahme liegt kein Spielstein vor!";
+		}
+		else if (fromColumn >= currentPlayground[fromRow].size()) {
+			std::cout << "An der angebenen Stelle zur Spielstein-Entnahme liegt kein Spielstein vor!";
+		}
+		else {
+			fromValuesValid = true;
+		}
 	}
 	//Board 2 Board
-	if (fromValuesValid) {
-		if (toRow == -1) {
-			if (tokensOfPlayer.size() >= toColumn) {
-				// Insert Token on the left side: Ex.: 1 2 3 4 5 -> Command: D > B
-				if (fromColumn > toColumn) {
-					insertTokenAndMoveElementsRight(tokensOfPlayer, fromColumn, toColumn);
-				}
-				else if (fromColumn == toColumn) {
-					std::cout << "Gebe bitte 2 unterschiedliche Positionen zum Verschieben an!";
-				}
-				// Insert Token on the right side: Ex.: 1 2 3 4 5 -> Command: B > D
-				else {
-					insertTokenAndMoveElementsLeft(tokensOfPlayer, fromColumn, toColumn);
-				}
-				//deleteTokenAndMoveElementsLeft(tokensOfPlayer, fromColumn);
+	if (fromValuesValid && fromRow == -1 && toRow == -1) {
+
+		if (tokensOfPlayer.size() >= toColumn) {
+			// Insert Token on the left side: Ex.: 1 2 3 4 5 -> Command: D > B
+			if (fromColumn > toColumn) {
+				insertTokenAndMoveElementsRight(tokensOfPlayer, fromColumn, toColumn);
 			}
-			// Insert Token at last position (empty) of board: Ex.: 1 2 3 4 -> Command: B > E
-			/*else if (tokensOfPlayer.size() == toColumn) {
-				tokensOfPlayer[fromColumn].setColumn(tokensOfPlayer.size());
-				tokensOfPlayer.push_back(tokensOfPlayer[fromColumn]);
-				deleteTokenAndMoveElementsLeft(tokensOfPlayer, fromColumn);
-			}*/
+			else if (fromColumn == toColumn) {
+				std::cout << "Gebe bitte 2 unterschiedliche Positionen zum Verschieben an!";
+			}
+			// Insert Token on the right side: Ex.: 1 2 3 4 5 -> Command: B > D
 			else {
-				std::cout << "Es kann nur an der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
+				insertTokenAndMoveElementsLeft(tokensOfPlayer, fromColumn, toColumn);
 			}
+			//deleteTokenAndMoveElementsLeft(tokensOfPlayer, fromColumn);
+		}
+		// Insert Token at last position (empty) of board: Ex.: 1 2 3 4 -> Command: B > E
+		/*else if (tokensOfPlayer.size() == toColumn) {
+			tokensOfPlayer[fromColumn].setColumn(tokensOfPlayer.size());
+			tokensOfPlayer.push_back(tokensOfPlayer[fromColumn]);
+			deleteTokenAndMoveElementsLeft(tokensOfPlayer, fromColumn);
+		}*/
+		else {
+			std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
+		}
+	}
+	//Playground 2 Board
+	if (fromValuesValid && fromRow != -1 && toRow == -1) {
+		if (tokensOfPlayer.size() >= toColumn) {
+			// Add Token as last element Bsp: insert 5
+			// Insert Token on the left side: Ex.: 1 2 6 7 5 -> Command: E > ...
+			currentPlayground[fromRow][fromColumn].setPositionPlayerBoard(tokensOfPlayer.size());
+			tokensOfPlayer.push_back(currentPlayground[fromRow][fromColumn]);
+			if (tokensOfPlayer.size() - 1 > toColumn) {
+				insertTokenAndMoveElementsRight(tokensOfPlayer, tokensOfPlayer.size() - 1, toColumn);
+			}
+			// Delete from playground -> move Token to last element -> delete last Element
+			if (currentPlayground[fromRow].size() != fromColumn - 1) {
+				insertTokenAndMoveElementsLeft(currentPlayground[fromRow], fromColumn, currentPlayground[fromRow].size());
+			}
+			currentPlayground[fromRow].pop_back();
+			// delete empty Row, if row is before last row
+			if (currentPlayground[fromRow].empty() && currentPlayground.size() - 1 == fromRow) {
+				currentPlayground.pop_back();
+			}
+		}
+		else {
+			std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
 		}
 	}
 }
@@ -960,14 +991,14 @@ void moveToken(std::vector<std::vector<Token>>& currentPlayground, std::vector<T
 	}
 }*/
 
-void insertTokenAndMoveElementsRight(std::vector<Token>& tokensOfPlayer, int& columnOfElementToInsert, int& toColumn) {
+void insertTokenAndMoveElementsRight(std::vector<Token>& tokensOfPlayer, int columnOfElementToInsert, int toColumn) {
 	for (int column = columnOfElementToInsert; column != toColumn; column--)
 	{
 		swapValuesOfTwoTokens(tokensOfPlayer.at(column), tokensOfPlayer.at(column - 1));
 	}
 }
 
-void insertTokenAndMoveElementsLeft(std::vector<Token>& tokensOfPlayer, int& columnOfElementToInsert, int& toColumn) {
+void insertTokenAndMoveElementsLeft(std::vector<Token>& tokensOfPlayer, int columnOfElementToInsert, int toColumn) {
 	for (int column = columnOfElementToInsert; column != toColumn - 1; column++)
 	{
 		swapValuesOfTwoTokens(tokensOfPlayer.at(column), tokensOfPlayer.at(column + 1));
@@ -1037,6 +1068,15 @@ std::vector<std::vector<Token>> getPlaygroundToDisplay() {
 	toAdd2.push_back(token6);
 	toAdd2.push_back(token7);
 	playgroundBeforeMove.push_back(toAdd2);
+
+	std::vector<Token> toAdd3;
+	Token token8(Token::Color::CYAN, 9, Token::Usage::Playground, -1, 0, 4, 0, 2);
+	/*Token token9(Token::Color::RED, 9, Token::Usage::Playground, -1, 2, 4, 1, 2);
+	Token token10(Token::Color::YELLOW, 9, Token::Usage::Playground, -1, 4, 4, 2, 2);*/
+	toAdd3.push_back(token8);
+	//toAdd3.push_back(token9);
+	//toAdd3.push_back(token10);
+	playgroundBeforeMove.push_back(toAdd3);
 
 	return playgroundBeforeMove;
 }
