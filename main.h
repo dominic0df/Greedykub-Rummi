@@ -41,7 +41,7 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 
 void printToken(Token token);
 
-std::vector<std::vector<std::map < Token::Color, int >>> searchForGroups(std::vector<std::vector<Token>>& tokens);
+bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::map < Token::Color, int >>> &foundGroupsAllColumns);
 
 void testSearchForGroups(std::vector<std::vector<int>>& x, std::vector<std::vector<Token>>& tokens);
 
@@ -57,3 +57,7 @@ void getRowAndColumnOfCommandEntry(std::string& commandEntry, int& row, int& col
 void moveToken(int& fromRow, int& fromColumn, int& toRow, int& toColumn);
 
 std::vector<std::vector<Token>> getPlaygroundToDisplay();
+
+bool searchForRows(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<bool>> &processed, std::vector<std::vector<std::vector<Token>>> &foundRowsAllColors);
+
+std::vector<std::vector<Token>> searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens);
