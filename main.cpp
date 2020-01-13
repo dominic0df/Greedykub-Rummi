@@ -931,7 +931,11 @@ void moveToken(std::vector<std::vector<Token>>& currentPlayground, std::vector<T
 			fromValuesValid = true;
 		}
 	}
-	//Board 2 Board
+	if (toColumn >= NUMBER_OF_COLUMNS) {
+		std::cout << "Mehr als 13 Zahlen sind in einer Reihe nicht moeglich!";
+		fromValuesValid = false;
+	}
+	// Board 2 Board
 	if (fromValuesValid && fromRow == -1 && toRow == -1) {
 
 		if (tokensOfPlayer.size() >= toColumn) {
@@ -948,20 +952,14 @@ void moveToken(std::vector<std::vector<Token>>& currentPlayground, std::vector<T
 			}
 			//deleteTokenAndMoveElementsLeft(tokensOfPlayer, fromColumn);
 		}
-		// Insert Token at last position (empty) of board: Ex.: 1 2 3 4 -> Command: B > E
-		/*else if (tokensOfPlayer.size() == toColumn) {
-			tokensOfPlayer[fromColumn].setColumn(tokensOfPlayer.size());
-			tokensOfPlayer.push_back(tokensOfPlayer[fromColumn]);
-			deleteTokenAndMoveElementsLeft(tokensOfPlayer, fromColumn);
-		}*/
 		else {
 			std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
 		}
 	}
-	//Playground 2 Board
+	// Playground 2 Board
 	if (fromValuesValid && fromRow != -1 && toRow == -1) {
 		if (tokensOfPlayer.size() >= toColumn) {
-			// Add Token as last element Bsp: insert 5
+			// Add Token as last element Ex.: insert 5
 			// Insert Token on the left side: Ex.: 1 2 6 7 5 -> Command: E > ...
 			currentPlayground[fromRow][fromColumn].setPositionPlayerBoard(tokensOfPlayer.size());
 			tokensOfPlayer.push_back(currentPlayground[fromRow][fromColumn]);
@@ -980,6 +978,42 @@ void moveToken(std::vector<std::vector<Token>>& currentPlayground, std::vector<T
 		}
 		else {
 			std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
+		}
+	}
+	// Board 2 Playground
+	if (fromValuesValid && fromRow == -1 && toRow != -1) {
+		if (currentPlayground.size() < toRow) {
+			std::cout << "Es kann nicht nach der letzten Zeile eingefuegt werden! -> Gebe zum Einfuegen in der letzte Zeile, deren Index an!";
+		}
+		else {
+			if (currentPlayground.size() > toRow) {
+				if (currentPlayground[toRow].size() >= toColumn) {
+					// Add Token as last element Ex.: insert 5
+					// Insert Token on the left side: Ex.: 1 2 6 7 5 -> Command: E > ...
+					currentPlayground[toRow].push_back(tokensOfPlayer[fromColumn]);
+					if (currentPlayground[toRow].size() - 1 > toColumn) {
+						insertTokenAndMoveElementsRight(currentPlayground[toRow], currentPlayground[toRow].size() - 1, toColumn);
+					}
+				}
+				else {
+					std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
+				}
+			}
+			else if (currentPlayground.size() == toRow) {
+				if (toColumn == 0) {
+					std::vector<Token> toAdd;
+					toAdd.push_back(tokensOfPlayer[fromColumn]);
+					currentPlayground.push_back(toAdd);
+				}
+				else {
+					std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
+				}
+			}
+			// Delete from board -> move Token to last element -> delete last Element
+			if (tokensOfPlayer.size() != fromColumn - 1) {
+				insertTokenAndMoveElementsLeft(tokensOfPlayer, fromColumn, tokensOfPlayer.size());
+			}
+			tokensOfPlayer.pop_back();
 		}
 	}
 }
