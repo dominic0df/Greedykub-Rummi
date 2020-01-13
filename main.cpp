@@ -52,7 +52,7 @@ void testSearchForGroups(std::vector<std::vector<std::vector<int>>>& x, std::vec
 	}
 }
 
-bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::map < Token::Color, int >>> &foundGroupsAllColumns)
+bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::map < Token::Color, int >>> &foundGroupsAllColumns, std::vector<Token::Usage> &usageConditions)
 {
 	int remainingTokens = 0;
 	for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
@@ -63,9 +63,12 @@ bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::v
 		std::set<int> processed;
 		for (int j = 0; j < NUMBER_OF_ROWS; j++)
 		{
-			if (tokens[j][i].getUsage() == Token::Usage::Playground) //|| (field[i][j].location == "HandToPlayground"))
+			for (int condition = 0; condition < usageConditions.size(); condition++)
 			{
-				indexWithColor[j] = (Token::Color) tokens[j][i].getColor();
+				if (tokens[j][i].getUsage() == usageConditions[condition]) //|| (field[i][j].location == "HandToPlayground"))
+				{
+					indexWithColor[j] = (Token::Color) tokens[j][i].getColor();
+				}
 			}
 		}
 		for (std::map<int, Token::Color>::iterator iter = indexWithColor.begin(); iter != indexWithColor.end(); ++iter)
@@ -224,9 +227,11 @@ bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::v
 }
 
 //Input: tokens and references for the output. Return value
+//Input: tokens and the usage conditions, references for the output. Return value is a success message
 bool searchForRows(std::vector<std::vector<Token>>& tokens, 
 	std::vector<std::vector<bool>> &processed, 
-	std::vector<std::vector<std::vector<Token>>> &foundRowsAllColors)
+	std::vector<std::vector<std::vector<Token>>> &foundRowsAllColors, 
+	std::vector<Token::Usage>& usageConditions)
 {
 	for (int i = 0; i < NUMBER_OF_ROWS; i++)
 	{
@@ -252,79 +257,82 @@ bool searchForRows(std::vector<std::vector<Token>>& tokens,
 			else {
 				size = row->size();
 			}
-			if (tokens[i][j].getUsage() == Token::Usage::Playground && !processed[i][j]) {
-				if (size == 0) {
-					row->push_back(tokens[i][j]);
-					processed[i][j] = true;
-				}
-				else {
-					if (((*row)[row->size() - 1].getValue() == j) && (row->size() < 3))
-					{
-						row->push_back(tokens[i][j]);
-						processed[i][j] = true;
-					}
-					else
-					{
-						if (row->size() > 2) {
-							foundRows.push_back(*row);
-						}
-						else
-						{
-							if (row->size() == 2)
-							{
-								processed[i][j - 2] = false;
-								processed[i][j - 3] = false;
-							}
-							else
-							{
-								if (row->size() == 1)
-								{
-									processed[i][j - 2] = false;
-								}
-							}
-						}
-						std::shared_ptr<std::vector<Token>> nextRow(new std::vector<Token>());
-						row = nextRow;
-						row->push_back(tokens[i][j]);
-						processed[i][j] = true;
-					}
-				}
-			}
-			else {
-				if (tokens[i + shift][j].getUsage() == Token::Usage::Playground && !processed[i + shift][j]) {
+			for (int condition = 0; condition < usageConditions.size(); condition++)
+			{
+				if (tokens[i][j].getUsage() == usageConditions[condition] && !processed[i][j]) {
 					if (size == 0) {
-						row->push_back(tokens[i + shift][j]);
-						processed[i + shift][j] = true;
+						row->push_back(tokens[i][j]);
+						processed[i][j] = true;
 					}
 					else {
 						if (((*row)[row->size() - 1].getValue() == j) && (row->size() < 3))
 						{
-							row->push_back(tokens[i + shift][j]);
-							processed[i + shift][j] = true;
+							row->push_back(tokens[i][j]);
+							processed[i][j] = true;
 						}
 						else
 						{
 							if (row->size() > 2) {
 								foundRows.push_back(*row);
 							}
+							else
+							{
+								if (row->size() == 2)
+								{
+									processed[i][j - 2] = false;
+									processed[i][j - 3] = false;
+								}
+								else
+								{
+									if (row->size() == 1)
+									{
+										processed[i][j - 2] = false;
+									}
+								}
+							}
 							std::shared_ptr<std::vector<Token>> nextRow(new std::vector<Token>());
 							row = nextRow;
 							row->push_back(tokens[i][j]);
-							processed[i + shift][j] = true;
+							processed[i][j] = true;
 						}
 					}
 				}
-				//processed auch true wenns nicht playground als else
+				else {
+					if (tokens[i + shift][j].getUsage() == usageConditions[condition] && !processed[i + shift][j]) {
+						if (size == 0) {
+							row->push_back(tokens[i + shift][j]);
+							processed[i + shift][j] = true;
+						}
+						else {
+							if (((*row)[row->size() - 1].getValue() == j) && (row->size() < 3))
+							{
+								row->push_back(tokens[i + shift][j]);
+								processed[i + shift][j] = true;
+							}
+							else
+							{
+								if (row->size() > 2) {
+									foundRows.push_back(*row);
+								}
+								std::shared_ptr<std::vector<Token>> nextRow(new std::vector<Token>());
+								row = nextRow;
+								row->push_back(tokens[i][j]);
+								processed[i + shift][j] = true;
+							}
+						}
+					}
+					//processed auch true wenns nicht playground als else
+				}
 			}
 
 		}
-		if (row->size() == 1)
+		if (row->size()==1)
 		{
 			processed[i][NUMBER_OF_COLUMNS - 1] = false;
 		}
 		else
 		{
-			if (row->size() == 2)
+			if (row->size()==2)
 			{
 				processed[i][NUMBER_OF_COLUMNS - 1] = false;
 				processed[i][NUMBER_OF_COLUMNS - 2] = false;
@@ -340,20 +348,23 @@ bool searchForRows(std::vector<std::vector<Token>>& tokens,
 		int indexOfFoundRow = 0;
 		for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
 		{
-			bool c = !processed[i][column];
+			bool c=!processed[i][column];
 			if (c)
 			{
-				if (tokens[i][column].getUsage() == Token::Usage::Playground)
+				for (int condition = 0; condition < usageConditions.size(); condition++)
 				{
-					for (int numberOfRemainingRows = 0; numberOfRemainingRows < foundRows.size(); numberOfRemainingRows++)
+					if (tokens[i][column].getUsage() == usageConditions[condition])
 					{
-						int sizeOfVector = foundRows[numberOfRemainingRows].size();
-						//Token tokenToFillIn = foundRows[i][column];
-						int valueToFind = tokens[i][column].getValue() - 1;
-						int currentValue = foundRows[numberOfRemainingRows][(sizeOfVector - 1)].getValue();
-						if (currentValue == valueToFind) {
-							foundRows[numberOfRemainingRows].push_back(tokens[i][column]);
-							processed[i][column] = true;
+						for (int numberOfRemainingRows = 0; numberOfRemainingRows < foundRows.size(); numberOfRemainingRows++)
+						{
+							int sizeOfVector = foundRows[numberOfRemainingRows].size();
+							//Token tokenToFillIn = foundRows[i][column];
+							int valueToFind = tokens[i][column].getValue() - 1;
+							int currentValue = foundRows[numberOfRemainingRows][(sizeOfVector - 1)].getValue();
+							if (currentValue == valueToFind) {
+								foundRows[numberOfRemainingRows].push_back(tokens[i][column]);
+								processed[i][column] = true;
+							}
 						}
 					}
 				}
@@ -371,17 +382,20 @@ bool searchForRows(std::vector<std::vector<Token>>& tokens,
 			shift = -1;
 		}
 		for (int column = 0; column < NUMBER_OF_COLUMNS; column++) {
-			if (tokens[i][column].getUsage() == Token::Usage::Playground && !processed[i + shift][column]) {
-				for (int numberOfRemainingRowsShift = 0; numberOfRemainingRowsShift < foundRowsAllColors[i + shift].size(); numberOfRemainingRowsShift++)
-				{
-					int sizeOfVector = foundRowsAllColors[i + shift][numberOfRemainingRowsShift].size();
-					int currentValueShift = foundRowsAllColors[i + shift][numberOfRemainingRowsShift][(sizeOfVector - 1)].getValue();
-					//Token tokenToFillIn = foundRows[i][column];
-					int valueToFind = tokens[i][column].getValue() - 1;
-					int currentValue = foundRowsAllColors[i + shift][numberOfRemainingRowsShift][(sizeOfVector - 1)].getValue();
-					if (currentValue == valueToFind) {
-						foundRowsAllColors[i + shift][numberOfRemainingRowsShift].push_back(tokens[i][column]);
-						processed[i + shift][column] = true;
+			for (int condition = 0; condition < usageConditions.size(); condition++)
+			{
+				if (tokens[i][column].getUsage() == usageConditions[condition] && !processed[i + shift][column]) {
+					for (int numberOfRemainingRowsShift = 0; numberOfRemainingRowsShift < foundRowsAllColors[i + shift].size(); numberOfRemainingRowsShift++)
+					{
+						int sizeOfVector = foundRowsAllColors[i + shift][numberOfRemainingRowsShift].size();
+						int currentValueShift = foundRowsAllColors[i + shift][numberOfRemainingRowsShift][(sizeOfVector - 1)].getValue();
+						//Token tokenToFillIn = foundRows[i][column];
+						int valueToFind = tokens[i][column].getValue() - 1;
+						int currentValue = foundRowsAllColors[i + shift][numberOfRemainingRowsShift][(sizeOfVector - 1)].getValue();
+						if (currentValue == valueToFind) {
+							foundRowsAllColors[i + shift][numberOfRemainingRowsShift].push_back(tokens[i][column]);
+							processed[i + shift][column] = true;
+						}
 					}
 				}
 			}
@@ -389,8 +403,11 @@ bool searchForRows(std::vector<std::vector<Token>>& tokens,
 	}
 	for (int i = 0; i < NUMBER_OF_ROWS; i++) {
 		for (int j = 0; j < NUMBER_OF_COLUMNS; j++) {
-			if (tokens[i][j].getUsage() == Token::Usage::Playground && !processed[i][j]) {
-				return false;
+			for (int condition = 0; condition < usageConditions.size(); condition++)
+			{
+				if (tokens[i][j].getUsage() == usageConditions[condition] && !processed[i][j]) {
+					return false;
+				}
 			}
 		}
 	}
@@ -398,13 +415,16 @@ bool searchForRows(std::vector<std::vector<Token>>& tokens,
 }
 
 std::vector<std::vector<Token>> searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens) {
+	std::vector<Token::Usage> usageConditions = { Token::Usage::Playground, Token::Usage::Player1 };
 	std::vector<std::vector<std::map < Token::Color, int >>> groups;
-	bool allTokensInAGroup=searchForGroups(tokens, groups);
 	std::vector<std::vector<bool>> processed(
 		NUMBER_OF_ROWS,
 		std::vector<bool>(NUMBER_OF_COLUMNS, false));
 	std::vector<std::vector<std::vector<Token>>> rows;
-	bool allTokensInARow=searchForRows(tokens,processed,rows);
+
+	bool allTokensInAGroup=searchForGroups(tokens, groups, usageConditions);
+	bool allTokensInARow=searchForRows(tokens,processed,rows, usageConditions);
+
 	for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
 		for (int j = 0; j < NUMBER_OF_ROWS; j++) {
 			if (processed[j][i])
@@ -420,7 +440,26 @@ std::vector<std::vector<Token>> searchForGroupsAndRows(std::vector<std::vector<T
 						}
 						else
 						{
-							
+							for (int row = 0; row < rows[j].size(); row++)
+							{
+								/*for (std::vector<Token::Color>::iterator rowElement = rows[j][row].begin(); rowElement != rows[j][row].end(); ++rowElement)
+								{
+									if (rowElement->getValue() == j+1)
+									{
+										if (rowElement->getValue() == 0 && rows[j][row].size()>3)
+										{
+											rows[j][row].erase(rowElement]);
+										}
+										else
+										{
+											if ((rowElement == rows[j][row].size()-1) && (rows[j][row].size() > 3))
+											{
+
+											}
+										}
+									}
+								}*/
+							}
 						}
 					}
 				}
