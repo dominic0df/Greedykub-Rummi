@@ -1,18 +1,75 @@
 #include "computerOpponent.h"
-#include "shared.h"
 
-std::vector<std::vector<Token>> searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens) {
-    
-	std::vector<Token::Usage> usageConditions = { Token::Usage::Playground, Token::Usage::PC_Player_1 };
+//umbedingt searchForRows
+
+bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result) {
+	std::vector<Token::Usage> usageConditions = { Token::Usage::Playground, Token::Usage::Player1 };
 	std::vector<std::vector<std::map < Token::Color, int >>> groups;
 	std::vector<std::vector<bool>> processed(
 		NUMBER_OF_ROWS,
 		std::vector<bool>(NUMBER_OF_COLUMNS, false));
 	std::vector<std::vector<std::vector<Token>>> rows;
 
-	bool allTokensInAGroup=searchForGroups(tokens, groups, usageConditions);
-	bool allTokensInARow=searchForRows(tokens,processed,rows, usageConditions);
+	bool allTokensInAGroup = searchForGroups(tokens, groups, usageConditions);
+	bool allTokensInARow = searchForRows(tokens, processed, rows, usageConditions);
 
+	bool collisionSolved;
+	if (allTokensInAGroup && allTokensInARow)
+	{
+		collisionSolved = handlingOfCollisionsBetweenGroupsAndRows(processed, groups, tokens, rows);
+		if (collisionSolved)
+		{
+			concatinateResultsToASingleStructure(rows, result, groups, tokens);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		collisionSolved = handlingOfCollisionsBetweenGroupsAndRows(processed, groups, tokens, rows);
+		if (collisionSolved)
+		{
+			concatinateResultsToASingleStructure(rows, result, groups, tokens);
+			return true;
+		}
+		else
+		{
+			//if (true)
+			//{
+			//es existiert für jedes nicht enthaltene Element ein anderes Element, dass hinzugefügt werden kann
+			//}
+			return false;
+		}
+	}
+}
+
+void concatinateResultsToASingleStructure(std::vector<std::vector<std::vector<Token>>>& rows, std::vector<std::vector<Token>>& result, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens)
+{
+	//wird kopiert, kann man das ändern?
+	//add rows to result
+	for (int i = 0; i < NUMBER_OF_ROWS; i++) {
+		for (int j = 0; j < rows[i].size(); j++) {
+			result.push_back(rows[i][j]);
+		}
+	}
+	//add groups to result
+	for (int i = 0; i < NUMBER_OF_ROWS; i++) {
+		for (int j = 0; j < groups[i].size(); j++) {
+			std::vector<Token> group;
+			for (std::map<Token::Color, int>::iterator iter = groups[i][j].begin(); iter != groups[i][j].end(); ++iter)
+			{
+				group.push_back(tokens[i][iter->second]);
+			}
+			result.push_back(group);
+		}
+	}
+}
+
+bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::vector<Token>>>& rows)
+{
 	for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
 		for (int j = 0; j < NUMBER_OF_ROWS; j++) {
 			if (processed[j][i])
@@ -22,7 +79,7 @@ std::vector<std::vector<Token>> searchForGroupsAndRows(std::vector<std::vector<T
 					std::map < Token::Color, int >::iterator it = groups[i][groupsOfColumn].find(tokens[j][i].getColor());
 					if (it != groups[i][groupsOfColumn].end())
 					{
-						if (groups[i][groupsOfColumn].size()==4)
+						if (groups[i][groupsOfColumn].size() == 4)
 						{
 							groups[i][groupsOfColumn].erase(it);
 						}
@@ -30,87 +87,52 @@ std::vector<std::vector<Token>> searchForGroupsAndRows(std::vector<std::vector<T
 						{
 							for (int row = 0; row < rows[j].size(); row++)
 							{
-								/*for (std::vector<Token::Color>::iterator rowElement = rows[j][row].begin(); rowElement != rows[j][row].end(); ++rowElement)
+								for (int rowElement = 0; rowElement < rows[j][row].size(); rowElement++)
 								{
-									if (rowElement->getValue() == j+1)
+									if (rows[j][row][rowElement].getValue() == j + 1)//processed again?
 									{
-										if (rowElement->getValue() == 0 && rows[j][row].size()>3)
+										if (rows[j][row].size() > 3)
 										{
-											rows[j][row].erase(rowElement]);
+											if (rowElement == rows[j][row].size() - 1)
+											{
+												rows[j][row].pop_back();
+											}
+											else
+											{
+												if (rowElement == 0 && !rows[j][row].empty())
+												{
+													//std::swap(rows[j][row][rowElement], rows[j][row][rowElement]);
+													//rows[j][row].pop_back();
+													//rows[j][row].erase(rows[j][row].begin());
+													return false;
+												}
+												else
+												{
+													return false;
+													//Kollisionsbehandlung schwieriger Fall
+													//aus refactoreden Methoden bedienen falls noch Zeit bleibt
+												}
+											}
 										}
 										else
 										{
-											if ((rowElement == rows[j][row].size()-1) && (rows[j][row].size() > 3))
-											{
-
-											}
+											return false;
 										}
 									}
-								}*/
+									else
+										return false;
+								}
 							}
 						}
 					}
 				}
 			}
 		}
+
 	}
-    /*for (int j = 0; j < NUMBER_OF_ROWS; j++) {
-		for (int rowsOfColumn = 0; rowsOfColumn < rows[j].size(); rowsOfColumn++)
-		{
-			for (int indexInRow = 0; indexInRow < rows[j][rowsOfColumn].size(); indexInRow++)
-			{
-				if (groups[][])
-				{
-
-				}
-			}
-		}
-	}
-	for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
-	{
-		for (int groupsOfColumn = 0; groupsOfColumn < groups[i].size(); groupsOfColumn++)
-		{
-			for (std::map<Token::Color, int>::iterator iter = groups[i][groupsOfColumn].begin(); iter != groups[i][groupsOfColumn].end(); ++iter)
-			{
-
-			}
-		}
-	}
-
-	for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
-	{
-		std::vector<std::map<Token::Color, int>>foundGroups;
-		std::map<int, Token::Color> indexWithColor;
-		std::set<int> processed;
-		for (int j = 0; j < NUMBER_OF_ROWS; j++)
-		{
-			if (tokens[j][i].getUsage() == Token::Usage::Playground) //|| (field[i][j].location == "HandToPlayground"))
-			{
-				indexWithColor[j] = (Token::Color) tokens[j][i].getColor();
-			}
-		}
-	}*/
-
-
-	//default
-	return tokens;
+	return true;
 }
 
-
-    void testSearchForGroups(std::vector<std::vector<std::vector<int>>> & x, std::vector<std::vector<Token>> & tokens)
-    {
-        for (int i = 0; i < x.size(); i++)
-        {
-            for (int j = 0; j < x[i].size(); j++)
-            {
-
-                for (int color = 0; color < x[i][j].size(); color++)
-                {
-                    std::cout << "index" << i << ", " << color /*<< "has color" << tokens[i][color]*/ << std::endl;
-                }
-            }
-        }
-    }
 
 bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::map < Token::Color, int >>>& foundGroupsAllColumns, std::vector<Token::Usage>& usageConditions)
 {
@@ -179,7 +201,7 @@ bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::v
 				newGroup = nullptr;
 				//nicht geprüfter teil kleiner 5
 				//if (numberOfRemainingColors < 5)
-				notEqual=checkIfOnlyRepeatedElementsAreRemaining(indexWithColor, notEqual);
+				notEqual = checkIfOnlyRepeatedElementsAreRemaining(indexWithColor, notEqual);
 			}
 		}
 		addColorsToGroupsOfSize3(numberOfRemainingColors, foundGroups, indexWithColor, processed);
@@ -310,7 +332,7 @@ bool searchForRows(std::vector<std::vector<Token>>& tokens,
 		std::shared_ptr<std::vector<Token>> row(new std::vector<Token>());
 		std::shared_ptr<std::vector<Token>> firstRow(new std::vector<Token>());
 		row = firstRow;
-		int shift=getValueToShiftBetweenTwoRows(i, shift);
+		int shift = getValueToShiftBetweenTwoRows(i, shift);
 		for (int j = 0; j < NUMBER_OF_COLUMNS; j++)
 		{
 			int size = getSizeOfRow(row, size);
@@ -408,7 +430,7 @@ void findRemainingTokensToAddShift(std::vector<Token::Usage>& usageConditions, s
 
 bool pushTokenToRowUntilRowSize3(std::vector<std::vector<Token>>& tokens, int i, int shift, int j, std::vector<Token::Usage>& usageConditions, int condition, std::vector<std::vector<bool>>& processed, int size, std::shared_ptr<std::vector<Token>>& row, std::vector<std::vector<Token>>& foundRows)
 {
-	bool tokenFullfillsCondition=tokens[i + shift][j].getUsage() == usageConditions[condition] && !processed[i + shift][j];
+	bool tokenFullfillsCondition = tokens[i + shift][j].getUsage() == usageConditions[condition] && !processed[i + shift][j];
 	if (tokenFullfillsCondition) {
 		if (size == 0) {
 			row->push_back(tokens[i + shift][j]);

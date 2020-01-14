@@ -10,8 +10,7 @@ int main()
 	Token joker2(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, -1, -1, -1, -1, -1);
 	setStartingCondition(tokens, joker1, joker2);
 	printMemoryStructure(tokens, joker1, joker2);
-	std::vector<std::vector<Token>> result = searchForGroupsAndRows(tokens);*/
-
+	bool inputGeneratesCorrectOutput = searchForGroupsAndRows(tokens, result);*/
 	firstUserInteraction();
 }
 
