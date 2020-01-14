@@ -5,6 +5,14 @@
 #define SHARED_H
 
 
+const std::string ERROR_OCCURRED = "Ein Fehler im Programm ist aufgetreten!";
+const std::string WELCOME = "Herzlich Willkommen bei Rummikub!";
+const std::string MESSAGE_PLAYER_TO_START = "Folgender Spieler darf das Spiel beginnen: ";
+const std::string BOARD_FILLED = "Dein Brett ist voll -> du kannst keine neuen Spielsteine mehr aufnehmen. Lege Spielsteine auf dem Spielfeld ab!";
+
+const int VALUE_OF_JOKER = 30;
+const int TOTAL_AMOUNT_OF_TOKEN = 106;
+const int AMOUNT_OF_TOKENS_TO_DRAW_BEGINNING = 14;
 
 const int LETTER_A_ASCII_NUMBER = 65;
 const int NUMBER_OF_COLUMNS = 13;
