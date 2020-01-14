@@ -19,7 +19,7 @@ int determineIndexPlayerToStart(std::vector<playerAdministration>& score);
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 
-std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player);
+std::vector<Token> getTokensByUsage(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage usage);
 
 void showTokensOfPlayer(std::vector<Token> tokensOfPlayer, std::string nameOfHumanPlayer);
 
@@ -44,7 +44,7 @@ void getRowAndColumnOfCommandEntry(std::string& commandEntry, int& row, int& col
 
 void moveToken(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, int& fromRow, int& fromColumn, int& toRow, int& toColumn);
 
-bool& basicValidationOfRowAndColumn(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, int& fromRow, int& fromColumn, int& toRow, int& toColumn);
+bool basicValidationOfRowAndColumn(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, int& fromRow, int& fromColumn, int& toRow, int& toColumn);
 
 void moveTokenOnBoard(std::vector<Token>& tokensOfPlayer, int& fromColumn, int& toColumn);
 

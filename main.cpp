@@ -52,6 +52,7 @@ void startGame() {
 
 	dealTokens(playerMemory, tokens, joker1, joker2);
 
+	std::vector<std::vector<Token>> currentPlaygroundBeforeManipulations;
 	std::vector<std::vector<Token>> currentPlayground;
 	std::vector<Token> tokensOfPlayer;
 	bool gameOn = true;
@@ -67,17 +68,17 @@ void startGame() {
 				player = 0;
 			}
 
-			std::vector<std::vector<Token>> currentPlaygroundBeforeManipulations = currentPlayground;
+			//currentPlaygroundBeforeManipulations = currentPlayground;
+			bool pcOpponentSuccessfull = true;
+
 			if (player >= Token::Usage::PC_Player_1) {
 				currentPlayground.clear();
-				//bool successfull=...
-				
+				bool pcOpponentSuccessfull; // gesetzt durch Algo
+				//------------------PC GEGNER CODE--------------------------------------------------
 			}
 			else {
 				roundOn = true;
-				// -> keine Referenz -> Kopie! 
-				std::vector<std::vector<Token>> currentPlaygroundBeforeManipulations = currentPlayground;
-				tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, (Token::Usage) player);
+				tokensOfPlayer = getTokensByUsage(tokens, joker1, joker2, (Token::Usage) player);
 
 				while (roundOn) {
 					// while round on -> 30, then variable first move board -> playground
@@ -88,17 +89,21 @@ void startGame() {
 					makeMovePlayer((Token::Usage) player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2);
 				}
 
-				if (gameOn) {
-					// validate "Aufstellung"
-					// save "Aufstellung"
-					saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, (Token::Usage) player);
-					//currentPlayground.clear();
-					tokensOfPlayer.clear();
-				}
-				else {
-					break;
-				}
 			}
+			if (gameOn && pcOpponentSuccessfull) {
+				// validate "Aufstellung"
+				//validateGameLineUp();
+				saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, (Token::Usage) player);
+			}
+			else if (gameOn && !pcOpponentSuccessfull) {
+				//currentPlayground = currentPlaygroundBeforeManipulations;
+				drawTokenRandomlyFromStock(tokens, joker1, joker2, (Token::Usage) player, 1);
+			}
+			else {
+				break;
+			}
+			tokensOfPlayer.clear();
+			currentPlaygroundBeforeManipulations.clear();
 		}
 	}
 
@@ -266,7 +271,7 @@ int determineIndexPlayerToStart(std::vector<playerAdministration>& score) {
 	return indexOfPlayerToStartGame;
 }
 
-std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player) {
+std::vector<Token> getTokensByUsage(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage usage) {
 
 	std::vector<Token> tokensOfPlayer;
 	bool tokenFound = true;
@@ -280,7 +285,7 @@ std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, To
 			for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
 			{
 				Token value = tokens[row][column];
-				if (value.getUsage() == (Token::Usage) player) {
+				if (value.getUsage() == (Token::Usage) usage) {
 					if (value.getPositionPlayerBoard() == tokenPosition) {
 						tokensOfPlayer.push_back(value);
 						tokenFound = true;
@@ -289,14 +294,14 @@ std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, To
 			}
 		}
 
-		if (joker1.getUsage() == (Token::Usage) player) {
+		if (joker1.getUsage() == (Token::Usage) usage) {
 			if (joker1.getPositionPlayerBoard() == tokenPosition) {
 				tokensOfPlayer.push_back(joker1);
 				tokenFound = true;
 			}
 		}
 
-		if (joker2.getUsage() == (Token::Usage) player) {
+		if (joker2.getUsage() == (Token::Usage) usage) {
 			if (joker2.getPositionPlayerBoard() == tokenPosition) {
 				tokensOfPlayer.push_back(joker2);
 				tokenFound = true;
@@ -534,9 +539,12 @@ void moveToken(std::vector<std::vector<Token>>& currentPlayground, std::vector<T
 	else if (validationSuccessful && fromRow != -1 && toRow != -1) {
 		moveTokenOnPlayground(currentPlayground, fromRow, fromColumn, toRow, toColumn);
 	}
+	else {
+		// user feedback in method basicValidationOfRowAndColumn
+	}
 }
 
-bool& basicValidationOfRowAndColumn(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, int& fromRow, int& fromColumn, int& toRow, int& toColumn)
+bool basicValidationOfRowAndColumn(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, int& fromRow, int& fromColumn, int& toRow, int& toColumn)
 {
 	bool validationSuccessful = false;
 
