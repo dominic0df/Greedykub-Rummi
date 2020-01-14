@@ -27,37 +27,70 @@ int showFirstSelectMenu()
 }
 
 std::string requestNameOfPlayer() {
+
 	std::cout
 		<< std::endl
-		<< INSTRUCTION_ENTER_NAME;
+		<< ENTER_NAME;
 
-	// NICE TO HAVE: Nachnamen erlauben
-
-	std::string nameOfHumanPlayer;
-	std::cin >> nameOfHumanPlayer;
-	std::cin.clear();
-	std::cin.ignore(INT8_MAX, '\n');
+	char nameOfHumanPlayer_c[50];
+	std::cin.getline(nameOfHumanPlayer_c, sizeof(nameOfHumanPlayer_c));
+	std::string nameOfHumanPlayer(nameOfHumanPlayer_c);
 
 	return nameOfHumanPlayer;
 }
 
-int requestNumberOfOpponents() {
+
+void requestNumberOfOpponents(int& numberOfHumanOpponents, int& numberOfPcOpponents) {
+
+	requestNumberOfHumanOpponents(numberOfHumanOpponents);
+	requestNumberOfPcOpponents(numberOfPcOpponents);
+
+	int totalNumberOfOpponents = numberOfHumanOpponents + numberOfPcOpponents;
+	if (totalNumberOfOpponents < 1) {
+		std::cout << std::endl << NOT_ENOUGH_OPPONENTS_CHOOSED << std::endl << std::endl;
+		requestNumberOfOpponents(numberOfHumanOpponents, numberOfPcOpponents);
+	}
+	else if (totalNumberOfOpponents > 3) {
+		std::cout << std::endl << TOO_MANY_OPPONENTS_CHOOSED << std::endl << std::endl;
+		requestNumberOfOpponents(numberOfHumanOpponents, numberOfPcOpponents);
+	}
+}
+
+void requestNumberOfHumanOpponents(int& numberOfHumanOpponents)
+{
 	std::cout
 		<< std::endl
-		<< INSTRUCTION_NUMBER_OF_OPPONENTS;
+		<< INSTRUCTION_NUMBER_OF_HUMAN_OPPONENTS;
+	std::cin >> numberOfHumanOpponents;
 
-	int numberOfOpponents;
-	std::cin >> numberOfOpponents;
+	if (validateInputNumberOfOpponents(numberOfHumanOpponents) == false) {
+		requestNumberOfHumanOpponents(numberOfHumanOpponents);
+	}
+}
 
-	if (!std::cin.good() || (numberOfOpponents != 1 && numberOfOpponents != 2 && numberOfOpponents != 3))
+void requestNumberOfPcOpponents(int& numberOfPcOpponents)
+{
+	std::cout
+		<< std::endl
+		<< INSTRUCTION_NUMBER_OF_PC_OPPONENTS;
+	std::cin >> numberOfPcOpponents;
+
+	if (validateInputNumberOfOpponents(numberOfPcOpponents) == false) {
+		requestNumberOfPcOpponents(numberOfPcOpponents);
+	}
+}
+
+bool validateInputNumberOfOpponents(int& numberOfOpponents)
+{
+	if (!std::cin.good() || (numberOfOpponents != 0 && numberOfOpponents != 1 && numberOfOpponents != 2 && numberOfOpponents != 3))
 	{
 		std::cin.clear();
 		std::cin.ignore(INT8_MAX, '\n');
-		std::cout << UNAVAILABLE_OPTION_CHOOSED << std::endl;
-		return requestNumberOfOpponents();
+		std::cout << UNAVAILABLE_NUMBER_CHOOSED << std::endl;
+		return false;
 	}
 	else {
-		return numberOfOpponents;
+		return true;
 	}
 }
 

@@ -15,9 +15,9 @@ int main();
 
 void startGame();
 
-void dealTokens(std::vector<scoreEntry>& score, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
+void dealTokens(std::vector<playerAdministration>& score, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 
-int determineIndexPlayerToStart(std::vector<scoreEntry>& score);
+int determineIndexPlayerToStart(std::vector<playerAdministration>& score);
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 
@@ -31,6 +31,8 @@ void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& 
 void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 
 void printToken(Token token);
+
+void saveGameLineUp();
 
 void regexTester();
 

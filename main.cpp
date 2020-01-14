@@ -4,13 +4,13 @@
 
 int main()
 {
-	std::cout << WELCOME << std::endl;
+	/*std::cout << WELCOME << std::endl;
 	std::vector<std::vector<Token>> tokens;
 	Token joker1(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, -1, -1, -1, -1, -1);
 	Token joker2(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, -1, -1, -1, -1, -1);
 	setStartingCondition(tokens, joker1, joker2);
 	printMemoryStructure(tokens, joker1, joker2);
-	std::vector<std::vector<Token>> result = searchForGroupsAndRows(tokens);
+	std::vector<std::vector<Token>> result = searchForGroupsAndRows(tokens);*/
 
 	firstUserInteraction();
 }
@@ -44,49 +44,57 @@ void startGame() {
 	Token joker2(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, -1, -1, -1, -1, -1);
 	setStartingCondition(tokens, joker1, joker2);
 
-	//printMemoryStructure(tokens, joker1, joker2);
-	//std::cout << x.size() << std::endl;
-	//std::cout << x[0].size() << std::endl;
-	//std::cout << x[0][0].size() << std::endl;
-	/*for (int i = 0; i < x.size(); i++)
-	{
-		for (int j = 0; j < x[i].size(); j++)
-		{
-			for (int color = 0; color < x[i][j].size(); color++)
-			{
-				std::cout << "index" << i << ", " << color /*<< "has color" << tokens[i][color] << std::endl;
-			}
-		}
-	}*/
-	//testSearchForGroups(x,tokens);
+	std::vector<playerAdministration> playerMemory;
 
-	std::vector<scoreEntry> score;
-	std::string nameOfHumanPlayer;
+	setPlayerInformation(playerMemory);
 
-	setPlayerInformation(score, nameOfHumanPlayer);
+	int indexOfPlayerToStartGame = determineIndexPlayerToStart(playerMemory);
+	std::cout << std::endl << MESSAGE_PLAYER_TO_START << playerMemory[indexOfPlayerToStartGame].constumizedName;
 
-	int indexOfPlayerToStartGame = determineIndexPlayerToStart(score);
-	std::cout << std::endl << MESSAGE_PLAYER_TO_START << score[indexOfPlayerToStartGame].player << std::endl;
+	dealTokens(playerMemory, tokens, joker1, joker2);
 
-	dealTokens(score, tokens, joker1, joker2);
-
-	/*for (int player = 1; player < score.size(); player++)
-	{
-		showTokensOfPlayer(tokens, joker1, joker2, (Token::Usage) player);
-	}*/
-
+	std::vector<std::vector<Token>> currentPlayground;
+	std::vector<Token> tokensOfPlayer;
 	bool gameOn = true;
+	bool roundOn = true;
 	std::cin.clear();
 	std::cin.ignore(INT8_MAX, '\n');
-	std::vector<std::vector<Token>> currentPlayground = getPlaygroundToDisplay();
-	std::vector<Token> tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, Token::HUMAN_Player);
+	// for loop for multiple games
 	while (gameOn) {
-		printMemoryStructure(currentPlayground, joker1, joker2);
-		showTokensOfPlayer(tokensOfPlayer, nameOfHumanPlayer);
+		// getPlaygroundToDisplay -> load suitable tokens in current Playground memory structure
 
-		//Achtung: Keine Referenz übergeben! -> Kopie -> currentPlayground
-		//std::vector<std::vector<Token>> currentPlayground;
-		makeMovePlayer(Token::Usage::HUMAN_Player, currentPlayground, tokensOfPlayer, gameOn, tokens, joker1, joker2);
+		for (int player = indexOfPlayerToStartGame; player <= playerMemory.size(); player++) {
+			if (player == playerMemory.size()) {
+				player = 0;
+			}
+
+			roundOn = true;
+			currentPlayground = getPlaygroundToDisplay();
+			tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, (Token::Usage) player);
+
+			while (roundOn) {
+				// while round on -> 30, then variable first move board -> playground
+				printMemoryStructure(currentPlayground, joker1, joker2);
+				// TO DO: nameOfHumanPlayer
+				showTokensOfPlayer(tokensOfPlayer, playerMemory.at(player).constumizedName);
+
+				//Achtung: Keine Referenz übergeben! -> Kopie -> currentPlayground
+				//std::vector<std::vector<Token>> currentPlayground;
+				makeMovePlayer((Token::Usage) player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2);
+			}
+
+			if (gameOn == false) {
+				break;
+			}
+		}
+
+		if (gameOn) {
+			// validate "Aufstellung"
+			// save "Aufstellung"
+			saveGameLineUp();
+			currentPlayground.clear();
+			tokensOfPlayer.clear();
+		}
 	}
 
 	/*
@@ -98,7 +106,11 @@ void startGame() {
 	*/
 }
 
-void dealTokens(std::vector<scoreEntry>& score, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
+void saveGameLineUp() {
+
+}
+
+void dealTokens(std::vector<playerAdministration>& score, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
 
 	for (int player = 0; player < score.size(); player++)
 	{
@@ -195,7 +207,7 @@ void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& 
 	}
 }
 
-int determineIndexPlayerToStart(std::vector<scoreEntry>& score) {
+int determineIndexPlayerToStart(std::vector<playerAdministration>& score) {
 	int numberOfPlayer = score.size();
 	srand((unsigned int)time(NULL));
 	int indexOfPlayerToStartGame = rand() % numberOfPlayer;
@@ -278,7 +290,6 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 	std::cout
 		<< std::endl
 		<< std::endl
-		<< "--------------------------------------------------------------------------------------------"
 		<< std::endl
 		<< "Spielfeld:"
 		<< std::endl;
@@ -389,7 +400,7 @@ void regexTester() {
 void processCommandInput(std::string& command, Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer,
 	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
 	std::regex commandMoveSingleToken("([a-zA-Z]|[[:digit:]]+[a-zA-Z])[ ]*>[ ]*([a-zA-Z]|[[:digit:]]+[a-zA-Z])");
-	std::regex commandMoveMultipleTokens("([a-zA-Z]|[[:digit:]]+[a-zA-Z])[ ]*-[ ]*([a-zA-Z]|[[:digit:]]+[a-zA-Z])[ ]*>[ ]*([a-zA-Z]|[[:digit:]]+[a-zA-Z]|\\+)");
+	//std::regex commandMoveMultipleTokens("([a-zA-Z]|[[:digit:]]+[a-zA-Z])[ ]*-[ ]*([a-zA-Z]|[[:digit:]]+[a-zA-Z])[ ]*>[ ]*([a-zA-Z]|[[:digit:]]+[a-zA-Z]|\\+)");
 
 	int fromRow;
 	int fromColumn;
@@ -404,7 +415,8 @@ void processCommandInput(std::string& command, Token::Usage player, std::vector<
 		std::cout << "WRONG!";
 	}*/
 	else {
-		std::cout << "WRONG!";
+		// TODO: Befehl in Ausgabe ergänzen
+		std::cout << "Der eingegebene Befehl entspricht nicht der geforderten Syntax! " << std::endl;
 	}
 
 }
@@ -416,8 +428,8 @@ void splitCommandMoveSingleToken(std::string& command, int& fromRow, int& fromCo
 
 	trim(from);
 	trim(to);
-	std::cout << "<" << from << ">" << std::endl;
-	std::cout << "<" << to << ">" << std::endl;
+	//std::cout << "<" << from << ">" << std::endl;
+	//std::cout << "<" << to << ">" << std::endl;
 
 	getRowAndColumnOfCommandEntry(from, fromRow, fromColumn);
 	getRowAndColumnOfCommandEntry(to, toRow, toColumn);
@@ -446,11 +458,11 @@ void getRowAndColumnOfCommandEntry(std::string& commandEntry, int& row, int& col
 void moveToken(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, int& fromRow, int& fromColumn, int& toRow, int& toColumn) {
 	// row = -1 -> User want to move Token from/to player
 
-	std::cout << "Spielstein wird wie folgt verschoben: " << std::endl;
-	std::cout << "Von (Reihe): <" << fromRow << ">" << std::endl;
-	std::cout << "Von (Spalte): <" << fromColumn << ">" << std::endl;
-	std::cout << "Nach (Reihe): <" << toRow << ">" << std::endl;
-	std::cout << "Nach (Spalte): <" << toColumn << ">" << std::endl;
+	//std::cout << "Spielstein wird wie folgt verschoben: " << std::endl;
+	//std::cout << "Von (Reihe): <" << fromRow << ">" << std::endl;
+	//std::cout << "Von (Spalte): <" << fromColumn << ">" << std::endl;
+	//std::cout << "Nach (Reihe): <" << toRow << ">" << std::endl;
+	//std::cout << "Nach (Spalte): <" << toColumn << ">" << std::endl;
 
 	bool validationSuccessful = basicValidationOfRowAndColumn(currentPlayground, tokensOfPlayer, fromRow, fromColumn, toRow, toColumn);
 

@@ -1,6 +1,7 @@
 #include "userInputProcessing.h"
 #include "main.h"
 #include "userInteraction.h"
+#include "shared.h"
 
 void firstUserInteraction() {
 
@@ -16,7 +17,15 @@ void firstUserInteraction() {
 		//std::cout << "1 MANUAL";
 		//regexTester();
 		std::cout << "Implementierung ausstehend!";
-		firstUserInteraction();
+		//firstUserInteraction();
+		int numberOfHumanOpponents;
+		int numberOfPcOpponents;
+
+		requestNumberOfOpponents(numberOfHumanOpponents, numberOfPcOpponents);
+
+		std::cout << std::endl;
+		std::cout << "ANZ Mensch:" << numberOfHumanOpponents << std::endl;
+		std::cout << "ANZ PC:" << numberOfPcOpponents;
 		break;
 	case 2:
 		startGame();
@@ -28,32 +37,67 @@ void firstUserInteraction() {
 	}
 }
 
-void setPlayerInformation(std::vector<scoreEntry>& score, std::string& nameOfHumanPlayer) {
+void setPlayerInformation(std::vector<playerAdministration>& player) {
 	//TO DO: Schwierigkeitsgrad der Gegner auswählen
 	//(TO DO: Namen für PC-Gegner festlegen)
 
-	nameOfHumanPlayer = requestNameOfPlayer();
+	std::cin.clear();
+	std::cin.ignore(INT8_MAX, '\n');
+	std::cout << std::endl << "Gebe folgend deinen Namen an!" << std::endl;
+	addPlayer(player, Token::Usage::HUMAN_Player_1, requestNameOfPlayer());
 
-	int numberOfOpponents = requestNumberOfOpponents();
+	std::cout
+		<< std::endl
+		<< "Rummikub wird mit 2-4 Gegenspielern gespielt"
+		<< std::endl
+		<< "-> Im folgenden kannst du die Anzahl menschlicher als auch computerbasierter Gegner waehlen:"
+		<< std::endl;
 
-	for (int player = 0; player <= numberOfOpponents; player++)
-	{
-		scoreEntry nextPlayer;
-		nextPlayer.player = (Token::Usage) player;
-		nextPlayer.point = 0;
-		score.push_back(nextPlayer);
+	int numberOfHumanOpponents;
+	int numberOfPcOpponents;
+
+	requestNumberOfOpponents(numberOfHumanOpponents, numberOfPcOpponents);
+
+	if (numberOfHumanOpponents > 0) {
+		std::cout << std::endl << "Wie heissen die menschlichen Gegenspieler?:";
 	}
 
-	//std::cout << "Length: " << score.size() << std::endl;
+	std::cin.clear();
+	std::cin.ignore(INT8_MAX, '\n');
+	for (int humanPlayer = 1; humanPlayer <= numberOfHumanOpponents; humanPlayer++)
+	{
+		std::cout << std::endl << "Gebe folgend den Namen vom meschlichen Gegenspieler " << humanPlayer << " an!" << std::endl;
+		addPlayer(player, (Token::Usage) humanPlayer, requestNameOfPlayer());
+	}
+
+	for (int pcPlayer = 1; pcPlayer <= numberOfPcOpponents; pcPlayer++)
+	{
+		std::string nameOfPcPlayer = "PC Gegner " + std::to_string(pcPlayer);
+		addPlayer(player, (Token::Usage) (pcPlayer + 3), nameOfPcPlayer);
+	}
 }
 
-void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, bool& gameOn,
-	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
+void addPlayer(std::vector<playerAdministration>& playerMemory, Token::Usage player, std::string nameOfHumanPlayer) {
+	playerAdministration nextPlayer;
+	nextPlayer.player = player;
+	nextPlayer.constumizedName = nameOfHumanPlayer;
+	nextPlayer.tokensMovedToPlayground = false;
+	nextPlayer.points = 0;
+
+	playerMemory.push_back(nextPlayer);
+}
+
+void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer,
+	bool& gameOn, bool& roundOn, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
 
 	std::string selection = showSelectMenuMove();
-	std::cout << "<" << selection << ">" << std::endl;
+	std::cout << SEPARATION_LINE
+		<< std::endl
+		<< std::endl;
+
+	//std::cout << "<" << selection << ">" << std::endl;
 	trim(selection);
-	std::cout << "<" << selection << ">" << std::endl;
+	//std::cout << "<" << selection << ">" << std::endl;
 
 	if (isNumber(selection)) {
 		int selectionNumber = std::stoi(selection);
@@ -62,6 +106,7 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 		{
 		case 0:
 			std::cout << "0 Quit Game";
+			roundOn = false;
 			gameOn = false;
 			break;
 		case 1:
@@ -74,11 +119,13 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 			break;
 		case 3:
 			drawTokenRandomlyFromStock(tokens, joker1, joker2, player, 1);
+			roundOn = false;
 			std::cout << "3 Draw Token";
 			break;
 		case 4:
 			//nextPlayer()
-			std::cout << "4 Quit Move";
+			roundOn = false;
+			std::cout << "Spielrunde beendet!";
 			break;
 		case 5:
 			//resetPlayground()
@@ -86,14 +133,14 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 			break;
 		default:
 			std::cout << UNAVAILABLE_OPTION_CHOOSED << std::endl;
-			makeMovePlayer(player, currentPlayground, tokensOfPlayer, gameOn, tokens, joker1, joker2);
+			makeMovePlayer(player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2);
 			break;
 		}
 	}
 	else {
 		//checkRegex
 		processCommandInput(selection, player, currentPlayground, tokensOfPlayer, tokens, joker1, joker2);
-		std::cout << "Check Regex";
+		//std::cout << "Check Regex";
 	}
 }
 

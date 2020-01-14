@@ -16,8 +16,12 @@ const std::string INSTRUCTION_ENTER_OPTION = "Deine Eingabe: ";
 const std::string START_GAME = "2:\t Spiel starten";
 
 //player setting constants
-const std::string INSTRUCTION_NUMBER_OF_OPPONENTS = "Gebe deine favorisierte Anzahl an Gegenspielern ein (1-3): ";
-const std::string INSTRUCTION_ENTER_NAME = "Gebe deinen Namen ein: ";
+const std::string UNAVAILABLE_NUMBER_CHOOSED = "Fehlerhafte Eingabe! Die Anzahl muss zwischen 0 und 3 liegen!";
+const std::string NOT_ENOUGH_OPPONENTS_CHOOSED = "-> Fehlerhafte Eingabe! Du brauchst MINDESTENS 1nen Gegegnspieler!";
+const std::string TOO_MANY_OPPONENTS_CHOOSED = "-> Fehlerhafte Eingabe! Du kannst gegen MAXIMAL 3 Gegenspieler antreten!";
+const std::string INSTRUCTION_NUMBER_OF_HUMAN_OPPONENTS = "Gebe deine favorisierte Anzahl an menschlichen Gegenspielern ein (0-3): ";
+const std::string INSTRUCTION_NUMBER_OF_PC_OPPONENTS = "Gebe deine favorisierte Anzahl an PC-basierten Gegenspielern ein (0-3): ";
+const std::string ENTER_NAME = "Name: ";
 
 //move menu constants
 const std::string SHOW_COMMANDS = "2:\t Befehlssatz anzeigen";
@@ -29,7 +33,13 @@ const std::string MOVE_TOKEN = "ODER gebe einen Befehl zum Verschieben einer Kar
 int showFirstSelectMenu();
 
 std::string requestNameOfPlayer();
-int requestNumberOfOpponents();
+void requestNumberOfOpponents(int& numberOfHumanOpponents, int& numberOfPcOpponents);
+
+void requestNumberOfHumanOpponents(int& numberOfHumanOpponents);
+
+void requestNumberOfPcOpponents(int& numberOfPcOpponents);
+
+bool validateInputNumberOfOpponents(int& numberOfOpponents);
 
 std::string showSelectMenuMove();
 

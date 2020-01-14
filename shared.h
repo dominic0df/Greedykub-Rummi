@@ -9,6 +9,8 @@ const std::string ERROR_OCCURRED = "Ein Fehler im Programm ist aufgetreten!";
 const std::string WELCOME = "Herzlich Willkommen bei Rummikub!";
 const std::string MESSAGE_PLAYER_TO_START = "Folgender Spieler darf das Spiel beginnen: ";
 const std::string BOARD_FILLED = "Dein Brett ist voll -> du kannst keine neuen Spielsteine mehr aufnehmen. Lege Spielsteine auf dem Spielfeld ab!";
+const std::string SEPARATION_LINE = "--------------------------------------------------------------------------------------------";
+// Trennstriche
 
 const int VALUE_OF_JOKER = 30;
 const int TOTAL_AMOUNT_OF_TOKEN = 106;
@@ -34,7 +36,7 @@ public:
 	const std::string WHITE_BACKGROUND_COL = "\033[47m";
 
 	enum Color { CYAN = 0, RED, YELLOW, PURPLE, JOKER_WHITE };
-	enum Usage { HUMAN_Player = 0, PC_Player_1, PC_Player_2, PC_Player_3, Playground, Stock };
+	enum Usage { HUMAN_Player_1 = 0, HUMAN_Player_2, HUMAN_Player_3, HUMAN_Player_4, PC_Player_1, PC_Player_2, PC_Player_3, Playground, Stock };
 
 private:
 
@@ -88,9 +90,11 @@ public:
 
 };
 
-struct scoreEntry {
+struct playerAdministration {
 	Token::Usage player;
-	int point;
+	std::string constumizedName;
+	bool tokensMovedToPlayground;
+	int points;
 };
 
 void ltrim(std::string& s);
