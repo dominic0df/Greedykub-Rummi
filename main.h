@@ -56,6 +56,16 @@ void getRowAndColumnOfCommandEntry(std::string& commandEntry, int& row, int& col
 
 void moveToken(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, int& fromRow, int& fromColumn, int& toRow, int& toColumn);
 
+bool& basicValidationOfRowAndColumn(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, int& fromRow, int& fromColumn, int& toRow, int& toColumn);
+
+void moveTokenOnBoard(std::vector<Token>& tokensOfPlayer, int& fromColumn, int& toColumn);
+
+void moveTokenPlaygroundToBoard(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, int& fromRow, int& fromColumn, int& toColumn);
+
+void moveTokenBoardToPlayground(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, int& fromColumn, int& toRow, int& toColumn);
+
+void moveTokenOnPlayground(std::vector<std::vector<Token>>& currentPlayground, int& fromRow, int& fromColumn, int& toRow, int& toColumn);
+
 //void deleteTokenAndMoveElementsLeft(std::vector<Token>& tokensOfPlayer, int& columnOfElementToDelete);
 
 void insertTokenAndMoveElementsRight(std::vector<Token>& tokensOfPlayer, int columnOfElementToInsert, int toColumn);
