@@ -67,30 +67,37 @@ void startGame() {
 				player = 0;
 			}
 
-			roundOn = true;
-
-			// -> keine Referenz -> Kopie! 
 			std::vector<std::vector<Token>> currentPlaygroundBeforeManipulations = currentPlayground;
-			tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, (Token::Usage) player);
-
-			while (roundOn) {
-				// while round on -> 30, then variable first move board -> playground
-				printMemoryStructure(currentPlayground);
-				// TO DO: nameOfHumanPlayer
-				showTokensOfPlayer(tokensOfPlayer, playerMemory.at(player).constumizedName);
-
-				makeMovePlayer((Token::Usage) player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2);
-			}
-
-			if (gameOn) {
-				// validate "Aufstellung"
-				// save "Aufstellung"
-				saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, (Token::Usage) player);
-				//currentPlayground.clear();
-				tokensOfPlayer.clear();
+			if (player >= Token::Usage::PC_Player_1) {
+				currentPlayground.clear();
+				//bool successfull=...
+				
 			}
 			else {
-				break;
+				roundOn = true;
+				// -> keine Referenz -> Kopie! 
+				std::vector<std::vector<Token>> currentPlaygroundBeforeManipulations = currentPlayground;
+				tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, (Token::Usage) player);
+
+				while (roundOn) {
+					// while round on -> 30, then variable first move board -> playground
+					printMemoryStructure(currentPlayground);
+					// TO DO: nameOfHumanPlayer
+					showTokensOfPlayer(tokensOfPlayer, playerMemory.at(player).constumizedName);
+
+					makeMovePlayer((Token::Usage) player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2);
+				}
+
+				if (gameOn) {
+					// validate "Aufstellung"
+					// save "Aufstellung"
+					saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, (Token::Usage) player);
+					//currentPlayground.clear();
+					tokensOfPlayer.clear();
+				}
+				else {
+					break;
+				}
 			}
 		}
 	}
