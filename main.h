@@ -11,8 +11,6 @@
 
 int main();
 
-//void startGame();
-
 void startGame();
 
 void dealTokens(std::vector<playerAdministration>& score, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);

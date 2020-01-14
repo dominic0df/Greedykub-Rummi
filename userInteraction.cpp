@@ -12,9 +12,9 @@ int showFirstSelectMenu()
 		<< std::endl
 		<< INSTRUCTION_ENTER_OPTION;
 
-	int selection;
+	std::string selection;
 	std::cin >> selection;
-	if (!std::cin.good() || (selection != 0 && selection != 1 && selection != 2))
+	if (!std::cin.good() || (selection != "0" && selection != "1" && selection != "2"))
 	{
 		std::cin.clear();
 		std::cin.ignore(INT8_MAX, '\n');
@@ -22,7 +22,7 @@ int showFirstSelectMenu()
 		return showFirstSelectMenu();
 	}
 	else {
-		return selection;
+		return std::stoi(selection);
 	}
 }
 
@@ -58,31 +58,40 @@ void requestNumberOfOpponents(int& numberOfHumanOpponents, int& numberOfPcOppone
 
 void requestNumberOfHumanOpponents(int& numberOfHumanOpponents)
 {
+	std::string numberOfHumanOpponents_s;
+
 	std::cout
 		<< std::endl
 		<< INSTRUCTION_NUMBER_OF_HUMAN_OPPONENTS;
-	std::cin >> numberOfHumanOpponents;
+	std::cin >> numberOfHumanOpponents_s;
 
-	if (validateInputNumberOfOpponents(numberOfHumanOpponents) == false) {
+	if (validateInputNumberOfOpponents(numberOfHumanOpponents_s)) {
+		numberOfHumanOpponents = std::stoi(numberOfHumanOpponents_s);
+	}
+	else {
 		requestNumberOfHumanOpponents(numberOfHumanOpponents);
 	}
 }
 
 void requestNumberOfPcOpponents(int& numberOfPcOpponents)
 {
+	std::string numberOfPcOpponents_s;
 	std::cout
 		<< std::endl
 		<< INSTRUCTION_NUMBER_OF_PC_OPPONENTS;
-	std::cin >> numberOfPcOpponents;
+	std::cin >> numberOfPcOpponents_s;
 
-	if (validateInputNumberOfOpponents(numberOfPcOpponents) == false) {
+	if (validateInputNumberOfOpponents(numberOfPcOpponents_s)) {
+		numberOfPcOpponents = std::stoi(numberOfPcOpponents_s);
+	}
+	else {
 		requestNumberOfPcOpponents(numberOfPcOpponents);
 	}
 }
 
-bool validateInputNumberOfOpponents(int& numberOfOpponents)
+bool validateInputNumberOfOpponents(std::string& numberOfOpponents)
 {
-	if (!std::cin.good() || (numberOfOpponents != 0 && numberOfOpponents != 1 && numberOfOpponents != 2 && numberOfOpponents != 3))
+	if (!std::cin.good() || (numberOfOpponents != "0" && numberOfOpponents != "1" && numberOfOpponents != "2" && numberOfOpponents != "3"))
 	{
 		std::cin.clear();
 		std::cin.ignore(INT8_MAX, '\n');

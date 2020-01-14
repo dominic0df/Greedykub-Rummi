@@ -485,19 +485,22 @@ void getRowAndColumnOfCommandEntry(std::string& commandEntry, int& row, int& col
 	// Bsp.: A (player)
 	if (commandEntry.size() == 1) {
 		row = -1; //-> User want to move Token from/to player
-		column = ((int)commandEntry.at(0)) - LETTER_A_ASCII_NUMBER;
+		//column = ((int)commandEntry.at(0)) - LETTER_A_ASCII_NUMBER;
+		column = asciiToIndex(commandEntry.at(0));
 	}
 
 	// Bsp.: 1B (playground)
 	if (commandEntry.size() == 2) {
 		row = std::stoi(commandEntry.substr(0, 1));
-		column = ((int)commandEntry.at(1)) - LETTER_A_ASCII_NUMBER;
+		//column = ((int)commandEntry.at(1)) - LETTER_A_ASCII_NUMBER;
+		column = asciiToIndex(commandEntry.at(1));
 	}
 
 	// Bsp.: 10B (playground)
 	if (commandEntry.size() == 3) {
 		row = std::stoi(commandEntry.substr(0, 2));
-		column = ((int)commandEntry.at(2)) - LETTER_A_ASCII_NUMBER;
+		//column = ((int)commandEntry.at(2)) - LETTER_A_ASCII_NUMBER;
+		column = asciiToIndex(commandEntry.at(2));
 	}
 }
 
@@ -611,17 +614,23 @@ void moveTokenBoardToPlayground(std::vector<std::vector<Token>>& currentPlaygrou
 	bool processingSuccessful = true;
 
 	if (currentPlayground.size() > toRow) {
-		if (currentPlayground[toRow].size() >= toColumn) {
-			// Add Token as last element Ex.: insert 5
-			// Insert Token on the left side: Ex.: 1 2 6 7 5 -> Command: E > ...
-			currentPlayground[toRow].push_back(tokensOfPlayer[fromColumn]);
-			if (currentPlayground[toRow].size() - 1 > toColumn) {
-				insertTokenAndMoveElementsRight(currentPlayground[toRow], currentPlayground[toRow].size() - 1, toColumn);
-			}
+		if (currentPlayground[toRow].size() == NUMBER_OF_COLUMNS) {
+			std::cout << "Einfuegen nicht moeglich, da angegebene Zeile auf dem Spielfeld schon voll ist -> max. 13 Elemente pro Zeile!";
+			processingSuccessful = false;
 		}
 		else {
-			std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
-			processingSuccessful = false;
+			if (currentPlayground[toRow].size() >= toColumn) {
+				// Add Token as last element Ex.: insert 5
+				// Insert Token on the left side: Ex.: 1 2 6 7 5 -> Command: E > ...
+				currentPlayground[toRow].push_back(tokensOfPlayer[fromColumn]);
+				if (currentPlayground[toRow].size() - 1 > toColumn) {
+					insertTokenAndMoveElementsRight(currentPlayground[toRow], currentPlayground[toRow].size() - 1, toColumn);
+				}
+			}
+			else {
+				std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
+				processingSuccessful = false;
+			}
 		}
 	}
 	else if (currentPlayground.size() == toRow) {
@@ -647,6 +656,7 @@ void moveTokenBoardToPlayground(std::vector<std::vector<Token>>& currentPlaygrou
 		}
 		tokensOfPlayer.pop_back();
 	}
+
 }
 
 void moveTokenOnPlayground(std::vector<std::vector<Token>>& currentPlayground, int& fromRow, int& fromColumn, int& toRow, int& toColumn)
@@ -654,17 +664,23 @@ void moveTokenOnPlayground(std::vector<std::vector<Token>>& currentPlayground, i
 	bool processingSuccessful = true;
 
 	if (currentPlayground.size() > toRow) {
-		if (currentPlayground[toRow].size() >= toColumn) {
-			// Add Token as last element Ex.: insert 5
-			// Insert Token on the left side: Ex.: 1 2 6 7 5 -> Command: E > ...
-			currentPlayground[toRow].push_back(currentPlayground[fromRow][fromColumn]);
-			if (currentPlayground[toRow].size() - 1 > toColumn) {
-				insertTokenAndMoveElementsRight(currentPlayground[toRow], currentPlayground[toRow].size() - 1, toColumn);
-			}
+		if (currentPlayground[toRow].size() == NUMBER_OF_COLUMNS) {
+			std::cout << "Einfuegen nicht moeglich, da angegebene Zeile auf dem Spielfeld schon voll ist -> max. 13 Elemente pro Zeile!";
+			processingSuccessful = false;
 		}
 		else {
-			std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
-			processingSuccessful = false;
+			if (currentPlayground[toRow].size() >= toColumn) {
+				// Add Token as last element Ex.: insert 5
+				// Insert Token on the left side: Ex.: 1 2 6 7 5 -> Command: E > ...
+				currentPlayground[toRow].push_back(currentPlayground[fromRow][fromColumn]);
+				if (currentPlayground[toRow].size() - 1 > toColumn) {
+					insertTokenAndMoveElementsRight(currentPlayground[toRow], currentPlayground[toRow].size() - 1, toColumn);
+				}
+			}
+			else {
+				std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
+				processingSuccessful = false;
+			}
 		}
 	}
 	else if (currentPlayground.size() == toRow) {

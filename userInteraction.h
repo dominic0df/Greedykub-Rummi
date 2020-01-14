@@ -6,7 +6,7 @@
 #include <map>
 
 //general constant
-const std::string UNAVAILABLE_OPTION_CHOOSED = "Fehlerhafte Eingabe! Bitte waehlen sie eine der drei Optionen!";
+const std::string UNAVAILABLE_OPTION_CHOOSED = "Fehlerhafte Eingabe! Bittw waehle eine der drei Optionen!";
 const std::string AVAILABLE_OPTIONS = "Deine Optionen:";
 const std::string QUIT_GAME = "0:\t Verlassen des Spiels";
 const std::string SHOW_MANUAL = "1:\t Spielanleitung anzeigen";
@@ -39,7 +39,7 @@ void requestNumberOfHumanOpponents(int& numberOfHumanOpponents);
 
 void requestNumberOfPcOpponents(int& numberOfPcOpponents);
 
-bool validateInputNumberOfOpponents(int& numberOfOpponents);
+bool validateInputNumberOfOpponents(std::string& numberOfOpponents);
 
 std::string showSelectMenuMove();
 
