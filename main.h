@@ -28,11 +28,12 @@ void showTokensOfPlayer(std::vector<Token> tokensOfPlayer, std::string nameOfHum
 void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2,
 	Token::Usage drawingPlayer, int amountOfTokens);
 
-void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
+void printMemoryStructure(std::vector<std::vector<Token>>& currentPlayground);
 
 void printToken(Token token);
 
-void saveGameLineUp();
+void saveGameLineUp(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2,
+	std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player);
 
 void regexTester();
 

@@ -40,8 +40,8 @@ void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1
 
 void startGame() {
 	std::vector<std::vector<Token>> tokens;
-	Token joker1(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, -1, -1, -1, -1, -1);
-	Token joker2(Token::Color::JOKER_WHITE, VALUE_OF_JOKER, Token::Usage::Stock, -1, -1, -1, -1, -1);
+	Token joker1(Token::Color::JOKER_WHITE, 1, Token::Usage::Stock, -1, -1, -1, -1, -1);
+	Token joker2(Token::Color::JOKER_WHITE, 2, Token::Usage::Stock, -1, -1, -1, -1, -1);
 	setStartingCondition(tokens, joker1, joker2);
 
 	std::vector<playerAdministration> playerMemory;
@@ -69,31 +69,30 @@ void startGame() {
 			}
 
 			roundOn = true;
-			currentPlayground = getPlaygroundToDisplay();
+
+			// -> keine Referenz -> Kopie! 
+			std::vector<std::vector<Token>> currentPlaygroundBeforeManipulations = currentPlayground;
 			tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, (Token::Usage) player);
 
 			while (roundOn) {
 				// while round on -> 30, then variable first move board -> playground
-				printMemoryStructure(currentPlayground, joker1, joker2);
+				printMemoryStructure(currentPlayground);
 				// TO DO: nameOfHumanPlayer
 				showTokensOfPlayer(tokensOfPlayer, playerMemory.at(player).constumizedName);
 
-				//Achtung: Keine Referenz übergeben! -> Kopie -> currentPlayground
-				//std::vector<std::vector<Token>> currentPlayground;
 				makeMovePlayer((Token::Usage) player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2);
 			}
 
-			if (gameOn == false) {
+			if (gameOn) {
+				// validate "Aufstellung"
+				// save "Aufstellung"
+				saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, (Token::Usage) player);
+				//currentPlayground.clear();
+				tokensOfPlayer.clear();
+			}
+			else {
 				break;
 			}
-		}
-
-		if (gameOn) {
-			// validate "Aufstellung"
-			// save "Aufstellung"
-			saveGameLineUp();
-			currentPlayground.clear();
-			tokensOfPlayer.clear();
 		}
 	}
 
@@ -106,8 +105,54 @@ void startGame() {
 	*/
 }
 
-void saveGameLineUp() {
+void saveGameLineUp(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player) {
+	// save current playground
+	for (int rowPlayground = 0; rowPlayground < currentPlayground.size(); rowPlayground++)
+	{
+		for (int columnPlayground = 0; columnPlayground < currentPlayground[rowPlayground].size(); columnPlayground++)
+		{
+			if (currentPlayground[rowPlayground][columnPlayground].getRow() != -1) {
+				int tokenRow = currentPlayground[rowPlayground][columnPlayground].getRow();
+				int tokenColumn = currentPlayground[rowPlayground][columnPlayground].getColumn();
+				tokens[tokenRow][tokenColumn].setUsage(Token::Usage::Playground);
+				tokens[tokenRow][tokenColumn].setRowPlayground(rowPlayground);
+				tokens[tokenRow][tokenColumn].setColumnPlayground(columnPlayground);
+			}
+			else {
+				if (currentPlayground[rowPlayground][columnPlayground].getValue() == 1) {
+					joker1.setUsage(Token::Usage::Playground);
+					joker1.setRowPlayground(rowPlayground);
+					joker1.setColumnPlayground(columnPlayground);
+				}
+				else {
+					joker2.setUsage(Token::Usage::Playground);
+					joker2.setRowPlayground(rowPlayground);
+					joker2.setColumnPlayground(columnPlayground);
+				}
+			}
+		}
+	}
 
+	// save tokensOfPlayer
+	for (int columnTokensOfPlayer = 0; columnTokensOfPlayer < tokensOfPlayer.size(); columnTokensOfPlayer++)
+	{
+		if (tokensOfPlayer[columnTokensOfPlayer].getRow() != -1) {
+			int tokenRow = tokensOfPlayer[columnTokensOfPlayer].getRow();
+			int tokenColumn = tokensOfPlayer[columnTokensOfPlayer].getColumn();
+			tokens[tokenRow][tokenColumn].setUsage(player);
+			tokens[tokenRow][tokenColumn].setPositionPlayerBoard(columnTokensOfPlayer);
+		}
+		else {
+			if (tokensOfPlayer[columnTokensOfPlayer].getValue() == 1) {
+				joker1.setUsage(player);
+				joker1.setPositionPlayerBoard(columnTokensOfPlayer);
+			}
+			else {
+				joker2.setUsage(player);
+				joker2.setPositionPlayerBoard(columnTokensOfPlayer);
+			}
+		}
+	}
 }
 
 void dealTokens(std::vector<playerAdministration>& score, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
@@ -285,7 +330,7 @@ void showTokensOfPlayer(std::vector<Token> tokensOfPlayer, std::string nameOfHum
 	std::cout << std::endl;
 }
 
-void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
+void printMemoryStructure(std::vector<std::vector<Token>>& currentPlayground)
 {
 	std::cout
 		<< std::endl
@@ -295,6 +340,7 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 		<< std::endl;
 
 	/*
+	// show with max Row size
 	int maxRowSize = 0;
 	for (int row = 0; row < tokens.size(); row++)
 	{
@@ -329,15 +375,15 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 	}
 	std::cout << std::endl;
 
-	for (int row = 0; row < tokens.size(); row++)
+	for (int row = 0; row < currentPlayground.size(); row++)
 	{
 		std::cout << row << " ";
 		if ((row / 10) == 0) {
 			std::cout << " ";
 		}
-		for (int column = 0; column < tokens[row].size(); column++)
+		for (int column = 0; column < currentPlayground[row].size(); column++)
 		{
-			Token token = tokens[row][column];
+			Token token = currentPlayground[row][column];
 			if (token.getColor() == Token::Color::JOKER_WHITE) {
 				std::cout << token.getTerminalColor() << "J" << RESET_TERMINAL_COL << "  ";
 			}
@@ -350,7 +396,7 @@ void printMemoryStructure(std::vector<std::vector<Token>>& tokens, Token& joker1
 		}
 		std::cout << std::endl;
 	}
-	std::cout << tokens.size();
+	std::cout << currentPlayground.size();
 
 	std::cout << std::endl;
 }
