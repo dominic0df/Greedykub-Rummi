@@ -13,19 +13,6 @@ void firstUserInteraction() {
 		//std::cout << "0 QUIT";
 		break;
 	case 1:
-		//showGameManual();
-		//std::cout << "1 MANUAL";
-		//regexTester();
-		std::cout << "Implementierung ausstehend!";
-		//firstUserInteraction();
-		int numberOfHumanOpponents;
-		int numberOfPcOpponents;
-
-		requestNumberOfOpponents(numberOfHumanOpponents, numberOfPcOpponents);
-
-		std::cout << std::endl;
-		std::cout << "ANZ Mensch:" << numberOfHumanOpponents << std::endl;
-		std::cout << "ANZ PC:" << numberOfPcOpponents;
 		break;
 	case 2:
 		startGame();
@@ -109,17 +96,15 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 		switch (selectionNumber)
 		{
 		case 0:
-			std::cout << "0 Quit Game";
 			roundOn = false;
 			gameOn = false;
 			break;
 		case 1:
 			//showGameManual();
-			std::cout << "1 Manual";
 			break;
 		case 2:
 			//showCommandSet();
-			std::cout << "2 CommandSet";
+			showCommandSet();
 			break;
 		case 3:
 			if (!drawTokenRandomlyFromStock(tokens, joker1, joker2, player, 1)) {
@@ -127,7 +112,6 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 			}
 			roundOn = false;
 			tokenDrawn = true;
-			std::cout << "3 Draw Token";
 			break;
 		case 4:
 			//nextPlayer()
@@ -137,7 +121,6 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 			break;
 		case 5:
 			//resetPlayground()
-			std::cout << "5 Reset Playground";
 			break;
 		default:
 			std::cout << UNAVAILABLE_OPTION_CHOOSED << std::endl;

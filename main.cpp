@@ -215,7 +215,7 @@ void startGame() {
 
 }
 
-bool validateGameLineUp(std::vector<std::vector<Token>> &currentPlayground, std::vector<Token> &tokensOfPlayer, Token::Usage player, std::vector<Token> &tokensOfPlayerBeforeManipulations)
+bool validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player, std::vector<Token>& tokensOfPlayerBeforeManipulations)
 {
 
 	for (int elementsOnBoard = 0; elementsOnBoard < tokensOfPlayer.size(); elementsOnBoard++)
