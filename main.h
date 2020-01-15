@@ -30,8 +30,7 @@ void printMemoryStructure(std::vector<std::vector<Token>>& currentPlayground);
 
 void printToken(Token token);
 
-void validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player,
-	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
+bool validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player, std::vector<Token>& tokensOfPlayerBeforeManipulations);
 
 void saveGameLineUp(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2,
 	std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player);

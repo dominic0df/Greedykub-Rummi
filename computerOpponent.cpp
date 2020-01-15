@@ -7,7 +7,16 @@ bool makeAMoveComputerOpponent(std::vector<std::vector<Token>>& tokens, std::vec
 	for (int condition = 0; condition < usageConditions.size(); condition++)
 	{
 		if (usageConditions[condition]!=Token::Usage::Playground) {
-			std::vector<Token> board = getTokensByUsage(tokens, joker1, joker2, usageConditions[condition]);
+			std::vector<Token> board;
+			for (int row = 0; row < NUMBER_OF_ROWS; row++)
+			{
+				for (int column = 0; column < NUMBER_OF_COLUMNS; column++) {
+					if (tokens[row][column].getUsage()!=Token::Usage::Playground && tokens[row][column].getUsage() != Token::Usage::Stock)
+					{
+						board.push_back(tokens[row][column]);
+					}
+				}
+			}
 			while (board.size() > 0)
 			{
 				if (searchForGroupsAndRows(tokens, result, usageConditions, joker1, joker2)) {
