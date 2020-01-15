@@ -128,6 +128,7 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 		case 4:
 			//nextPlayer()
 			roundOn = false;
+			tokenDrawn = false;
 			std::cout << "Spielrunde beendet!";
 			break;
 		case 5:
