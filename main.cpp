@@ -215,7 +215,7 @@ void startGame() {
 
 }
 
-bool validateGameLineUp(std::vector<std::vector<Token>> &currentPlayground, std::vector<Token> &tokensOfPlayer, Token::Usage player, std::vector<Token> &tokensOfPlayerBeforeManipulations)
+bool validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player, std::vector<Token>& tokensOfPlayerBeforeManipulations)
 {
 
 	for (int elementsOnBoard = 0; elementsOnBoard < tokensOfPlayer.size(); elementsOnBoard++)
@@ -241,9 +241,11 @@ bool validateGameLineUp(std::vector<std::vector<Token>> &currentPlayground, std:
 				}
 				else
 				{
+					//Group
+					bool sameColor = lastColor.find(currentPlayground[rowOrGroup][element].getColor()) != lastColor.end();
 					if (lastValue == currentPlayground[rowOrGroup][element].getValue())
 					{
-						if (lastColor.find(currentPlayground[rowOrGroup][element].getColor()) == lastColor.end())
+						if ((!sameColor || currentPlayground[rowOrGroup][element].getColor() == Token::Color::JOKER_WHITE) && lastColor.size()<5)
 						{
 							lastColor.insert(currentPlayground[rowOrGroup][element].getColor());
 							if (element == 2)
@@ -257,7 +259,7 @@ bool validateGameLineUp(std::vector<std::vector<Token>> &currentPlayground, std:
 							{
 								if (element == 3)
 								{
-									if (lastColor.size() != 4)
+									if (lastColor.size() < 4)
 									{
 										return false;
 									}
@@ -271,13 +273,14 @@ bool validateGameLineUp(std::vector<std::vector<Token>> &currentPlayground, std:
 					}
 					else
 					{
-						if (lastColor.find(currentPlayground[rowOrGroup][element].getColor()) != lastColor.end())
+						//Row
+						if (!sameColor && !currentPlayground[rowOrGroup][element].getColor()==Token::Color::JOKER_WHITE)
 						{
 							return false;
 						}
 						else
 						{
-							if (lastValue = currentPlayground[rowOrGroup][element].getValue() - 1)
+							if ((lastValue == currentPlayground[rowOrGroup][element].getValue() - 1) || (currentPlayground[rowOrGroup][element].getValue()==30) || lastValue==30)
 							{
 								lastValue = currentPlayground[rowOrGroup][element].getValue();
 								lastColor.insert(currentPlayground[rowOrGroup][element].getColor());
