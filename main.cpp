@@ -215,7 +215,8 @@ void startGame() {
 
 }
 
-bool validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player, std::vector<Token>& tokensOfPlayerBeforeManipulations) {
+bool validateGameLineUp(std::vector<std::vector<Token>> &currentPlayground, std::vector<Token> &tokensOfPlayer, Token::Usage player, std::vector<Token> &tokensOfPlayerBeforeManipulations)
+{
 
 	for (int elementsOnBoard = 0; elementsOnBoard < tokensOfPlayer.size(); elementsOnBoard++)
 	{
@@ -223,104 +224,76 @@ bool validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std:
 		{
 			return false;
 		}
-
 	}
 
 	for (int rowOrGroup = 0; rowOrGroup < currentPlayground.size(); rowOrGroup++)
 	{
 		int lastValue;
-		std::map<int, Token::Color> lastColor;
+		std::set<Token::Color> lastColor;
 		if (currentPlayground[rowOrGroup].size() > 2)
 		{
-			for (int element = 0; element < currentPlayground[rowOrGroup].size(); element++) {
-				if (currentPlayground[rowOrGroup][element].getUsage() != Token::Usage::Playground || currentPlayground[rowOrGroup][element].getUsage() != player)
+			for (int element = 0; element < currentPlayground[rowOrGroup].size(); element++)
+			{
+				if (element == 0)
 				{
-					return false;
+					lastValue = currentPlayground[rowOrGroup][element].getValue();
+					lastColor.insert(currentPlayground[rowOrGroup][element].getColor());
 				}
 				else
 				{
-					if (element == 0)
+					if (lastValue == currentPlayground[rowOrGroup][element].getValue())
 					{
-						lastValue = currentPlayground[rowOrGroup][element].getValue();
-						lastColor[element] = currentPlayground[rowOrGroup][element].getColor();
-					}
-					else
-					{
-						if (lastValue == currentPlayground[rowOrGroup][element].getValue())
+						if (lastColor.find(currentPlayground[rowOrGroup][element].getColor()) == lastColor.end())
 						{
-							if (lastColor[element - 1] != currentPlayground[rowOrGroup][element].getColor())
+							lastColor.insert(currentPlayground[rowOrGroup][element].getColor());
+							if (element == 2)
 							{
-								lastColor[element] = currentPlayground[rowOrGroup][element].getColor();
-								if (element == 2)
-								{
-									if (lastColor.size() != 3)
-									{
-										return false;
-									}
-								}
-								else
-								{
-									if (element == 3)
-									{
-										if (lastColor.size() != 4)
-										{
-											return false;
-										}
-									}
-								}
-							}
-							else
-							{
-								return false;
-							}
-
-						}
-						else
-						{
-							if (lastColor[element - 1] != currentPlayground[rowOrGroup][element].getColor())
-							{
-								return false;
-							}
-							else
-							{
-								if (lastValue = currentPlayground[rowOrGroup][element].getValue() - 1)
-								{
-									lastValue = currentPlayground[rowOrGroup][element].getValue();
-									lastColor[element] = currentPlayground[rowOrGroup][element].getColor();
-								}
-								else
+								if (lastColor.size() != 3)
 								{
 									return false;
 								}
 							}
-						}
-
-					}
-				}
-
-				/*if (tokensOfPlayerBeforeManipulations[rowOrGroup][element].getUsage() == player)
-				{
-					for(std::vector<Token>::iterator it = tokensOfPlayerBeforeManipulations.begin(); it != tokensOfPlayerBeforeManipulations.end(); it++)
-					{
-						if (it->getValue()==tokensOfPlayerBeforeManipulations[rowOrGroup][element].getValue())
-						{
-							if (tokensOfPlayerBeforeManipulations->getColor()==tokensOfPlayerBeforeManipulations[rowOrGroup][element].getColor())
+							else
 							{
-								tokensOfPlayerBeforeManipulations.erase(it);
+								if (element == 3)
+								{
+									if (lastColor.size() != 4)
+									{
+										return false;
+									}
+								}
+							}
+						}
+						else
+						{
+							return false;
+						}
+					}
+					else
+					{
+						if (lastColor.find(currentPlayground[rowOrGroup][element].getColor()) != lastColor.end())
+						{
+							return false;
+						}
+						else
+						{
+							if (lastValue = currentPlayground[rowOrGroup][element].getValue() - 1)
+							{
+								lastValue = currentPlayground[rowOrGroup][element].getValue();
+								lastColor.insert(currentPlayground[rowOrGroup][element].getColor());
+							}
+							else
+							{
+								return false;
 							}
 						}
 					}
-				}*/
+				}
 			}
 		}
 		else
 		{
 			return false;
-		}
-
-
-		for (int element = 0; element < currentPlayground[rowOrGroup].size(); element++) {
-
 		}
 	}
 	return true;

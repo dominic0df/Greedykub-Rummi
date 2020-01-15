@@ -70,10 +70,6 @@ bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector
 		}
 		else
 		{
-			//if (true)
-			//{
-			//es existiert für jedes nicht enthaltene Element ein anderes Element, dass hinzugefügt werden kann
-			//}
 			return false;
 		}
 	}
