@@ -88,7 +88,7 @@ void addPlayer(std::vector<playerAdministration>& playerMemory, Token::Usage pla
 }
 
 void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer,
-	bool& gameOn, bool& roundOn, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
+	bool& gameOn, bool& roundOn, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, bool& tokenDrawn) {
 
 	std::string selection = showSelectMenuMove();
 	std::cout << SEPARATION_LINE
@@ -120,6 +120,7 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 		case 3:
 			drawTokenRandomlyFromStock(tokens, joker1, joker2, player, 1);
 			roundOn = false;
+			tokenDrawn = true;
 			std::cout << "3 Draw Token";
 			break;
 		case 4:
@@ -133,7 +134,7 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 			break;
 		default:
 			std::cout << UNAVAILABLE_OPTION_CHOOSED << std::endl;
-			makeMovePlayer(player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2);
+			makeMovePlayer(player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2, tokenDrawn);
 			break;
 		}
 	}

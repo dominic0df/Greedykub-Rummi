@@ -75,21 +75,29 @@ void startGame() {
 			tokenDrawn = false;
 
 			if (playerMemory.at(player).player >= Token::Usage::PC_Player_1) {
-				std::cout
+				/*std::cout
 					<< std::endl
 					<< SEPARATION_LINE
 					<< std::endl
 					<< playerMemory.at(player).constumizedName << " hat gespielt!"
 					<< std::endl
 					<< SEPARATION_LINE;
+					*/
+
 
 				currentPlayground.clear();
-				pcOpponentSuccessfull = false; // gesetzt durch Algo
-				//------------------PC GEGNER CODE--------------------------------------------------
+
+				std::vector<Token::Usage> usageConditions;
+				usageConditions.push_back(playerMemory.at(player).player);
+				if (playerMemory.at(player).tokensMovedToPlayground) {
+					usageConditions.push_back(Token::Usage::Playground);
+				}
+				pcOpponentSuccessfull = makeAMoveComputerOpponent(tokens, currentPlayground, usageConditions, joker1, joker2);
 
 				if (pcOpponentSuccessfull) {
 					// validate "Aufstellung"
 					//validateGameLineUp();
+					tokensOfPlayer = getTokensByUsage(tokens, joker1, joker2, playerMemory.at(player).player);
 					saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, playerMemory.at(player).player);
 				}
 				else {
@@ -97,6 +105,20 @@ void startGame() {
 					currentPlayground.clear();
 					std::copy(currentPlaygroundBeforeManipulations.begin(), currentPlaygroundBeforeManipulations.end(), back_inserter(currentPlayground));
 				}
+
+				std::cout
+					<< std::endl
+					<< SEPARATION_LINE
+					<< std::endl
+					<< "PC-GEGNER:"
+					<< std::endl;
+				printMemoryStructure(currentPlayground);
+				tokensOfPlayer = getTokensByUsage(tokens, joker1, joker2, playerMemory.at(player).player);
+				showTokensOfPlayer(tokensOfPlayer, playerMemory.at(player).constumizedName);
+				tokensOfPlayer.clear();
+				std::cout
+					<< std::endl
+					<< SEPARATION_LINE;
 			}
 			else {
 				roundOn = true;
