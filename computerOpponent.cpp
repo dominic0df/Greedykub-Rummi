@@ -1,9 +1,29 @@
 #include "computerOpponent.h"
 
-//umbedingt searchForRows
+//umbedingt searchForRows handling of collision search groups and rows
 
-bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result) {
-	std::vector<Token::Usage> usageConditions = { Token::Usage::Playground, Token::Usage::Player1 };
+bool makeAMoveComputerOpponent(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2) {
+	//getTokensByUsage(PC Player)
+	for (int condition = 0; condition < usageConditions.size(); condition++)
+	{
+		if (usageConditions[condition]!=Token::Usage::Playground) {
+			std::vector<Token> board = getTokensByUsage(tokens, joker1, joker2, usageConditions[condition]);
+			while (board.size() > 0)
+			{
+				if (searchForGroupsAndRows(tokens, result, usageConditions, joker1, joker2)) {
+					return true;
+				}
+				else
+				{
+					board.pop_back();
+				}
+			}
+		}
+	}
+	return false;
+}
+
+bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2) {
 	std::vector<std::vector<std::map < Token::Color, int >>> groups;
 	std::vector<std::vector<bool>> processed(
 		NUMBER_OF_ROWS,
@@ -16,7 +36,7 @@ bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector
 	bool collisionSolved;
 	if (allTokensInAGroup && allTokensInARow)
 	{
-		collisionSolved = handlingOfCollisionsBetweenGroupsAndRows(processed, groups, tokens, rows);
+		collisionSolved = handlingOfCollisionsBetweenGroupsAndRows(processed, groups, tokens, rows, joker1, joker2);
 		if (collisionSolved)
 		{
 			concatinateResultsToASingleStructure(rows, result, groups, tokens);
@@ -29,7 +49,7 @@ bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector
 	}
 	else
 	{
-		collisionSolved = handlingOfCollisionsBetweenGroupsAndRows(processed, groups, tokens, rows);
+		collisionSolved = handlingOfCollisionsBetweenGroupsAndRows(processed, groups, tokens, rows,joker1,joker2);
 		if (collisionSolved)
 		{
 			concatinateResultsToASingleStructure(rows, result, groups, tokens);
@@ -68,7 +88,7 @@ void concatinateResultsToASingleStructure(std::vector<std::vector<std::vector<To
 	}
 }
 
-bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::vector<Token>>>& rows)
+bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::vector<Token>>>& rows, Token& joker1, Token& joker2)
 {
 	for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
 		for (int j = 0; j < NUMBER_OF_ROWS; j++) {
