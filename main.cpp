@@ -69,16 +69,25 @@ void startGame() {
 			}
 
 			//currentPlaygroundBeforeManipulations = currentPlayground;
+			std::copy(currentPlayground.begin(), currentPlayground.end(), back_inserter(currentPlaygroundBeforeManipulations));
 			bool pcOpponentSuccessfull = true;
 
-			if (player >= Token::Usage::PC_Player_1) {
+			if (playerMemory.at(player).player >= Token::Usage::PC_Player_1) {
+				std::cout
+					<< std::endl
+					<< SEPARATION_LINE
+					<< std::endl
+					<< playerMemory.at(player).constumizedName << " hat gespielt!"
+					<< std::endl
+					<< SEPARATION_LINE;
+
 				currentPlayground.clear();
-				bool pcOpponentSuccessfull; // gesetzt durch Algo
+				pcOpponentSuccessfull = false; // gesetzt durch Algo
 				//------------------PC GEGNER CODE--------------------------------------------------
 			}
 			else {
 				roundOn = true;
-				tokensOfPlayer = getTokensByUsage(tokens, joker1, joker2, (Token::Usage) player);
+				tokensOfPlayer = getTokensByUsage(tokens, joker1, joker2, playerMemory.at(player).player);
 
 				while (roundOn) {
 					// while round on -> 30, then variable first move board -> playground
@@ -86,18 +95,20 @@ void startGame() {
 					// TO DO: nameOfHumanPlayer
 					showTokensOfPlayer(tokensOfPlayer, playerMemory.at(player).constumizedName);
 
-					makeMovePlayer((Token::Usage) player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2);
+					makeMovePlayer(playerMemory.at(player).player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2);
 				}
 
 			}
 			if (gameOn && pcOpponentSuccessfull) {
 				// validate "Aufstellung"
 				//validateGameLineUp();
-				saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, (Token::Usage) player);
+				saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, playerMemory.at(player).player);
 			}
 			else if (gameOn && !pcOpponentSuccessfull) {
 				//currentPlayground = currentPlaygroundBeforeManipulations;
-				drawTokenRandomlyFromStock(tokens, joker1, joker2, (Token::Usage) player, 1);
+				currentPlayground.clear();
+				std::copy(currentPlaygroundBeforeManipulations.begin(), currentPlaygroundBeforeManipulations.end(), back_inserter(currentPlayground));
+				drawTokenRandomlyFromStock(tokens, joker1, joker2, playerMemory.at(player).player, 1);
 			}
 			else {
 				break;
