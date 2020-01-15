@@ -84,7 +84,6 @@ void startGame() {
 					<< SEPARATION_LINE;
 					*/
 
-
 				currentPlayground.clear();
 
 				std::vector<Token::Usage> usageConditions;
@@ -97,8 +96,7 @@ void startGame() {
 				if (pcOpponentSuccessfull) {
 					// validate "Aufstellung"
 					//validateGameLineUp();
-					tokensOfPlayer = getTokensByUsage(tokens, joker1, joker2, playerMemory.at(player).player);
-					saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, playerMemory.at(player).player);
+					saveCurrentPlayground(currentPlayground, tokens, joker1, joker2);
 				}
 				else {
 					drawTokenRandomlyFromStock(tokens, joker1, joker2, playerMemory.at(player).player, 1);
@@ -113,16 +111,18 @@ void startGame() {
 					<< "PC-GEGNER:"
 					<< std::endl;
 				printMemoryStructure(currentPlayground);
-				tokensOfPlayer = getTokensByUsage(tokens, joker1, joker2, playerMemory.at(player).player);
+
+				tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, playerMemory.at(player).player);
 				showTokensOfPlayer(tokensOfPlayer, playerMemory.at(player).constumizedName);
-				tokensOfPlayer.clear();
+
+				makeMovePlayer(playerMemory.at(player).player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2, tokenDrawn);
 				std::cout
 					<< std::endl
 					<< SEPARATION_LINE;
 			}
 			else {
 				roundOn = true;
-				tokensOfPlayer = getTokensByUsage(tokens, joker1, joker2, playerMemory.at(player).player);
+				tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, playerMemory.at(player).player);
 
 				while (roundOn) {
 					// while round on -> 30, then variable first move board -> playground
@@ -161,8 +161,23 @@ void startGame() {
 	*/
 }
 
-void saveGameLineUp(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player) {
-	// save current playground
+void validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player,
+	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2) {
+
+	std::vector<Token> tokensOfPlayerOriginal = getTokensOfPlayer(tokens, joker1, joker2, player);
+
+}
+
+void saveGameLineUp(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, std::vector<std::vector<Token>>& currentPlayground,
+	std::vector<Token>& tokensOfPlayer, Token::Usage player) {
+
+	saveCurrentPlayground(currentPlayground, tokens, joker1, joker2);
+
+	saveTokensOfPlayer(tokensOfPlayer, tokens, player, joker1, joker2);
+}
+
+void saveCurrentPlayground(std::vector<std::vector<Token>>& currentPlayground, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2)
+{
 	for (int rowPlayground = 0; rowPlayground < currentPlayground.size(); rowPlayground++)
 	{
 		for (int columnPlayground = 0; columnPlayground < currentPlayground[rowPlayground].size(); columnPlayground++)
@@ -188,8 +203,10 @@ void saveGameLineUp(std::vector<std::vector<Token>>& tokens, Token& joker1, Toke
 			}
 		}
 	}
+}
 
-	// save tokensOfPlayer
+void saveTokensOfPlayer(std::vector<Token>& tokensOfPlayer, std::vector<std::vector<Token>>& tokens, Token::Usage player, Token& joker1, Token& joker2)
+{
 	for (int columnTokensOfPlayer = 0; columnTokensOfPlayer < tokensOfPlayer.size(); columnTokensOfPlayer++)
 	{
 		if (tokensOfPlayer[columnTokensOfPlayer].getRow() != -1) {
@@ -323,7 +340,7 @@ int determineIndexPlayerToStart(std::vector<playerAdministration>& score) {
 	return indexOfPlayerToStartGame;
 }
 
-std::vector<Token> getTokensByUsage(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage usage) {
+std::vector<Token>& getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player) {
 
 	std::vector<Token> tokensOfPlayer;
 	bool tokenFound = true;
@@ -337,7 +354,7 @@ std::vector<Token> getTokensByUsage(std::vector<std::vector<Token>>& tokens, Tok
 			for (int column = 0; column < NUMBER_OF_COLUMNS; column++)
 			{
 				Token value = tokens[row][column];
-				if (value.getUsage() == (Token::Usage) usage) {
+				if (value.getUsage() == (Token::Usage) player) {
 					if (value.getPositionPlayerBoard() == tokenPosition) {
 						tokensOfPlayer.push_back(value);
 						tokenFound = true;
@@ -346,14 +363,14 @@ std::vector<Token> getTokensByUsage(std::vector<std::vector<Token>>& tokens, Tok
 			}
 		}
 
-		if (joker1.getUsage() == (Token::Usage) usage) {
+		if (joker1.getUsage() == (Token::Usage) player) {
 			if (joker1.getPositionPlayerBoard() == tokenPosition) {
 				tokensOfPlayer.push_back(joker1);
 				tokenFound = true;
 			}
 		}
 
-		if (joker2.getUsage() == (Token::Usage) usage) {
+		if (joker2.getUsage() == (Token::Usage) player) {
 			if (joker2.getPositionPlayerBoard() == tokenPosition) {
 				tokensOfPlayer.push_back(joker2);
 				tokenFound = true;
