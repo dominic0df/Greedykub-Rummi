@@ -57,6 +57,8 @@ void startGame() {
 	std::vector<Token> tokensOfPlayer;
 	bool gameOn = true;
 	bool roundOn = true;
+	bool tokenDrawn = false;
+	bool pcOpponentSuccessfull = true;
 	std::cin.clear();
 	std::cin.ignore(INT8_MAX, '\n');
 	// for loop for multiple games
@@ -70,7 +72,7 @@ void startGame() {
 
 			//currentPlaygroundBeforeManipulations = currentPlayground;
 			std::copy(currentPlayground.begin(), currentPlayground.end(), back_inserter(currentPlaygroundBeforeManipulations));
-			bool pcOpponentSuccessfull = true;
+			tokenDrawn = false;
 
 			if (playerMemory.at(player).player >= Token::Usage::PC_Player_1) {
 				std::cout
@@ -84,6 +86,17 @@ void startGame() {
 				currentPlayground.clear();
 				pcOpponentSuccessfull = false; // gesetzt durch Algo
 				//------------------PC GEGNER CODE--------------------------------------------------
+
+				if (pcOpponentSuccessfull) {
+					// validate "Aufstellung"
+					//validateGameLineUp();
+					saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, playerMemory.at(player).player);
+				}
+				else {
+					drawTokenRandomlyFromStock(tokens, joker1, joker2, playerMemory.at(player).player, 1);
+					currentPlayground.clear();
+					std::copy(currentPlaygroundBeforeManipulations.begin(), currentPlaygroundBeforeManipulations.end(), back_inserter(currentPlayground));
+				}
 			}
 			else {
 				roundOn = true;
@@ -95,23 +108,22 @@ void startGame() {
 					// TO DO: nameOfHumanPlayer
 					showTokensOfPlayer(tokensOfPlayer, playerMemory.at(player).constumizedName);
 
-					makeMovePlayer(playerMemory.at(player).player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2);
+					makeMovePlayer(playerMemory.at(player).player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2, tokenDrawn);
 				}
 
-			}
-			if (gameOn && pcOpponentSuccessfull) {
-				// validate "Aufstellung"
-				//validateGameLineUp();
-				saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, playerMemory.at(player).player);
-			}
-			else if (gameOn && !pcOpponentSuccessfull) {
-				//currentPlayground = currentPlaygroundBeforeManipulations;
-				currentPlayground.clear();
-				std::copy(currentPlaygroundBeforeManipulations.begin(), currentPlaygroundBeforeManipulations.end(), back_inserter(currentPlayground));
-				drawTokenRandomlyFromStock(tokens, joker1, joker2, playerMemory.at(player).player, 1);
-			}
-			else {
-				break;
+				if (gameOn && tokenDrawn) {
+					std::cout << "Karte wurde gezogen + moegliche erfolgte Spielzuege der letzten Runde verworfen!";
+					currentPlayground.clear();
+					std::copy(currentPlaygroundBeforeManipulations.begin(), currentPlaygroundBeforeManipulations.end(), back_inserter(currentPlayground));
+				}
+				else if (gameOn && !tokenDrawn) {
+					//validate "Aufstellung"
+					//validateGameLineUp();
+					saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, playerMemory.at(player).player);
+				}
+				else {
+					break;
+				}
 			}
 			tokensOfPlayer.clear();
 			currentPlaygroundBeforeManipulations.clear();
@@ -193,6 +205,7 @@ void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& 
 	// TODO: eventuell srand benutzen
 
 	int positionOfToken;
+	int initialPositionOfToken;
 	int rowOfToken;
 	int columnOfToken;
 
@@ -235,7 +248,8 @@ void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& 
 			break;
 		}
 
-		positionOfToken = rand() % TOTAL_AMOUNT_OF_TOKEN;
+		initialPositionOfToken = rand() % TOTAL_AMOUNT_OF_TOKEN;
+		positionOfToken = initialPositionOfToken;
 
 		rowOfToken = (int)positionOfToken / NUMBER_OF_COLUMNS;
 		columnOfToken = positionOfToken % NUMBER_OF_COLUMNS;
@@ -269,6 +283,11 @@ void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& 
 
 				rowOfToken = (int)positionOfToken / NUMBER_OF_COLUMNS;
 				columnOfToken = positionOfToken % NUMBER_OF_COLUMNS;
+			}
+
+			if (positionOfToken == initialPositionOfToken) {
+				std::cout << "Keine Spielsteine mehr auf dem Stapel! -> Unentschieden";
+				break;
 			}
 		}
 	}
