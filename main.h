@@ -19,7 +19,7 @@ int determineIndexPlayerToStart(std::vector<playerAdministration>& score);
 
 void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
 
-std::vector<Token> getTokensByUsage(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage usage);
+std::vector<Token>& getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player);
 
 void showTokensOfPlayer(std::vector<Token> tokensOfPlayer, std::string nameOfHumanPlayer);
 
@@ -30,8 +30,15 @@ void printMemoryStructure(std::vector<std::vector<Token>>& currentPlayground);
 
 void printToken(Token token);
 
+void validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player,
+	std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
+
 void saveGameLineUp(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2,
 	std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player);
+
+void saveCurrentPlayground(std::vector<std::vector<Token>>& currentPlayground, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2);
+
+void saveTokensOfPlayer(std::vector<Token>& tokensOfPlayer, std::vector<std::vector<Token>>& tokens, Token::Usage player, Token& joker1, Token& joker2);
 
 void regexTester();
 
