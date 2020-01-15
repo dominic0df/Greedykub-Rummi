@@ -36,7 +36,7 @@ bool makeAMoveComputerOpponent(std::vector<std::vector<Token>> tokens, std::vect
 	return false;
 }
 
-bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2) {
+bool searchForGroupsAndRows(std::vector<std::vector<Token>> tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2) {
 	std::vector<std::vector<std::map < Token::Color, int >>> groups;
 	std::vector<std::vector<bool>> processed(
 		NUMBER_OF_ROWS,

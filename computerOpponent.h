@@ -1,5 +1,4 @@
 #include "shared.h"
-#include "main.h"
 #include <vector>
 #include <memory>
 #include <map>
