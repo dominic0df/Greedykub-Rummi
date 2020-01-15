@@ -15,3 +15,5 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 	bool& gameOn, bool& roundOn, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, bool& tokenDrawn);
 
 bool isNumber(const std::string& s);
+
+void showCommandSet();

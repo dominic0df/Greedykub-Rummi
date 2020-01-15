@@ -43,5 +43,7 @@ bool validateInputNumberOfOpponents(std::string& numberOfOpponents);
 
 std::string showSelectMenuMove();
 
+void showCommandSet();
+
 
 
