@@ -1,7 +1,9 @@
 # Greedykub-Rummi
 A Rummikub game with computer opponents based on a greedy algorithm written in C++
 
-Rummikub Spielanleitung
+
+
+## Rummikub Spielanleitung
 
 Vor der ersten Spielrunde: 
 +	Auswahl Anzahl PC Gegner / menschliche Gegner (an einem PC)
