@@ -134,9 +134,9 @@ void startGame() {
 
 				while (roundOn) {
 					// while round on -> 30, then variable first move board -> playground
-					printMemoryStructure(currentPlayground);
+					//printMemoryStructure(currentPlayground);
 					// TO DO: nameOfHumanPlayer
-					showTokensOfPlayer(tokensOfPlayer, playerMemory.at(player).constumizedName);
+					//showTokensOfPlayer(tokensOfPlayer, playerMemory.at(player).constumizedName);
 
 					makeMovePlayer(playerMemory.at(player).player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2, tokenDrawn);
 				}
@@ -233,84 +233,64 @@ bool validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std:
 		if (currentPlayground[rowOrGroup].size() > 2)
 		{
 			for (int element = 0; element < currentPlayground[rowOrGroup].size(); element++) {
-				if (currentPlayground[rowOrGroup][element].getUsage() != Token::Usage::Playground || currentPlayground[rowOrGroup][element].getUsage() != player)
+
+				if (element == 0)
 				{
-					return false;
+					lastValue = currentPlayground[rowOrGroup][element].getValue();
+					lastColor[element] = currentPlayground[rowOrGroup][element].getColor();
 				}
 				else
 				{
-					if (element == 0)
+					if (lastValue == currentPlayground[rowOrGroup][element].getValue())
 					{
-						lastValue = currentPlayground[rowOrGroup][element].getValue();
-						lastColor[element] = currentPlayground[rowOrGroup][element].getColor();
-					}
-					else
-					{
-						if (lastValue == currentPlayground[rowOrGroup][element].getValue())
+						if (lastColor[element - 1] != currentPlayground[rowOrGroup][element].getColor())
 						{
-							if (lastColor[element - 1] != currentPlayground[rowOrGroup][element].getColor())
+							lastColor[element] = currentPlayground[rowOrGroup][element].getColor();
+							lastValue = currentPlayground[rowOrGroup][element].getValue();
+							if (element == 2)
 							{
-								lastColor[element] = currentPlayground[rowOrGroup][element].getColor();
-								if (element == 2)
-								{
-									if (lastColor.size() != 3)
-									{
-										return false;
-									}
-								}
-								else
-								{
-									if (element == 3)
-									{
-										if (lastColor.size() != 4)
-										{
-											return false;
-										}
-									}
-								}
-							}
-							else
-							{
-								return false;
-							}
-
-						}
-						else
-						{
-							if (lastColor[element - 1] != currentPlayground[rowOrGroup][element].getColor())
-							{
-								return false;
-							}
-							else
-							{
-								if (lastValue = currentPlayground[rowOrGroup][element].getValue() - 1)
-								{
-									lastValue = currentPlayground[rowOrGroup][element].getValue();
-									lastColor[element] = currentPlayground[rowOrGroup][element].getColor();
-								}
-								else
+								if (lastColor.size() != 3)
 								{
 									return false;
 								}
 							}
+							else
+							{
+								if (element == 3)
+								{
+									if (lastColor.size() != 4)
+									{
+										return false;
+									}
+								}
+							}
+						}
+						else
+						{
+							return false;
 						}
 
 					}
-				}
-
-				/*if (tokensOfPlayerBeforeManipulations[rowOrGroup][element].getUsage() == player)
-				{
-					for(std::vector<Token>::iterator it = tokensOfPlayerBeforeManipulations.begin(); it != tokensOfPlayerBeforeManipulations.end(); it++)
+					else
 					{
-						if (it->getValue()==tokensOfPlayerBeforeManipulations[rowOrGroup][element].getValue())
+						if (lastColor[element - 1] != currentPlayground[rowOrGroup][element].getColor())
 						{
-							if (tokensOfPlayerBeforeManipulations->getColor()==tokensOfPlayerBeforeManipulations[rowOrGroup][element].getColor())
+							return false;
+						}
+						else
+						{
+							if (lastValue = currentPlayground[rowOrGroup][element].getValue() - 1)
 							{
-								tokensOfPlayerBeforeManipulations.erase(it);
+								lastValue = currentPlayground[rowOrGroup][element].getValue();
+								lastColor[element] = currentPlayground[rowOrGroup][element].getColor();
+							}
+							else
+							{
+								return false;
 							}
 						}
 					}
-				}*/
+				}
 			}
 		}
 		else
@@ -869,6 +849,9 @@ void moveTokenBoardToPlayground(std::vector<std::vector<Token>>& currentPlaygrou
 				if (currentPlayground[toRow].size() - 1 > toColumn) {
 					insertTokenAndMoveElementsRight(currentPlayground[toRow], currentPlayground[toRow].size() - 1, toColumn);
 				}
+				else {
+
+				}
 			}
 			else {
 				std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
@@ -906,50 +889,55 @@ void moveTokenOnPlayground(std::vector<std::vector<Token>>& currentPlayground, i
 {
 	bool processingSuccessful = true;
 
-	if (currentPlayground.size() > toRow) {
-		if (currentPlayground[toRow].size() == NUMBER_OF_COLUMNS) {
-			std::cout << "Einfuegen nicht moeglich, da angegebene Zeile auf dem Spielfeld schon voll ist -> max. 13 Elemente pro Zeile!";
-			processingSuccessful = false;
-		}
-		else {
-			if (currentPlayground[toRow].size() >= toColumn) {
-				// Add Token as last element Ex.: insert 5
-				// Insert Token on the left side: Ex.: 1 2 6 7 5 -> Command: E > ...
-				currentPlayground[toRow].push_back(currentPlayground[fromRow][fromColumn]);
-				if ((currentPlayground[toRow].size() - 1) > toColumn) {
-					insertTokenAndMoveElementsRight(currentPlayground[toRow], currentPlayground[toRow].size() - 1, toColumn);
+	if (fromRow == toRow) {
+		moveTokenOnBoard(currentPlayground[toRow], fromColumn, toColumn);
+	}
+	else {
+		if (currentPlayground.size() > toRow) {
+			if (currentPlayground[toRow].size() == NUMBER_OF_COLUMNS) {
+				std::cout << "Einfuegen nicht moeglich, da angegebene Zeile auf dem Spielfeld schon voll ist -> max. 13 Elemente pro Zeile!";
+				processingSuccessful = false;
+			}
+			else {
+				if (currentPlayground[toRow].size() >= toColumn) {
+					// Add Token as last element Ex.: insert 5
+					// Insert Token on the left side: Ex.: 1 2 6 7 5 -> Command: E > ...
+					currentPlayground[toRow].push_back(currentPlayground[fromRow][fromColumn]);
+					if ((currentPlayground[toRow].size() - 1) > toColumn) {
+						insertTokenAndMoveElementsRight(currentPlayground[toRow], currentPlayground[toRow].size() - 1, toColumn);
+					}
 				}
+				else {
+					std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
+					processingSuccessful = false;
+				}
+			}
+		}
+		else if (currentPlayground.size() == toRow) {
+			if (toColumn == 0) {
+				std::vector<Token> toAdd;
+				toAdd.push_back(currentPlayground[fromRow][fromColumn]);
+				currentPlayground.push_back(toAdd);
 			}
 			else {
 				std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
 				processingSuccessful = false;
 			}
 		}
-	}
-	else if (currentPlayground.size() == toRow) {
-		if (toColumn == 0) {
-			std::vector<Token> toAdd;
-			toAdd.push_back(currentPlayground[fromRow][fromColumn]);
-			currentPlayground.push_back(toAdd);
-		}
 		else {
-			std::cout << "Es kann nicht nach der letzten Stelle angefuegt werden! -> Gebe zum Einfuegen an der letzte Stelle, deren Index an!";
+			std::cout << "Es kann nicht nach der letzten Zeile eingefuegt werden! -> Gebe zum Einfuegen in der letzte Zeile, deren Index an!";
 			processingSuccessful = false;
 		}
-	}
-	else {
-		std::cout << "Es kann nicht nach der letzten Zeile eingefuegt werden! -> Gebe zum Einfuegen in der letzte Zeile, deren Index an!";
-		processingSuccessful = false;
-	}
-	// Delete from playground -> move Token to last element -> delete last Element
-	if (processingSuccessful) {
-		if (currentPlayground[fromRow].size() != fromColumn - 1) {
-			insertTokenAndMoveElementsLeft(currentPlayground[fromRow], fromColumn, currentPlayground[fromRow].size());
-		}
-		currentPlayground[fromRow].pop_back();
-		// delete empty Row, if row is before last row
-		if (currentPlayground[fromRow].empty() && currentPlayground.size() - 1 == fromRow) {
-			currentPlayground.pop_back();
+		// Delete from playground -> move Token to last element -> delete last Element
+		if (processingSuccessful) {
+			if (currentPlayground[fromRow].size() != fromColumn - 1) {
+				insertTokenAndMoveElementsLeft(currentPlayground[fromRow], fromColumn, currentPlayground[fromRow].size());
+			}
+			currentPlayground[fromRow].pop_back();
+			// delete empty Row, if row is before last row
+			if (currentPlayground[fromRow].empty() && currentPlayground.size() - 1 == fromRow) {
+				currentPlayground.pop_back();
+			}
 		}
 	}
 }
