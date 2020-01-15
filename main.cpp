@@ -72,17 +72,17 @@ void startGame() {
 
 			//currentPlaygroundBeforeManipulations = currentPlayground;
 			std::copy(currentPlayground.begin(), currentPlayground.end(), back_inserter(currentPlaygroundBeforeManipulations));
-			tokenDrawn = false;
+			//tokenDrawn = false;
 
 			if (playerMemory.at(player).player >= Token::Usage::PC_Player_1) {
-				/*std::cout
+				std::cout
 					<< std::endl
 					<< SEPARATION_LINE
 					<< std::endl
 					<< playerMemory.at(player).constumizedName << " hat gespielt!"
 					<< std::endl
 					<< SEPARATION_LINE;
-					*/
+
 
 				currentPlayground.clear();
 
@@ -99,17 +99,20 @@ void startGame() {
 					validateGameLineUp(currentPlayground, tokensOfPlayer, playerMemory.at(player).player, tokensOfPlayerBeforeManipulations);
 
 					saveCurrentPlayground(currentPlayground, tokens, joker1, joker2);
-					if (currentPlayground.empty()) {
+					std::vector<Token> tokensOfPlayerAfterManipulations = getTokensOfPlayer(tokens, joker1, joker2, playerMemory.at(player).player);
+					/*if (tokensOfPlayerAfterManipulations.empty()) {
 						gameOn = false;
-					}
+					}*/
 				}
 				else {
 					drawTokenRandomlyFromStock(tokens, joker1, joker2, playerMemory.at(player).player, 1);
+					//delete next row
+					//tokensOfPlayerAfterManipulations = getTokensOfPlayer(tokens, joker1, joker2, playerMemory.at(player).player);
 					currentPlayground.clear();
 					std::copy(currentPlaygroundBeforeManipulations.begin(), currentPlaygroundBeforeManipulations.end(), back_inserter(currentPlayground));
 				}
 
-				std::cout
+				/*std::cout
 					<< std::endl
 					<< SEPARATION_LINE
 					<< std::endl
@@ -118,12 +121,12 @@ void startGame() {
 				printMemoryStructure(currentPlayground);
 
 				tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, playerMemory.at(player).player);
-				showTokensOfPlayer(tokensOfPlayer, playerMemory.at(player).constumizedName);
+				showTokensOfPlayer(tokensOfPlayerAfterManipulations, playerMemory.at(player).constumizedName);*/
 
-				makeMovePlayer(playerMemory.at(player).player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2, tokenDrawn);
-				std::cout
-					<< std::endl
-					<< SEPARATION_LINE;
+				//makeMovePlayer(playerMemory.at(player).player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2, tokenDrawn);
+				//std::cout
+					//<< std::endl
+					//<< SEPARATION_LINE;
 			}
 			else {
 				roundOn = true;
@@ -150,6 +153,20 @@ void startGame() {
 					if (validation)
 					{
 						saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, playerMemory.at(player).player);
+					}
+					else {
+						std::cout << "Der aktuelle Zustand ist nicht regelkonform - bitte anpassen!"
+							<< std::endl
+							<< "-> Deine Spielzuege werden rueckgaengig gemacht und du musst 2 Karten ziehen!"
+							<< std::endl;
+						//<< "Falls kein konsistenter Zustand mehr hergestellt werden kann, so kann die Option '5 Reset Playground' verwendet werden"
+						//<< std::endl
+						//<< "-> Achtung: du musst dann 3 Strafsteine ziehen!";
+						drawTokenRandomlyFromStock(tokens, joker1, joker2, playerMemory.at(player).player, 2);
+
+						currentPlayground.clear();
+						std::copy(currentPlaygroundBeforeManipulations.begin(), currentPlaygroundBeforeManipulations.end(),
+							back_inserter(currentPlayground));
 					}
 				}
 				else {
