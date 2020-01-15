@@ -25,8 +25,8 @@ bool searchForRows(std::vector<std::vector<Token>>& tokens, std::vector<std::vec
 
 bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2);
 
-void concatinateResultsToASingleStructure(std::vector<std::vector<std::vector<Token>>>& rows, std::vector<std::vector<Token>>& result, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens);
+void concatinateResultsToASingleStructure(std::vector<std::vector<std::vector<Token>>>& rows, std::vector<std::vector<Token>>& result, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, std::vector<Token::Usage>& usageConditions);
 
-bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::vector<Token>>>& rows, Token& joker1, Token& joker2);
+bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::vector<Token>>>& rows);
 
 bool makeAMoveComputerOpponent(std::vector<std::vector<Token>> tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2);

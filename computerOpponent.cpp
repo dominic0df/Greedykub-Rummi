@@ -1,6 +1,5 @@
 #include "computerOpponent.h"
 
-//umbedingt searchForRows handling of collision search groups and rows
 
 //The algorithm writes on a copy of the tokens vector. Output is the result vector
 bool makeAMoveComputerOpponent(std::vector<std::vector<Token>> tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2) {
@@ -50,10 +49,10 @@ bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector
 	bool collisionSolved;
 	if (allTokensInAGroup && allTokensInARow)
 	{
-		collisionSolved = handlingOfCollisionsBetweenGroupsAndRows(processed, groups, tokens, rows, joker1, joker2);
+		collisionSolved = handlingOfCollisionsBetweenGroupsAndRows(processed, groups, tokens, rows);
 		if (collisionSolved)
 		{
-			concatinateResultsToASingleStructure(rows, result, groups, tokens);
+			concatinateResultsToASingleStructure(rows, result, groups, tokens, joker1, joker2, usageConditions);
 			return true;
 		}
 		else
@@ -63,10 +62,10 @@ bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector
 	}
 	else
 	{
-		collisionSolved = handlingOfCollisionsBetweenGroupsAndRows(processed, groups, tokens, rows,joker1,joker2);
+		collisionSolved = handlingOfCollisionsBetweenGroupsAndRows(processed, groups, tokens, rows);
 		if (collisionSolved)
 		{
-			concatinateResultsToASingleStructure(rows, result, groups, tokens);
+			concatinateResultsToASingleStructure(rows, result, groups, tokens, joker1, joker2, usageConditions);
 			return true;
 		}
 		else
@@ -80,12 +79,34 @@ bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector
 	}
 }
 
-void concatinateResultsToASingleStructure(std::vector<std::vector<std::vector<Token>>>& rows, std::vector<std::vector<Token>>& result, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens)
+void concatinateResultsToASingleStructure(std::vector<std::vector<std::vector<Token>>>& rows, std::vector<std::vector<Token>>& result, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, std::vector<Token::Usage>& usageConditions)
 {
 	//wird kopiert, kann man das ändern?
 	//add rows to result
+	bool joker1Used=false;
+	bool joker2Used = false;
+
 	for (int i = 0; i < NUMBER_OF_ROWS; i++) {
 		for (int j = 0; j < rows[i].size(); j++) {
+			if ((!joker1Used || !joker2Used) && (rows[i][j][(rows[i][j].size()-1)].getValue() < 13))
+			{
+				for (int condition = 0; condition < usageConditions.size(); condition++)
+				{
+					if (joker1.getUsage() == usageConditions[condition])
+					{
+						rows[i][j].push_back(joker1);
+						joker1Used = true;
+					}
+					else
+					{
+						if (joker2.getUsage() == usageConditions[condition])
+						{
+							rows[i][j].push_back(joker2);
+							joker2Used = true;
+						}
+					}
+				}
+			}
 			result.push_back(rows[i][j]);
 		}
 	}
@@ -95,6 +116,24 @@ void concatinateResultsToASingleStructure(std::vector<std::vector<std::vector<To
 			std::vector<Token> group;
 			for (std::map<Token::Color, int>::iterator iter = groups[i][j].begin(); iter != groups[i][j].end(); ++iter)
 			{
+				if ((!joker1Used || !joker2Used) && groups[i][j].size()<4)
+				{
+					for (int condition = 0; condition < usageConditions.size(); condition++)
+					{
+						if (joker1.getUsage() == usageConditions[condition])
+						{
+							group.push_back(joker1);
+							joker1Used = true;
+						}
+						else
+						{
+							if (joker2.getUsage() == usageConditions[condition]) {
+								group.push_back(joker2);
+								joker2Used = true;
+							}
+						}
+					}
+				}
 				group.push_back(tokens[i][iter->second]);
 			}
 			result.push_back(group);
@@ -102,7 +141,7 @@ void concatinateResultsToASingleStructure(std::vector<std::vector<std::vector<To
 	}
 }
 
-bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::vector<Token>>>& rows, Token& joker1, Token& joker2)
+bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::vector<Token>>>& rows)
 {
 	for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
 		for (int j = 0; j < NUMBER_OF_ROWS; j++) {
@@ -123,7 +162,7 @@ bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& pr
 							{
 								for (int rowElement = 0; rowElement < rows[j][row].size(); rowElement++)
 								{
-									if (rows[j][row][rowElement].getValue() == j + 1)//processed again?
+									if (rows[j][row][rowElement].getValue() == j + 1)
 									{
 										if (rows[j][row].size() > 3)
 										{
@@ -133,19 +172,7 @@ bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& pr
 											}
 											else
 											{
-												if (rowElement == 0 && !rows[j][row].empty())
-												{
-													//std::swap(rows[j][row][rowElement], rows[j][row][rowElement]);
-													//rows[j][row].pop_back();
-													//rows[j][row].erase(rows[j][row].begin());
-													return false;
-												}
-												else
-												{
-													return false;
-													//Kollisionsbehandlung schwieriger Fall
-													//aus refactoreden Methoden bedienen falls noch Zeit bleibt
-												}
+												return false;
 											}
 										}
 										else
@@ -153,8 +180,9 @@ bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& pr
 											return false;
 										}
 									}
-									else
+									else {
 										return false;
+									}
 								}
 							}
 						}
@@ -166,7 +194,6 @@ bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& pr
 	}
 	return true;
 }
-
 
 bool searchForGroups(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::map < Token::Color, int >>>& foundGroupsAllColumns, std::vector<Token::Usage>& usageConditions)
 {
