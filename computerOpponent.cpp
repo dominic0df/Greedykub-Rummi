@@ -2,29 +2,34 @@
 
 //umbedingt searchForRows handling of collision search groups and rows
 
-bool makeAMoveComputerOpponent(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2) {
+//The algorithm writes on a copy of the tokens vector. Output is the result vector
+bool makeAMoveComputerOpponent(std::vector<std::vector<Token>> tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2) {
 	//getTokensByUsage(PC Player)
 	for (int condition = 0; condition < usageConditions.size(); condition++)
 	{
 		if (usageConditions[condition]!=Token::Usage::Playground) {
-			std::vector<Token> board;
 			for (int row = 0; row < NUMBER_OF_ROWS; row++)
 			{
+				std::set<int> converted;
 				for (int column = 0; column < NUMBER_OF_COLUMNS; column++) {
 					if (tokens[row][column].getUsage()!=Token::Usage::Playground && tokens[row][column].getUsage() != Token::Usage::Stock)
 					{
-						board.push_back(tokens[row][column]);
+						tokens[row][column].setUsage(Token::Usage::Stock);
+						converted.insert(column);
+						if (searchForGroupsAndRows(tokens, result, usageConditions, joker1, joker2)) {
+							return true;
+						}
+						else
+						{
+							result.clear();
+						}
 					}
 				}
-			}
-			while (board.size() > 0)
-			{
-				if (searchForGroupsAndRows(tokens, result, usageConditions, joker1, joker2)) {
-					return true;
-				}
-				else
-				{
-					board.pop_back();
+				for (int column = 0; column < NUMBER_OF_COLUMNS; column++) {
+					if (converted.find(column) != converted.end())
+					{
+						tokens[row][column].setUsage(usageConditions[condition]);
+					}
 				}
 			}
 		}
