@@ -23,8 +23,10 @@ void findRemainingTokensToAddWithoutShift(std::vector<std::vector<bool>>& proces
 void correctFalseInputToProcessedAndPush(std::shared_ptr<std::vector<Token>>& row, std::vector<std::vector<bool>>& processed, int i, std::vector<std::vector<Token>>& foundRows);
 bool searchForRows(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::vector<Token>>>& foundRowsAllColors, std::vector<Token::Usage>& usageConditions);
 
-bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result);
+bool searchForGroupsAndRows(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2);
 
 void concatinateResultsToASingleStructure(std::vector<std::vector<std::vector<Token>>>& rows, std::vector<std::vector<Token>>& result, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens);
 
-bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::vector<Token>>>& rows);
+bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::vector<Token>>>& rows, Token& joker1, Token& joker2);
+
+bool makeAMoveComputerOpponent(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2);
