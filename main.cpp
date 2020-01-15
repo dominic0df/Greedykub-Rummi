@@ -95,9 +95,9 @@ void startGame() {
 
 				if (pcOpponentSuccessfull) {
 					// validate "Aufstellung"
-					std::vector<Token> tokensOfPlayerBeforeManipulations = getTokensOfPlayer(tokens, joker1, joker2, player);
-					validateGameLineUp(currentPlayground, tokensOfPlayer, player, tokensOfPlayerBeforeManipulations);
-				
+					std::vector<Token> tokensOfPlayerBeforeManipulations = getTokensOfPlayer(tokens, joker1, joker2, playerMemory.at(player).player);
+					validateGameLineUp(currentPlayground, tokensOfPlayer, playerMemory.at(player).player, tokensOfPlayerBeforeManipulations);
+
 					saveCurrentPlayground(currentPlayground, tokens, joker1, joker2);
 					if (currentPlayground.empty()) {
 						gameOn = false;
@@ -145,8 +145,8 @@ void startGame() {
 				}
 				else if (gameOn && !tokenDrawn) {
 					//validate "Aufstellung"
-					std::vector<Token> tokensOfPlayerBeforeManipulations = getTokensOfPlayer(tokens, joker1, joker2, player);
-					bool validation=validateGameLineUp(currentPlayground, tokensOfPlayer, player, tokensOfPlayerBeforeManipulations);
+					std::vector<Token> tokensOfPlayerBeforeManipulations = getTokensOfPlayer(tokens, joker1, joker2, playerMemory.at(player).player);
+					bool validation = validateGameLineUp(currentPlayground, tokensOfPlayer, playerMemory.at(player).player, tokensOfPlayerBeforeManipulations);
 					if (validation)
 					{
 						saveGameLineUp(tokens, joker1, joker2, currentPlayground, tokensOfPlayer, playerMemory.at(player).player);
@@ -202,50 +202,50 @@ bool validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std:
 
 	for (int elementsOnBoard = 0; elementsOnBoard < tokensOfPlayer.size(); elementsOnBoard++)
 	{
-		if (tokensOfPlayer[elementsOnBoard].getUsage()==Token::Usage::Playground)
+		if (tokensOfPlayer[elementsOnBoard].getUsage() == Token::Usage::Playground)
 		{
 			return false;
 		}
-		
+
 	}
 
 	for (int rowOrGroup = 0; rowOrGroup < currentPlayground.size(); rowOrGroup++)
 	{
 		int lastValue;
 		std::map<int, Token::Color> lastColor;
-		if (currentPlayground[rowOrGroup].size()>2)
+		if (currentPlayground[rowOrGroup].size() > 2)
 		{
 			for (int element = 0; element < currentPlayground[rowOrGroup].size(); element++) {
-				if (currentPlayground[rowOrGroup][element].getUsage()!=Token::Usage::Playground || currentPlayground[rowOrGroup][element].getUsage() != player)
+				if (currentPlayground[rowOrGroup][element].getUsage() != Token::Usage::Playground || currentPlayground[rowOrGroup][element].getUsage() != player)
 				{
 					return false;
 				}
 				else
 				{
-					if (element==0)
+					if (element == 0)
 					{
-						lastValue=currentPlayground[rowOrGroup][element].getValue();
-						lastColor[element]=currentPlayground[rowOrGroup][element].getColor();
+						lastValue = currentPlayground[rowOrGroup][element].getValue();
+						lastColor[element] = currentPlayground[rowOrGroup][element].getColor();
 					}
 					else
 					{
-						if (lastValue==currentPlayground[rowOrGroup][element].getValue())
+						if (lastValue == currentPlayground[rowOrGroup][element].getValue())
 						{
-							if (lastColor[element-1]!=currentPlayground[rowOrGroup][element].getColor())
+							if (lastColor[element - 1] != currentPlayground[rowOrGroup][element].getColor())
 							{
-								lastColor[element]=currentPlayground[rowOrGroup][element].getColor();
-								if (element==2)
+								lastColor[element] = currentPlayground[rowOrGroup][element].getColor();
+								if (element == 2)
 								{
-									if (lastColor.size()!=3)
+									if (lastColor.size() != 3)
 									{
 										return false;
 									}
 								}
 								else
 								{
-									if (element==3)
+									if (element == 3)
 									{
-										if (lastColor.size()!=4)
+										if (lastColor.size() != 4)
 										{
 											return false;
 										}
@@ -256,29 +256,29 @@ bool validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std:
 							{
 								return false;
 							}
-							
+
 						}
 						else
 						{
-							if (lastColor[element-1]!=currentPlayground[rowOrGroup][element].getColor())
+							if (lastColor[element - 1] != currentPlayground[rowOrGroup][element].getColor())
 							{
 								return false;
 							}
 							else
 							{
-								if (lastValue=currentPlayground[rowOrGroup][element].getValue()-1)
+								if (lastValue = currentPlayground[rowOrGroup][element].getValue() - 1)
 								{
-									lastValue=currentPlayground[rowOrGroup][element].getValue();
-									lastColor[element]=currentPlayground[rowOrGroup][element].getColor();
+									lastValue = currentPlayground[rowOrGroup][element].getValue();
+									lastColor[element] = currentPlayground[rowOrGroup][element].getColor();
 								}
 								else
 								{
 									return false;
-								}								
+								}
 							}
 						}
-						
-					}			
+
+					}
 				}
 
 				/*if (tokensOfPlayerBeforeManipulations[rowOrGroup][element].getUsage() == player)
@@ -302,8 +302,8 @@ bool validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std:
 		}
 
 
-		for (int element = 0; element < currentPlayground[rowOrGroup].size(); element++) {			
-			
+		for (int element = 0; element < currentPlayground[rowOrGroup].size(); element++) {
+
 		}
 	}
 	return true;
@@ -483,7 +483,7 @@ int determineIndexPlayerToStart(std::vector<playerAdministration>& score) {
 	return indexOfPlayerToStartGame;
 }
 
-std::vector<Token>& getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player) {
+std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player) {
 
 	std::vector<Token> tokensOfPlayer;
 	bool tokenFound = true;
