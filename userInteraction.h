@@ -45,5 +45,7 @@ std::string showSelectMenuMove();
 
 void showCommandSet();
 
+void showGameManual();
+
 
 

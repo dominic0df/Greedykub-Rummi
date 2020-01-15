@@ -58,7 +58,7 @@ void startGame() {
 	bool gameOn = true;
 	bool roundOn = true;
 	bool tokenDrawn = false;
-	bool pcOpponentSuccessfull = true;
+	bool pcOpponentSuccessfull = false;
 	std::cin.clear();
 	std::cin.ignore(INT8_MAX, '\n');
 	// for loop for multiple games
@@ -84,30 +84,37 @@ void startGame() {
 					<< SEPARATION_LINE;
 
 
-				currentPlayground.clear();
+				std::vector<std::vector<Token>> result;
 
 				std::vector<Token::Usage> usageConditions;
 				usageConditions.push_back(playerMemory.at(player).player);
 				if (playerMemory.at(player).tokensMovedToPlayground) {
 					usageConditions.push_back(Token::Usage::Playground);
 				}
-				pcOpponentSuccessfull = makeAMoveComputerOpponent(tokens, currentPlayground, usageConditions, joker1, joker2);
+				pcOpponentSuccessfull = makeAMoveComputerOpponent(tokens, result, usageConditions, joker1, joker2);
+				//std::cout << "Hey: ";
+				//printMemoryStructure(currentPlayground);
 
 				if (pcOpponentSuccessfull) {
 					// validate "Aufstellung"
+					if (!result.empty()) {
+						std::copy(result.begin(), result.end(), back_inserter(currentPlayground));
+					}
 					std::vector<Token> tokensOfPlayerBeforeManipulations = getTokensOfPlayer(tokens, joker1, joker2, playerMemory.at(player).player);
-					validateGameLineUp(currentPlayground, tokensOfPlayer, playerMemory.at(player).player, tokensOfPlayerBeforeManipulations);
 
-					saveCurrentPlayground(currentPlayground, tokens, joker1, joker2);
-					std::vector<Token> tokensOfPlayerAfterManipulations = getTokensOfPlayer(tokens, joker1, joker2, playerMemory.at(player).player);
-					/*if (tokensOfPlayerAfterManipulations.empty()) {
-						gameOn = false;
-					}*/
+					bool valid = validateGameLineUp(currentPlayground, tokensOfPlayer, playerMemory.at(player).player, tokensOfPlayerBeforeManipulations);
+
+					if (valid) {
+						saveCurrentPlayground(currentPlayground, tokens, joker1, joker2);
+					}
+					else {
+						drawTokenRandomlyFromStock(tokens, joker1, joker2, playerMemory.at(player).player, 1);
+						currentPlayground.clear();
+						std::copy(currentPlaygroundBeforeManipulations.begin(), currentPlaygroundBeforeManipulations.end(), back_inserter(currentPlayground));
+					}
 				}
 				else {
 					drawTokenRandomlyFromStock(tokens, joker1, joker2, playerMemory.at(player).player, 1);
-					//delete next row
-					//tokensOfPlayerAfterManipulations = getTokensOfPlayer(tokens, joker1, joker2, playerMemory.at(player).player);
 					currentPlayground.clear();
 					std::copy(currentPlaygroundBeforeManipulations.begin(), currentPlaygroundBeforeManipulations.end(), back_inserter(currentPlayground));
 				}
@@ -138,7 +145,7 @@ void startGame() {
 					// TO DO: nameOfHumanPlayer
 					//showTokensOfPlayer(tokensOfPlayer, playerMemory.at(player).constumizedName);
 
-					makeMovePlayer(playerMemory.at(player).player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2, tokenDrawn);
+					makeMovePlayer(playerMemory.at(player).player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2, tokenDrawn, playerMemory.at(player).constumizedName);
 				}
 
 				if (gameOn && tokenDrawn) {
@@ -245,7 +252,7 @@ bool validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std:
 					bool sameColor = lastColor.find(currentPlayground[rowOrGroup][element].getColor()) != lastColor.end();
 					if (lastValue == currentPlayground[rowOrGroup][element].getValue())
 					{
-						if ((!sameColor || currentPlayground[rowOrGroup][element].getColor() == Token::Color::JOKER_WHITE) && lastColor.size()<5)
+						if ((!sameColor || currentPlayground[rowOrGroup][element].getColor() == Token::Color::JOKER_WHITE) && lastColor.size() < 5)
 						{
 							lastColor.insert(currentPlayground[rowOrGroup][element].getColor());
 							if (element == 2)
@@ -274,13 +281,13 @@ bool validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std:
 					else
 					{
 						//Row
-						if (!sameColor && !currentPlayground[rowOrGroup][element].getColor()==Token::Color::JOKER_WHITE)
+						if (!sameColor && !currentPlayground[rowOrGroup][element].getColor() == Token::Color::JOKER_WHITE)
 						{
 							return false;
 						}
 						else
 						{
-							if ((lastValue == currentPlayground[rowOrGroup][element].getValue() - 1) || (currentPlayground[rowOrGroup][element].getValue()==30) || lastValue==30)
+							if ((lastValue == currentPlayground[rowOrGroup][element].getValue() - 1) || (currentPlayground[rowOrGroup][element].getValue() == 30) || lastValue == 30)
 							{
 								lastValue = currentPlayground[rowOrGroup][element].getValue();
 								lastColor.insert(currentPlayground[rowOrGroup][element].getColor());
@@ -1020,7 +1027,7 @@ std::vector<std::vector<Token>> getPlaygroundToDisplay() {
 	Token token8(Token::Color::CYAN, 9, Token::Usage::Playground, -1, 0, 4, 0, 2);
 	/*Token token9(Token::Color::RED, 9, Token::Usage::Playground, -1, 2, 4, 1, 2);
 	Token token10(Token::Color::YELLOW, 9, Token::Usage::Playground, -1, 4, 4, 2, 2);*/
-	toAdd3.push_back(token8);
+	//toAdd3.push_back(token8);
 	//toAdd3.push_back(token9);
 	//toAdd3.push_back(token10);
 	playgroundBeforeMove.push_back(toAdd3);

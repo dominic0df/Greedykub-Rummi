@@ -114,7 +114,6 @@ std::string showSelectMenuMove() {
 		<< std::endl
 		<< DRAW_TOKEN << std::endl
 		<< CONTINUE << std::endl
-		<< REPAIR_PLAYGROUND << std::endl
 		<< MOVE_TOKEN << std::endl
 		<< std::endl
 		<< INSTRUCTION_ENTER_OPTION;
@@ -168,5 +167,13 @@ void showCommandSet() {
 		<< std::endl
 
 		<< SEPARATION_LINE
+		<< std::endl;
+}
+
+void showGameManual() {
+	std::cout
+		<< std::endl
+		<< "Die Spielanleitung ist im Git - Repo aufzufinden"
+		<< "Adresse: https://github.com/dominic0df/Greedykub-Rummi/blob/master/README.md"
 		<< std::endl;
 }

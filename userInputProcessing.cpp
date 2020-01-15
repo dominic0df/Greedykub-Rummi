@@ -13,7 +13,8 @@ void firstUserInteraction() {
 		//std::cout << "0 QUIT";
 		break;
 	case 1:
-		break;
+		showGameManual();
+		//break;
 	case 2:
 		startGame();
 		//std::cout << "2 START GAME";
@@ -75,11 +76,11 @@ void addPlayer(std::vector<playerAdministration>& playerMemory, Token::Usage pla
 }
 
 void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer,
-	bool& gameOn, bool& roundOn, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, bool& tokenDrawn) {
+	bool& gameOn, bool& roundOn, std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, bool& tokenDrawn, std::string& name) {
 
 	printMemoryStructure(currentPlayground);
 	// TO DO: nameOfHumanPlayer
-	showTokensOfPlayer(tokensOfPlayer, std::to_string(player));
+	showTokensOfPlayer(tokensOfPlayer, name);
 
 	std::string selection = showSelectMenuMove();
 	std::cout << SEPARATION_LINE
@@ -100,7 +101,7 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 			gameOn = false;
 			break;
 		case 1:
-			//showGameManual();
+			showGameManual();
 			break;
 		case 2:
 			//showCommandSet();
@@ -119,12 +120,9 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 			tokenDrawn = false;
 			std::cout << "Spielrunde beendet!";
 			break;
-		case 5:
-			//resetPlayground()
-			break;
 		default:
 			std::cout << UNAVAILABLE_OPTION_CHOOSED << std::endl;
-			makeMovePlayer(player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2, tokenDrawn);
+			makeMovePlayer(player, currentPlayground, tokensOfPlayer, gameOn, roundOn, tokens, joker1, joker2, tokenDrawn, name);
 			break;
 		}
 	}

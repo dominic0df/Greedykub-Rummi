@@ -2,16 +2,16 @@
 
 
 //The algorithm writes on a copy of the tokens vector. Output is the result vector
-bool makeAMoveComputerOpponent(std::vector<std::vector<Token>> tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2) {
+bool makeAMoveComputerOpponent(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2) {
 	//getTokensByUsage(PC Player)
 	for (int condition = 0; condition < usageConditions.size(); condition++)
 	{
-		if (usageConditions[condition]!=Token::Usage::Playground) {
+		if (usageConditions[condition] != Token::Usage::Playground) {
 			for (int row = 0; row < NUMBER_OF_ROWS; row++)
 			{
 				std::set<int> converted;
 				for (int column = 0; column < NUMBER_OF_COLUMNS; column++) {
-					if (tokens[row][column].getUsage()!=Token::Usage::Playground && tokens[row][column].getUsage() != Token::Usage::Stock)
+					if (tokens[row][column].getUsage() != Token::Usage::Playground && tokens[row][column].getUsage() != Token::Usage::Stock)
 					{
 						tokens[row][column].setUsage(Token::Usage::Stock);
 						converted.insert(column);
@@ -79,12 +79,12 @@ void concatinateResultsToASingleStructure(std::vector<std::vector<std::vector<To
 {
 	//wird kopiert, kann man das ändern?
 	//add rows to result
-	bool joker1Used=false;
+	bool joker1Used = false;
 	bool joker2Used = false;
 
 	for (int i = 0; i < NUMBER_OF_ROWS; i++) {
 		for (int j = 0; j < rows[i].size(); j++) {
-			if ((!joker1Used || !joker2Used) && (rows[i][j][(rows[i][j].size()-1)].getValue() < 13))
+			if ((!joker1Used || !joker2Used) && (rows[i][j][(rows[i][j].size() - 1)].getValue() < 13))
 			{
 				for (int condition = 0; condition < usageConditions.size(); condition++)
 				{
@@ -112,7 +112,7 @@ void concatinateResultsToASingleStructure(std::vector<std::vector<std::vector<To
 			std::vector<Token> group;
 			for (std::map<Token::Color, int>::iterator iter = groups[i][j].begin(); iter != groups[i][j].end(); ++iter)
 			{
-				if ((!joker1Used || !joker2Used) && groups[i][j].size()<4)
+				if ((!joker1Used || !joker2Used) && groups[i][j].size() < 4)
 				{
 					for (int condition = 0; condition < usageConditions.size(); condition++)
 					{

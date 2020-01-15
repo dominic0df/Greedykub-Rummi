@@ -29,4 +29,4 @@ void concatinateResultsToASingleStructure(std::vector<std::vector<std::vector<To
 
 bool handlingOfCollisionsBetweenGroupsAndRows(std::vector<std::vector<bool>>& processed, std::vector<std::vector<std::map<Token::Color, int>>>& groups, std::vector<std::vector<Token>>& tokens, std::vector<std::vector<std::vector<Token>>>& rows);
 
-bool makeAMoveComputerOpponent(std::vector<std::vector<Token>> tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2);
+bool makeAMoveComputerOpponent(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2);
