@@ -118,7 +118,9 @@ void makeMovePlayer(Token::Usage player, std::vector<std::vector<Token>>& curren
 			std::cout << "2 CommandSet";
 			break;
 		case 3:
-			drawTokenRandomlyFromStock(tokens, joker1, joker2, player, 1);
+			if (!drawTokenRandomlyFromStock(tokens, joker1, joker2, player, 1)) {
+				gameOn = false;
+			}
 			roundOn = false;
 			tokenDrawn = true;
 			std::cout << "3 Draw Token";

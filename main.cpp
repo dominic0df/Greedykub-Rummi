@@ -96,6 +96,9 @@ void startGame() {
 				if (pcOpponentSuccessfull) {
 					// validate "Aufstellung"
 					//validateGameLineUp();
+					if (currentPlayground.empty()) {
+						gameOn = false;
+					}
 					saveCurrentPlayground(currentPlayground, tokens, joker1, joker2);
 				}
 				else {
@@ -152,6 +155,33 @@ void startGame() {
 		}
 	}
 
+
+	int score;
+	int highestScore = -INT8_MAX;
+	int winner;
+	// subtract all values on board of each player
+	for (int player = 0; player < playerMemory.size(); player++) {
+		score = 0;
+		tokensOfPlayer = getTokensOfPlayer(tokens, joker1, joker2, playerMemory.at(player).player);
+		for (int column = 0; column < tokensOfPlayer.size(); column++) {
+			score = score - tokensOfPlayer.at(column).getValue();
+		}
+		if (highestScore < score) {
+			highestScore = score;
+			winner = player;
+		}
+		playerMemory.at(player).points = score;
+	}
+
+	playerMemory.at(winner).points = (-1) * (playerMemory.at(winner).points);
+	std::cout << "Spieler " << playerMemory.at(winner).constumizedName << "hat das Spiel mit " << playerMemory.at(winner).points << " Punkten gewonnen!" << std::endl;
+	std::cout << "Die weiteren Ergebnisse: " << std::endl;
+	for (int player = 0; player < playerMemory.size(); player++) {
+		if (player != winner) {
+			std::cout << playerMemory.at(player).constumizedName << ": " << playerMemory.at(player).points;
+		}
+	}
+
 	/*
 	std::cout << std::endl;
 	for (scoreEntry& entry : score)
@@ -159,6 +189,7 @@ void startGame() {
 		std::cout << entry.player << ": " << entry.point << std::endl;
 	}
 	*/
+
 }
 
 void validateGameLineUp(std::vector<std::vector<Token>>& currentPlayground, std::vector<Token>& tokensOfPlayer, Token::Usage player,
@@ -237,7 +268,7 @@ void dealTokens(std::vector<playerAdministration>& score, std::vector<std::vecto
 	}
 }
 
-void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2,
+bool drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2,
 	Token::Usage player, int amountOfTokens) {
 	//auto zufall=srand((unsigned int)time(NULL));
 	//srand(1);
@@ -325,11 +356,13 @@ void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& 
 			}
 
 			if (positionOfToken == initialPositionOfToken) {
-				std::cout << "Keine Spielsteine mehr auf dem Stapel! -> Unentschieden";
+				std::cout << "Ziehen nicht moeglich, da keine Karten mehr auf dem Stapel!";
+				return false;
 				break;
 			}
 		}
 	}
+	return true;
 }
 
 int determineIndexPlayerToStart(std::vector<playerAdministration>& score) {
@@ -756,7 +789,7 @@ void moveTokenOnPlayground(std::vector<std::vector<Token>>& currentPlayground, i
 				// Add Token as last element Ex.: insert 5
 				// Insert Token on the left side: Ex.: 1 2 6 7 5 -> Command: E > ...
 				currentPlayground[toRow].push_back(currentPlayground[fromRow][fromColumn]);
-				if (currentPlayground[toRow].size() - 1 > toColumn) {
+				if ((currentPlayground[toRow].size() - 1) > toColumn) {
 					insertTokenAndMoveElementsRight(currentPlayground[toRow], currentPlayground[toRow].size() - 1, toColumn);
 				}
 			}

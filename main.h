@@ -23,7 +23,7 @@ std::vector<Token>& getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, T
 
 void showTokensOfPlayer(std::vector<Token> tokensOfPlayer, std::string nameOfHumanPlayer);
 
-void drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2,
+bool drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2,
 	Token::Usage drawingPlayer, int amountOfTokens);
 
 void printMemoryStructure(std::vector<std::vector<Token>>& currentPlayground);
