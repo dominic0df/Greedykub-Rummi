@@ -2,7 +2,7 @@
 
 
 //The algorithm writes on a copy of the tokens vector. Output is the result vector
-bool makeAMoveComputerOpponent(std::vector<std::vector<Token>>& tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2) {
+bool makeAMoveComputerOpponent(std::vector<std::vector<Token>> tokens, std::vector<std::vector<Token>>& result, std::vector<Token::Usage>& usageConditions, Token& joker1, Token& joker2) {
 	//getTokensByUsage(PC Player)
 	for (int condition = 0; condition < usageConditions.size(); condition++)
 	{
