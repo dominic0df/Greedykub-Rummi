@@ -173,7 +173,8 @@ void showCommandSet() {
 void showGameManual() {
 	std::cout
 		<< std::endl
-		<< "Die Spielanleitung ist im Git - Repo aufzufinden"
+		<< "Die Spielanleitung ist im Git-Repo aufzufinden"
+		<< std::endl
 		<< "Adresse: https://github.com/dominic0df/Greedykub-Rummi/blob/master/README.md"
 		<< std::endl;
 }

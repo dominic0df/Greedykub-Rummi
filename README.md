@@ -24,15 +24,14 @@ Spielzug:
 +	Ablegen unter Einhaltung der Kombinations-Regel (kein Limit bzgl. Anzahl der max. ablegbaren Karten):
 +	Bilden einer eigenen Gruppe/Reihe
 +	Anlegen an einer auf dem Spielfeld befindlichen Gruppe/Reihe
-+	Umstrukturierung der Karten auf dem Spielfeld (Aufnehmen bereits abgelegter Karten ist nicht gestattet (in den letzten Runden))
-+	Einschränkung – Erstes Auslegen: Spielsteinwert mind. 30 Punkte, Joker wird dabei nicht berücksichtigt
++	Umstrukturierung der Karten auf dem Spielfeld (Aufnehmen bereits abgelegter Karten ist nicht gestattet)
++	Bei nicht regelkonformer Eingabe werden moegliche erfolgte Spielzuege verworfen + Spielstein gezogen
 Oder:
 +	Spielstein von Vorratsstapel ziehen
 
 Spielende + Auswertung:
 +	Ein Spieler hat alle Karten abgelegt
 	Für jeden Verlierer werden die Werte seiner Spielsteine addiert und als Minuspunkte notiert (Joker = 30 Minuspunkte)
-	Der Gewinner erhält die Minuspunkte aller Verlierer als Pluspunkte
 +	Keine Spielsteine mehr auf Vorratsstapel
-+	Der Spieler mit dem höchsten Punktewert hat das gesamte Spiel gewonnen
-+	Ausgabe Rangliste mit Punkten
++	Der Spieler mit dem niedrigsten Punktewert hat das gesamte Spiel gewonnen
++	Ausgabe Spieler + Punkten

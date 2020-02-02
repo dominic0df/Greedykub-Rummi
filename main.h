@@ -21,6 +21,10 @@ void setStartingCondition(std::vector<std::vector<Token>>& tokens, Token& joker1
 
 std::vector<Token> getTokensOfPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player);
 
+std::vector<Token> getTokensOfPcPlayer(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2, Token::Usage player);
+
+bool playgroundChanged(std::vector<std::vector<Token>>& currentPlaygroundBeforeManipulations, std::vector<std::vector<Token>>& currentPlayground);
+
 void showTokensOfPlayer(std::vector<Token> tokensOfPlayer, std::string nameOfHumanPlayer);
 
 bool drawTokenRandomlyFromStock(std::vector<std::vector<Token>>& tokens, Token& joker1, Token& joker2,

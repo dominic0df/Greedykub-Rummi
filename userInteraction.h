@@ -28,7 +28,7 @@ const std::string SHOW_COMMANDS = "2:\t Befehlssatz anzeigen";
 const std::string DRAW_TOKEN = "3:\t Spielstein ziehen";
 const std::string CONTINUE = "4:\t Spielzug beenden";
 const std::string REPAIR_PLAYGROUND = "5:\t Spielfeld zuruecksetzen";
-const std::string MOVE_TOKEN = "ODER gebe einen Befehl zum Verschieben einer Karte an";
+const std::string MOVE_TOKEN = "ODER gebe einen Befehl zum Verschieben eines Spielsteins an";
 
 int showFirstSelectMenu();
 
@@ -46,6 +46,5 @@ std::string showSelectMenuMove();
 void showCommandSet();
 
 void showGameManual();
-
 
 
